@@ -14,9 +14,9 @@
 #include "gtest-extra.h"
 #include "util.h"
 
-using fmt::buffered_file;
+using lll::fmt::buffered_file;
 using testing::HasSubstr;
-using wstring_view = fmt::basic_string_view<wchar_t>;
+using wstring_view = lll::fmt::basic_string_view<wchar_t>;
 
 #ifdef _WIN32
 
@@ -30,12 +30,13 @@ TEST(os_test, format_windows_error) {
       nullptr, ERROR_FILE_EXISTS, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
       reinterpret_cast<LPWSTR>(&message), 0, nullptr);
   auto utf8_message =
-      fmt::detail::to_utf8<wchar_t>(wstring_view(message, result - 2));
+      lll::fmt::detail::to_utf8<wchar_t>(wstring_view(message, result - 2));
   LocalFree(message);
-  fmt::memory_buffer actual_message;
-  fmt::detail::format_windows_error(actual_message, ERROR_FILE_EXISTS, "test");
-  EXPECT_EQ(fmt::format("test: {}", utf8_message.str()),
-            fmt::to_string(actual_message));
+  lll::fmt::memory_buffer actual_message;
+  lll::fmt::detail::format_windows_error(actual_message, ERROR_FILE_EXISTS,
+                                         "test");
+  EXPECT_EQ(lll::fmt::format("test: {}", utf8_message.str()),
+            lll::fmt::to_string(actual_message));
   actual_message.resize(0);
 }
 
@@ -56,71 +57,72 @@ TEST(os_test, format_long_windows_error) {
     return;
   }
   auto utf8_message =
-      fmt::detail::to_utf8<wchar_t>(wstring_view(message, result - 2));
+      lll::fmt::detail::to_utf8<wchar_t>(wstring_view(message, result - 2));
   LocalFree(message);
-  fmt::memory_buffer actual_message;
-  fmt::detail::format_windows_error(actual_message, provisioning_not_allowed,
-                                    "test");
-  EXPECT_EQ(fmt::format("test: {}", utf8_message.str()),
-            fmt::to_string(actual_message));
+  lll::fmt::memory_buffer actual_message;
+  lll::fmt::detail::format_windows_error(actual_message,
+                                         provisioning_not_allowed, "test");
+  EXPECT_EQ(lll::fmt::format("test: {}", utf8_message.str()),
+            lll::fmt::to_string(actual_message));
 }
 
 TEST(os_test, windows_error) {
   auto error = std::system_error(std::error_code());
   try {
-    throw fmt::windows_error(ERROR_FILE_EXISTS, "test {}", "error");
+    throw lll::fmt::windows_error(ERROR_FILE_EXISTS, "test {}", "error");
   } catch (const std::system_error& e) {
     error = e;
   }
-  fmt::memory_buffer message;
-  fmt::detail::format_windows_error(message, ERROR_FILE_EXISTS, "test error");
+  lll::fmt::memory_buffer message;
+  lll::fmt::detail::format_windows_error(message, ERROR_FILE_EXISTS,
+                                         "test error");
   EXPECT_THAT(error.what(), HasSubstr(to_string(message)));
   EXPECT_EQ(ERROR_FILE_EXISTS, error.code().value());
 }
 
 TEST(os_test, report_windows_error) {
-  fmt::memory_buffer out;
-  fmt::detail::format_windows_error(out, ERROR_FILE_EXISTS, "test error");
+  lll::fmt::memory_buffer out;
+  lll::fmt::detail::format_windows_error(out, ERROR_FILE_EXISTS, "test error");
   out.push_back('\n');
   EXPECT_WRITE(stderr,
-               fmt::report_windows_error(ERROR_FILE_EXISTS, "test error"),
-               fmt::to_string(out));
+               lll::fmt::report_windows_error(ERROR_FILE_EXISTS, "test error"),
+               lll::fmt::to_string(out));
 }
 
-#  if FMT_USE_FCNTL && !defined(__MINGW32__)
+#  if LAWS3_FMT_USE_FCNTL && !defined(__MINGW32__)
 TEST(file_test, open_windows_file) {
-  using fmt::file;
+  using lll::fmt::file;
   file out = file::open_windows_file(L"test-file",
                                      file::WRONLY | file::CREATE | file::TRUNC);
   out.write("x", 1);
   file in = file::open_windows_file(L"test-file", file::RDONLY);
   EXPECT_READ(in, "x");
 }
-#  endif  // FMT_USE_FCNTL && !defined(__MINGW32__)
+#  endif  // LAWS3_FMT_USE_FCNTL && !defined(__MINGW32__)
 
 #endif  // _WIN32
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 
-using fmt::file;
+using lll::fmt::file;
 
 auto isclosed(int fd) -> bool {
   char buffer;
   auto result = std::streamsize();
-  SUPPRESS_ASSERT(result = FMT_POSIX(read(fd, &buffer, 1)));
+  SUPPRESS_ASSERT(result = LAWS3_FMT_POSIX(read(fd, &buffer, 1)));
   return result == -1 && errno == EBADF;
 }
 
 // Opens a file for reading.
 auto open_file() -> file {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   pipe.write_end.write(file_content, std::strlen(file_content));
   pipe.write_end.close();
   return std::move(pipe.read_end);
 }
 
 // Attempts to write a string to a file.
-void write(file& f, fmt::string_view s) {
+void write(file& f, lll::fmt::string_view s) {
   size_t num_chars_left = s.size();
   const char* ptr = s.data();
   do {
@@ -203,7 +205,7 @@ TEST(buffered_file_test, close_error_in_dtor) {
         // otherwise the system may recycle closed file descriptor when
         // redirecting the output in EXPECT_STDERR and the second close
         // will break output redirection.
-        FMT_POSIX(close(f->descriptor()));
+        LAWS3_FMT_POSIX(close(f->descriptor()));
         SUPPRESS_ASSERT(f.reset(nullptr));
       },
       system_error_message(EBADF, "cannot close file") + "\n");
@@ -219,7 +221,7 @@ TEST(buffered_file_test, close) {
 
 TEST(buffered_file_test, close_error) {
   buffered_file f = open_buffered_file();
-  FMT_POSIX(close(f.descriptor()));
+  LAWS3_FMT_POSIX(close(f.descriptor()));
   EXPECT_SYSTEM_ERROR_NOASSERT(f.close(), EBADF, "cannot close file");
   EXPECT_TRUE(f.get() == nullptr);
 }
@@ -232,16 +234,16 @@ TEST(buffered_file_test, descriptor) {
 }
 
 TEST(ostream_test, move) {
-  fmt::ostream out = fmt::output_file("test-file");
-  fmt::ostream moved(std::move(out));
+  lll::fmt::ostream out = lll::fmt::output_file("test-file");
+  lll::fmt::ostream moved(std::move(out));
   moved.print("hello");
 }
 
 TEST(ostream_test, move_while_holding_data) {
   {
-    fmt::ostream out = fmt::output_file("test-file");
+    lll::fmt::ostream out = lll::fmt::output_file("test-file");
     out.print("Hello, ");
-    fmt::ostream moved(std::move(out));
+    lll::fmt::ostream moved(std::move(out));
     moved.print("world!\n");
   }
   {
@@ -251,7 +253,7 @@ TEST(ostream_test, move_while_holding_data) {
 }
 
 TEST(ostream_test, print) {
-  fmt::ostream out = fmt::output_file("test-file");
+  lll::fmt::ostream out = lll::fmt::output_file("test-file");
   out.print("The answer is {}.\n", 42);
   out.close();
   file in("test-file", file::RDONLY);
@@ -260,7 +262,7 @@ TEST(ostream_test, print) {
 
 TEST(ostream_test, buffer_boundary) {
   auto str = std::string(4096, 'x');
-  fmt::ostream out = fmt::output_file("test-file");
+  lll::fmt::ostream out = lll::fmt::output_file("test-file");
   out.print("{}", str);
   out.print("{}", str);
   out.close();
@@ -269,7 +271,8 @@ TEST(ostream_test, buffer_boundary) {
 }
 
 TEST(ostream_test, buffer_size) {
-  fmt::ostream out = fmt::output_file("test-file", fmt::buffer_size = 1);
+  lll::fmt::ostream out =
+      lll::fmt::output_file("test-file", lll::fmt::buffer_size = 1);
   out.print("{}", "foo");
   out.close();
   file in("test-file", file::RDONLY);
@@ -278,11 +281,11 @@ TEST(ostream_test, buffer_size) {
 
 TEST(ostream_test, truncate) {
   {
-    fmt::ostream out = fmt::output_file("test-file");
+    lll::fmt::ostream out = lll::fmt::output_file("test-file");
     out.print("0123456789");
   }
   {
-    fmt::ostream out = fmt::output_file("test-file");
+    lll::fmt::ostream out = lll::fmt::output_file("test-file");
     out.print("foo");
   }
   file in("test-file", file::RDONLY);
@@ -290,10 +293,10 @@ TEST(ostream_test, truncate) {
 }
 
 TEST(ostream_test, flush) {
-  auto out = fmt::output_file("test-file");
+  auto out = lll::fmt::output_file("test-file");
   out.print("x");
   out.flush();
-  auto in = fmt::file("test-file", file::RDONLY);
+  auto in = lll::fmt::file("test-file", file::RDONLY);
   EXPECT_READ(in, "x");
 }
 
@@ -309,7 +312,7 @@ TEST(file_test, open_buffered_file_in_ctor) {
   file f("test-file", file::RDONLY);
   // Check if the file is open by reading one character from it.
   char buffer;
-  bool isopen = FMT_POSIX(read(f.descriptor(), &buffer, 1)) == 1;
+  bool isopen = LAWS3_FMT_POSIX(read(f.descriptor(), &buffer, 1)) == 1;
   ASSERT_TRUE(isopen);
 }
 
@@ -390,7 +393,7 @@ TEST(file_test, close_error_in_dtor) {
         // otherwise the system may recycle closed file descriptor when
         // redirecting the output in EXPECT_STDERR and the second close
         // will break output redirection.
-        FMT_POSIX(close(f->descriptor()));
+        LAWS3_FMT_POSIX(close(f->descriptor()));
         SUPPRESS_ASSERT(f.reset(nullptr));
       },
       system_error_message(EBADF, "cannot close file") + "\n");
@@ -406,7 +409,7 @@ TEST(file_test, close) {
 
 TEST(file_test, close_error) {
   file f = open_file();
-  FMT_POSIX(close(f.descriptor()));
+  LAWS3_FMT_POSIX(close(f.descriptor()));
   EXPECT_SYSTEM_ERROR_NOASSERT(f.close(), EBADF, "cannot close file");
   EXPECT_EQ(-1, f.descriptor());
 }
@@ -425,7 +428,7 @@ TEST(file_test, read_error) {
 }
 
 TEST(file_test, write) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   write(pipe.write_end, "test");
   pipe.write_end.close();
   EXPECT_READ(pipe.read_end, "test");
@@ -465,7 +468,8 @@ TEST(file_test, dup2_error) {
   file f = open_file();
   EXPECT_SYSTEM_ERROR_NOASSERT(
       f.dup2(-1), EBADF,
-      fmt::format("cannot duplicate file descriptor {} to -1", f.descriptor()));
+      lll::fmt::format("cannot duplicate file descriptor {} to -1",
+                       f.descriptor()));
 }
 
 TEST(file_test, dup2_noexcept) {
@@ -486,7 +490,7 @@ TEST(file_test, dup2_noexcept_error) {
 }
 
 TEST(file_test, pipe) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   EXPECT_NE(-1, pipe.read_end.descriptor());
   EXPECT_NE(-1, pipe.write_end.descriptor());
   write(pipe.write_end, "test");
@@ -494,8 +498,8 @@ TEST(file_test, pipe) {
 }
 
 TEST(file_test, fdopen) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   int read_fd = pipe.read_end.descriptor();
-  EXPECT_EQ(read_fd, FMT_POSIX(fileno(pipe.read_end.fdopen("r").get())));
+  EXPECT_EQ(read_fd, LAWS3_FMT_POSIX(fileno(pipe.read_end.fdopen("r").get())));
 }
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL

@@ -5,8 +5,8 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_OSTREAM_H_
-#define FMT_OSTREAM_H_
+#ifndef LAWS3_FMT_OSTREAM_H_
+#define LAWS3_FMT_OSTREAM_H_
 
 #include <fstream>  // std::filebuf
 
@@ -20,7 +20,7 @@
 
 #include "chrono.h"  // formatbuf
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 
 // Generate a unique explicit instantion in every translation unit using a tag
@@ -33,16 +33,16 @@ class file_access {
   friend auto get_file(BufType& obj) -> FILE* { return obj.*FileMemberPtr; }
 };
 
-#if FMT_MSC_VERSION
+#if LAWS3_FMT_MSC_VERSION
 template class file_access<file_access_tag, std::filebuf,
                            &std::filebuf::_Myfile>;
 auto get_file(std::filebuf&) -> FILE*;
 #endif
 
-inline auto write_ostream_unicode(std::ostream& os, fmt::string_view data)
+inline auto write_ostream_unicode(std::ostream& os, lll::fmt::string_view data)
     -> bool {
   FILE* f = nullptr;
-#if FMT_MSC_VERSION
+#if LAWS3_FMT_MSC_VERSION
   if (auto* buf = dynamic_cast<std::filebuf*>(os.rdbuf()))
     f = get_file(*buf);
   else
@@ -70,7 +70,8 @@ inline auto write_ostream_unicode(std::ostream& os, fmt::string_view data)
   return false;
 }
 inline auto write_ostream_unicode(std::wostream&,
-                                  fmt::basic_string_view<wchar_t>) -> bool {
+                                  lll::fmt::basic_string_view<wchar_t>)
+    -> bool {
   return false;
 }
 
@@ -94,7 +95,7 @@ template <typename Char, typename T>
 void format_value(buffer<Char>& buf, const T& value) {
   auto&& format_buf = formatbuf<std::basic_streambuf<Char>>(buf);
   auto&& output = std::basic_ostream<Char>(&format_buf);
-#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
+#if !defined(LAWS3_FMT_STATIC_THOUSANDS_SEPARATOR)
   output.imbue(std::locale::classic());  // The default is always unlocalized.
 #endif
   output << value;
@@ -139,8 +140,8 @@ struct formatter<detail::streamed_view<T>, Char>
 
   **Example**::
 
-    fmt::print("Current thread id: {}\n",
-               fmt::streamed(std::this_thread::get_id()));
+    lll::fmt::print("Current thread id: {}\n",
+               lll::fmt::streamed(std::this_thread::get_id()));
   \endrst
  */
 template <typename T>
@@ -159,7 +160,7 @@ inline void vprint_directly(std::ostream& os, string_view format_str,
 
 }  // namespace detail
 
-FMT_EXPORT template <typename Char>
+LAWS3_FMT_EXPORT template <typename Char>
 void vprint(std::basic_ostream<Char>& os,
             basic_string_view<type_identity_t<Char>> format_str,
             typename detail::vformat_args<Char>::type args) {
@@ -175,39 +176,40 @@ void vprint(std::basic_ostream<Char>& os,
 
   **Example**::
 
-    fmt::print(cerr, "Don't {}!", "panic");
+    lll::fmt::print(cerr, "Don't {}!", "panic");
   \endrst
  */
-FMT_EXPORT template <typename... T>
+LAWS3_FMT_EXPORT template <typename... T>
 void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
-  const auto& vargs = fmt::make_format_args(args...);
+  const auto& vargs = lll::fmt::make_format_args(args...);
   if (detail::is_utf8())
     vprint(os, fmt, vargs);
   else
     detail::vprint_directly(os, fmt, vargs);
 }
 
-FMT_EXPORT
+LAWS3_FMT_EXPORT
 template <typename... Args>
 void print(std::wostream& os,
            basic_format_string<wchar_t, type_identity_t<Args>...> fmt,
            Args&&... args) {
-  vprint(os, fmt, fmt::make_format_args<buffered_context<wchar_t>>(args...));
+  vprint(os, fmt,
+         lll::fmt::make_format_args<buffered_context<wchar_t>>(args...));
 }
 
-FMT_EXPORT template <typename... T>
+LAWS3_FMT_EXPORT template <typename... T>
 void println(std::ostream& os, format_string<T...> fmt, T&&... args) {
-  fmt::print(os, "{}\n", fmt::format(fmt, std::forward<T>(args)...));
+  lll::fmt::print(os, "{}\n", lll::fmt::format(fmt, std::forward<T>(args)...));
 }
 
-FMT_EXPORT
+LAWS3_FMT_EXPORT
 template <typename... Args>
 void println(std::wostream& os,
              basic_format_string<wchar_t, type_identity_t<Args>...> fmt,
              Args&&... args) {
-  print(os, L"{}\n", fmt::format(fmt, std::forward<Args>(args)...));
+  print(os, L"{}\n", lll::fmt::format(fmt, std::forward<Args>(args)...));
 }
 
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_OSTREAM_H_
+#endif  // LAWS3_FMT_OSTREAM_H_

@@ -65,7 +65,7 @@ Try {fmt} in [Compiler Explorer](https://godbolt.org/z/8Mx1EW73v).
   `-Wall -Wextra -pedantic`
 - Locale independence by default
 - Optional header-only configuration enabled with the
-  `FMT_HEADER_ONLY` macro
+  `LAWS3_FMT_HEADER_ONLY` macro
 
 See the [documentation](https://fmt.dev) for more details.
 

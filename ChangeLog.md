@@ -362,7 +362,7 @@
 -   Added `throw_format_error` to the public API
     (https://github.com/fmtlib/fmt/pull/3551). Thanks @mjerabek.
 
--   Made `FMT_THROW` assert even if assertions are disabled when
+-   Made `LAWS3_FMT_THROW` assert even if assertions are disabled when
     compiling with exceptions disabled
     (https://github.com/fmtlib/fmt/issues/3418,
     https://github.com/fmtlib/fmt/pull/3439). Thanks @BRevzin.
@@ -447,7 +447,7 @@
     ![](https://user-images.githubusercontent.com/33922675/211956670-84891a09-6867-47d9-82fc-3230da7abe0f.png)
 
     -   Red: new algorithm
-    -   Green: new algorithm with `FMT_USE_FULL_CACHE_DRAGONBOX` defined
+    -   Green: new algorithm with `LAWS3_FMT_USE_FULL_CACHE_DRAGONBOX` defined
         to 1
     -   Blue: old algorithm
 
@@ -475,11 +475,11 @@
     https://github.com/fmtlib/fmt/pull/3399,
     https://github.com/fmtlib/fmt/pull/3400).
     Thanks @laitingsheng, @Orvid and @DanielaE.
-    
+
 -   Switched to the [modules CMake library](https://github.com/vitaut/modules)
     which allows building {fmt} as a C++20 module with clang:
 
-        CXX=clang++ cmake -DFMT_MODULE=ON .
+        CXX=clang++ cmake -DLAWS3_FMT_MODULE=ON .
         make
 
 -   Made `format_as` work with any user-defined type and not just enums.
@@ -689,7 +689,7 @@
     (https://github.com/fmtlib/fmt/issues/3084,
     https://github.com/fmtlib/fmt/pull/3087). Thanks @gerboengels.
 
--   Removed the deprecated `FMT_DEPRECATED_OSTREAM`.
+-   Removed the deprecated `LAWS3_FMT_DEPRECATED_OSTREAM`.
 
 -   Fixed a UB when using a null `std::string_view` with
     `fmt::to_string` or format string compilation
@@ -706,8 +706,8 @@
 -   Added `println` for compatibility with C++23
     (https://github.com/fmtlib/fmt/pull/3267). Thanks @ShawnZhong.
 
--   Renamed the `FMT_EXPORT` macro for shared library usage to
-    `FMT_LIB_EXPORT`.
+-   Renamed the `LAWS3_FMT_EXPORT` macro for shared library usage to
+    `LAWS3_FMT_LIB_EXPORT`.
 
 -   Improved documentation
     (https://github.com/fmtlib/fmt/issues/3108,
@@ -945,7 +945,7 @@
 
     consteval auto compile_time_dtoa(double value) -> std::array<char, 10> {
       auto result = std::array<char, 10>();
-      fmt::format_to(result.data(), FMT_COMPILE("{}"), value);
+      fmt::format_to(result.data(), LAWS3_FMT_COMPILE("{}"), value);
       return result;
     }
 
@@ -967,7 +967,7 @@
 -   Disabled automatic `std::ostream` insertion operator (`operator<<`)
     discovery when `fmt/ostream.h` is included to prevent ODR
     violations. You can get the old behavior by defining
-    `FMT_DEPRECATED_OSTREAM` but this will be removed in the next major
+    `LAWS3_FMT_DEPRECATED_OSTREAM` but this will be removed in the next major
     release. Use `fmt::streamed` or `fmt::ostream_formatter` to enable
     formatting via `std::ostream` instead.
 
@@ -1527,7 +1527,7 @@
     (https://github.com/fmtlib/fmt/pull/2461,
     https://github.com/fmtlib/fmt/pull/2469). @pauldreik,
 
--   Added the `FMT_SYSTEM_HEADERS` CMake option setting which marks
+-   Added the `LAWS3_FMT_SYSTEM_HEADERS` CMake option setting which marks
     {fmt}\'s headers as system. It can be used to suppress warnings
     (https://github.com/fmtlib/fmt/issues/2644,
     https://github.com/fmtlib/fmt/pull/2651). Thanks @alexezeder.
@@ -1672,7 +1672,7 @@
 
     consteval auto compile_time_itoa(int value) -> std::array<char, 10> {
       auto result = std::array<char, 10>();
-      fmt::format_to(result.data(), FMT_COMPILE("{}"), value);
+      fmt::format_to(result.data(), LAWS3_FMT_COMPILE("{}"), value);
       return result;
     }
 
@@ -1728,7 +1728,7 @@
     smaller fraction of the total time.
 
 -   Added the `_cf` user-defined literal to represent a compiled format
-    string. It can be used instead of the `FMT_COMPILE` macro
+    string. It can be used instead of the `LAWS3_FMT_COMPILE` macro
     (https://github.com/fmtlib/fmt/pull/2043,
     https://github.com/fmtlib/fmt/pull/2242):
 
@@ -1736,7 +1736,7 @@
     #include <fmt/compile.h>
 
     using namespace fmt::literals;
-    auto s = fmt::format(FMT_COMPILE("{}"), 42); // 🙁 not modern
+    auto s = fmt::format(LAWS3_FMT_COMPILE("{}"), 42); // 🙁 not modern
     auto s = fmt::format("{}"_cf, 42);           // 🙂 modern as hell
     ```
 
@@ -1764,7 +1764,7 @@
     #include <fmt/compile.h>
 
     using namespace fmt::literals;
-    auto s = fmt::format(FMT_COMPILE("{answer}"), "answer"_a = 42);
+    auto s = fmt::format(LAWS3_FMT_COMPILE("{answer}"), "answer"_a = 42);
     ```
 
     Here the argument named \"answer\" is resolved at compile time with
@@ -1935,7 +1935,7 @@
     respectively.
 
 -   Moved `wchar_t`-specific functions and types to `fmt/xchar.h`. You
-    can define `FMT_DEPRECATED_INCLUDE_XCHAR` to automatically include
+    can define `LAWS3_FMT_DEPRECATED_INCLUDE_XCHAR` to automatically include
     `fmt/xchar.h` from `fmt/format.h` but this will be disabled in the
     next major release.
 
@@ -1981,7 +1981,7 @@
     compilation (https://github.com/fmtlib/fmt/issues/2042):
 
     ```c++
-    auto s = fmt::format(FMT_COMPILE(""));
+    auto s = fmt::format(LAWS3_FMT_COMPILE(""));
     ```
 
     Thanks @alexezeder.
@@ -2098,7 +2098,7 @@
 -   Error messages are now passed to assert when exceptions are disabled
     (https://github.com/fmtlib/fmt/pull/2145). Thanks @NobodyXu.
 
--   Added the `FMT_MASTER_PROJECT` CMake option to control build and
+-   Added the `LAWS3_FMT_MASTER_PROJECT` CMake option to control build and
     install targets when {fmt} is included via `add_subdirectory`
     (https://github.com/fmtlib/fmt/issues/2098,
     https://github.com/fmtlib/fmt/pull/2100).
@@ -2257,7 +2257,7 @@
 
 -   Fixed ABI compatibility with 7.0.x
     (https://github.com/fmtlib/fmt/issues/1961).
--   Added the `FMT_ARM_ABI_COMPATIBILITY` macro to work around ABI
+-   Added the `LAWS3_FMT_ARM_ABI_COMPATIBILITY` macro to work around ABI
     incompatibility between GCC and Clang on ARM
     (https://github.com/fmtlib/fmt/issues/1919).
 -   Worked around a SFINAE bug in GCC 8
@@ -2288,7 +2288,7 @@
     ![](https://user-images.githubusercontent.com/576385/95684665-11719600-0ba8-11eb-8e5b-972ff4e49428.png)
 
     It is possible to get even better performance at the cost of larger
-    binary size by compiling with the `FMT_USE_FULL_CACHE_DRAGONBOX`
+    binary size by compiling with the `LAWS3_FMT_USE_FULL_CACHE_DRAGONBOX`
     macro set to 1.
 
     Thanks @jk-jeon.
@@ -2351,14 +2351,14 @@
 -   Added a `memory_buffer::append` overload that takes a range
     (https://github.com/fmtlib/fmt/pull/1806). Thanks @BRevzin.
 
--   Improved handling of single code units in `FMT_COMPILE`. For
+-   Improved handling of single code units in `LAWS3_FMT_COMPILE`. For
     example:
 
     ```c++
     #include <fmt/compile.h>
 
     char* f(char* buf) {
-      return fmt::format_to(buf, FMT_COMPILE("x{}"), 42);
+      return fmt::format_to(buf, LAWS3_FMT_COMPILE("x{}"), 42);
     }
     ```
 
@@ -2422,7 +2422,7 @@
     }
 
     #define MY_LOG(format, ...) \
-      log(__FILE__, __LINE__, FMT_STRING(format), __VA_ARGS__)
+      log(__FILE__, __LINE__, LAWS3_FMT_STRING(format), __VA_ARGS__)
 
     MY_LOG("invalid squishiness: {}", 42);
     ```
@@ -2467,7 +2467,7 @@
 
     int main() {
       char buffer[8];
-      fmt::format_to_n(buffer, sizeof(buffer), FMT_COMPILE("{}"), 42);
+      fmt::format_to_n(buffer, sizeof(buffer), LAWS3_FMT_COMPILE("{}"), 42);
     }
     ```
 
@@ -2542,7 +2542,7 @@
     (https://github.com/fmtlib/fmt/issues/1870,
     https://github.com/fmtlib/fmt/issues/1932).
 
--   Improved `FMT_ALWAYS_INLINE`
+-   Improved `LAWS3_FMT_ALWAYS_INLINE`
     (https://github.com/fmtlib/fmt/pull/1878). Thanks @jk-jeon.
 
 -   Removed dependency on `windows.h`
@@ -2561,14 +2561,14 @@
     https://github.com/fmtlib/fmt/pull/1939).
     Thanks @leolchat, @pepsiman, @Klaim, @ravijanjam, @francesco-st and @udnaan.
 
--   Added the `FMT_REDUCE_INT_INSTANTIATIONS` CMake option that reduces
+-   Added the `LAWS3_FMT_REDUCE_INT_INSTANTIATIONS` CMake option that reduces
     the binary code size at the cost of some integer formatting
     performance. This can be useful for extremely memory-constrained
     embedded systems
     (https://github.com/fmtlib/fmt/issues/1778,
     https://github.com/fmtlib/fmt/pull/1781). Thanks @kammce.
 
--   Added the `FMT_USE_INLINE_NAMESPACES` macro to control usage of
+-   Added the `LAWS3_FMT_USE_INLINE_NAMESPACES` macro to control usage of
     inline namespaces
     (https://github.com/fmtlib/fmt/pull/1945). Thanks @darklukee.
 
@@ -2661,7 +2661,7 @@
 
     // Converts 42 into std::string using the most efficient method and no
     // runtime format string processing.
-    std::string s = fmt::format(FMT_COMPILE("{}"), 42);
+    std::string s = fmt::format(LAWS3_FMT_COMPILE("{}"), 42);
     ```
 
     The old `fmt::compile` API is now deprecated.
@@ -2759,7 +2759,7 @@
     #include <fmt/format.h>
 
     int main() {
-      fmt::print(FMT_STRING("{0:{1}}"), 42);
+      fmt::print(LAWS3_FMT_STRING("{0:{1}}"), 42);
     }
     ```
 
@@ -2768,7 +2768,7 @@
         In file included from test.cc:1:
         include/fmt/format.h:2726:27: error: constexpr variable 'invalid_format' must be
         initialized by a constant expression
-          FMT_CONSTEXPR_DECL bool invalid_format =
+          LAWS3_FMT_CONSTEXPR_DECL bool invalid_format =
                                   ^
         ...
         include/fmt/core.h:569:26: note: in call to
@@ -2810,27 +2810,27 @@
 -   Replaced the `'n'` format specifier with `'L'` for compatibility
     with `std::format`
     (https://github.com/fmtlib/fmt/issues/1624). The `'n'`
-    specifier can be enabled via the `FMT_DEPRECATED_N_SPECIFIER` macro.
+    specifier can be enabled via the `LAWS3_FMT_DEPRECATED_N_SPECIFIER` macro.
 
 -   The `'='` format specifier is now disabled by default for
     compatibility with `std::format`. It can be enabled via the
-    `FMT_DEPRECATED_NUMERIC_ALIGN` macro.
+    `LAWS3_FMT_DEPRECATED_NUMERIC_ALIGN` macro.
 
 -   Removed the following deprecated APIs:
 
-    -   `FMT_STRING_ALIAS` and `fmt` macros - replaced by `FMT_STRING`
+    -   `LAWS3_FMT_STRING_ALIAS` and `fmt` macros - replaced by `LAWS3_FMT_STRING`
     -   `fmt::basic_string_view::char_type` - replaced by
         `fmt::basic_string_view::value_type`
     -   `convert_to_int`
     -   `format_arg_store::types`
     -   `*parse_context` - replaced by `*format_parse_context`
-    -   `FMT_DEPRECATED_INCLUDE_OS`
-    -   `FMT_DEPRECATED_PERCENT` - incompatible with `std::format`
+    -   `LAWS3_FMT_DEPRECATED_INCLUDE_OS`
+    -   `LAWS3_FMT_DEPRECATED_PERCENT` - incompatible with `std::format`
     -   `*writer` - replaced by compiled format API
 
 -   Renamed the `internal` namespace to `detail`
     (https://github.com/fmtlib/fmt/issues/1538). The former is
-    still provided as an alias if the `FMT_USE_INTERNAL` macro is
+    still provided as an alias if the `LAWS3_FMT_USE_INTERNAL` macro is
     defined.
 
 -   Improved compatibility between `fmt::printf` with the standard specs
@@ -2843,13 +2843,13 @@
 -   Fixed handling of `operator<<` overloads that use `copyfmt`
     (https://github.com/fmtlib/fmt/issues/1666).
 
--   Added the `FMT_OS` CMake option to control inclusion of OS-specific
+-   Added the `LAWS3_FMT_OS` CMake option to control inclusion of OS-specific
     APIs in the fmt target. This can be useful for embedded platforms
     (https://github.com/fmtlib/fmt/issues/1654,
     https://github.com/fmtlib/fmt/pull/1656). Thanks @kwesolowski.
 
 -   Replaced `FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION` with the
-    `FMT_FUZZ` macro to prevent interfering with fuzzing of projects
+    `LAWS3_FMT_FUZZ` macro to prevent interfering with fuzzing of projects
     using {fmt} (https://github.com/fmtlib/fmt/pull/1650).
     Thanks @asraa.
 
@@ -2966,7 +2966,7 @@
     release.
 
 -   Moved OS-specific APIs such as `windows_error` from `fmt/format.h`
-    to `fmt/os.h`. You can define `FMT_DEPRECATED_INCLUDE_OS` to
+    to `fmt/os.h`. You can define `LAWS3_FMT_DEPRECATED_INCLUDE_OS` to
     automatically include `fmt/os.h` from `fmt/format.h` for
     compatibility but this will be disabled in the next major release.
 
@@ -3027,11 +3027,11 @@
     (https://github.com/fmtlib/fmt/pull/1553). Thanks @dominicpoeschko.
 
 -   Added the ability to disable floating-point formatting via
-    `FMT_USE_FLOAT`, `FMT_USE_DOUBLE` and `FMT_USE_LONG_DOUBLE` macros
+    `LAWS3_FMT_USE_FLOAT`, `LAWS3_FMT_USE_DOUBLE` and `LAWS3_FMT_USE_LONG_DOUBLE` macros
     for extremely memory-constrained embedded system
     (https://github.com/fmtlib/fmt/pull/1590). Thanks @albaguirre.
 
--   Made `FMT_STRING` work with `constexpr` `string_view`
+-   Made `LAWS3_FMT_STRING` work with `constexpr` `string_view`
     (https://github.com/fmtlib/fmt/pull/1589). Thanks @scramsby.
 
 -   Implemented a minor optimization in the format string parser
@@ -3117,7 +3117,7 @@
     (https://github.com/fmtlib/fmt/issues/1471).
 -   Fixed handling types convertible to `std::string_view`
     (https://github.com/fmtlib/fmt/pull/1451). Thanks @denizevrenci.
--   Made CUDA test an opt-in enabled via the `FMT_CUDA_TEST` CMake
+-   Made CUDA test an opt-in enabled via the `LAWS3_FMT_CUDA_TEST` CMake
     option.
 -   Fixed sign conversion warnings
     (https://github.com/fmtlib/fmt/pull/1440). Thanks @0x8000-0000.
@@ -3395,10 +3395,10 @@
 
 -   Added an experimental Grisu floating-point formatting algorithm
     implementation (disabled by default). To enable it compile with the
-    `FMT_USE_GRISU` macro defined to 1:
+    `LAWS3_FMT_USE_GRISU` macro defined to 1:
 
     ```c++
-    #define FMT_USE_GRISU 1
+    #define LAWS3_FMT_USE_GRISU 1
     #include <fmt/format.h>
 
     auto s = fmt::format("{}", 4.2); // formats 4.2 using Grisu
@@ -3582,7 +3582,7 @@
     https://github.com/fmtlib/fmt/blob/master/support/C%2B%2B.sublime-syntax)
     (https://github.com/fmtlib/fmt/issues/1037). Thanks @Kronuz.
 
--   Added the `FMT_ENFORCE_COMPILE_STRING` macro to enforce the use of
+-   Added the `LAWS3_FMT_ENFORCE_COMPILE_STRING` macro to enforce the use of
     compile-time format strings
     (https://github.com/fmtlib/fmt/pull/1231). Thanks @jackoalan.
 
@@ -3977,11 +3977,11 @@
     | std::stringstream          | 1.73            |         |
 
 -   Changed the `fmt` macro from opt-out to opt-in to prevent name
-    collisions. To enable it define the `FMT_STRING_ALIAS` macro to 1
+    collisions. To enable it define the `LAWS3_FMT_STRING_ALIAS` macro to 1
     before including `fmt/format.h`:
 
     ```c++
-    #define FMT_STRING_ALIAS 1
+    #define LAWS3_FMT_STRING_ALIAS 1
     #include <fmt/format.h>
     std::string answer = format(fmt("{}"), 42);
     ```
@@ -3998,7 +3998,7 @@
 
 -   Moved experimental color support to `fmt/color.h` and enabled the
     new API by default. The old API can be enabled by defining the
-    `FMT_DEPRECATED_COLORS` macro.
+    `LAWS3_FMT_DEPRECATED_COLORS` macro.
 
 -   Added formatting support for types explicitly convertible to
     `fmt::string_view`:
@@ -4062,11 +4062,11 @@
 # 5.1.0 - 2018-07-05
 
 -   Added experimental support for RGB color output enabled with the
-    `FMT_EXTENDED_COLORS` macro:
+    `LAWS3_FMT_EXTENDED_COLORS` macro:
 
     ```c++
-    #define FMT_EXTENDED_COLORS
-    #define FMT_HEADER_ONLY // or compile fmt with FMT_EXTENDED_COLORS defined
+    #define LAWS3_FMT_EXTENDED_COLORS
+    #define LAWS3_FMT_HEADER_ONLY // or compile fmt with LAWS3_FMT_EXTENDED_COLORS defined
     #include <fmt/format.h>
 
     fmt::print(fmt::color::steel_blue, "Some beautiful text");
@@ -4093,7 +4093,7 @@
     https://github.com/fmtlib/fmt/pull/759). Thanks @drrlvn.
 
 -   Added more compilers to continuous integration and increased
-    `FMT_PEDANTIC` warning levels
+    `LAWS3_FMT_PEDANTIC` warning levels
     (https://github.com/fmtlib/fmt/pull/736). Thanks @eliaskosunen.
 
 -   Fixed compilation with MSVC 2013.
@@ -4136,7 +4136,7 @@
 # 5.0.0 - 2018-05-21
 
 -   Added a requirement for partial C++11 support, most importantly
-    variadic templates and type traits, and dropped `FMT_VARIADIC_*`
+    variadic templates and type traits, and dropped `LAWS3_FMT_VARIADIC_*`
     emulation macros. Variadic templates are available since GCC 4.4,
     Clang 2.9 and MSVC 18.0 (2013). For older compilers use {fmt}
     [version 4.x](https://github.com/fmtlib/fmt/releases/tag/4.1.0)
@@ -4371,7 +4371,7 @@
 -   Added Gradle build file `support/build.gradle`
     (https://github.com/fmtlib/fmt/pull/649). Thanks @luncliff.
 
--   Removed `FMT_CPPFORMAT` CMake option.
+-   Removed `LAWS3_FMT_CPPFORMAT` CMake option.
 
 -   Fixed a name conflict with the macro `CHAR_WIDTH` in glibc
     (https://github.com/fmtlib/fmt/pull/616). Thanks @aroig.
@@ -4480,7 +4480,7 @@
 -   Conditionally enabled use of `std::allocator_traits`
     (https://github.com/fmtlib/fmt/pull/583). Thanks @mwinterb.
 -   Added support for `const` variadic member function emulation with
-    `FMT_VARIADIC_CONST`
+    `LAWS3_FMT_VARIADIC_CONST`
     (https://github.com/fmtlib/fmt/pull/591). Thanks @ludekvodicka.
 -   Various bugfixes: bad overflow check, unsupported implicit type
     conversion when determining formatting function, test segfaults
@@ -4620,9 +4620,9 @@
 
 # 3.0.2 - 2017-06-14
 
--   Added `FMT_VERSION` macro
+-   Added `LAWS3_FMT_VERSION` macro
     (https://github.com/fmtlib/fmt/issues/411).
--   Used `FMT_NULL` instead of literal `0`
+-   Used `LAWS3_FMT_NULL` instead of literal `0`
     (https://github.com/fmtlib/fmt/pull/409). Thanks @alabuzhev.
 -   Added extern templates for `format_float`
     (https://github.com/fmtlib/fmt/issues/413).
@@ -4856,7 +4856,7 @@
 # 2.1.1 - 2016-04-11
 
 -   The install location for generated CMake files is now configurable
-    via the `FMT_CMAKE_DIR` CMake variable
+    via the `LAWS3_FMT_CMAKE_DIR` CMake variable
     (https://github.com/fmtlib/fmt/pull/299). Thanks @niosHD.
 -   Documentation fixes
     (https://github.com/fmtlib/fmt/issues/252).
@@ -4875,7 +4875,7 @@
         configuration.
     -   Targets `doc`, `install`, and `test` are now disabled if C++
         Format is included as a CMake subproject. They can be enabled by
-        setting `FMT_DOC`, `FMT_INSTALL`, and `FMT_TEST` in the parent
+        setting `LAWS3_FMT_DOC`, `LAWS3_FMT_INSTALL`, and `LAWS3_FMT_TEST` in the parent
         project.
 
     Thanks @niosHD.
@@ -5006,7 +5006,7 @@
 -   Dependency on pthreads introduced by Google Test is now optional
     (https://github.com/fmtlib/fmt/issues/185).
 
--   New CMake options `FMT_DOC`, `FMT_INSTALL` and `FMT_TEST` to control
+-   New CMake options `LAWS3_FMT_DOC`, `LAWS3_FMT_INSTALL` and `LAWS3_FMT_TEST` to control
     generation of `doc`, `install` and `test` targets respectively, on
     by default (https://github.com/fmtlib/fmt/issues/197,
     https://github.com/fmtlib/fmt/issues/198,
@@ -5016,11 +5016,11 @@
     (https://github.com/fmtlib/fmt/pull/215). Thanks @dmkrepo.
 
 -   Added an option to disable use of `windows.h` when
-    `FMT_USE_WINDOWS_H` is defined as 0 before including `format.h`
+    `LAWS3_FMT_USE_WINDOWS_H` is defined as 0 before including `format.h`
     (https://github.com/fmtlib/fmt/issues/171). Thanks @alfps.
 
 -   \[Breaking\] `windows.h` is now included with `NOMINMAX` unless
-    `FMT_WIN_MINMAX` is defined. This is done to prevent breaking code
+    `LAWS3_FMT_WIN_MINMAX` is defined. This is done to prevent breaking code
     using `std::min` and `std::max` and only affects the header-only
     configuration (https://github.com/fmtlib/fmt/issues/152,
     https://github.com/fmtlib/fmt/pull/153,
@@ -5029,7 +5029,7 @@
 -   Improved support for custom character types
     (https://github.com/fmtlib/fmt/issues/171). Thanks @alfps.
 
--   Added an option to disable use of IOStreams when `FMT_USE_IOSTREAMS`
+-   Added an option to disable use of IOStreams when `LAWS3_FMT_USE_IOSTREAMS`
     is defined as 0 before including `format.h`
     (https://github.com/fmtlib/fmt/issues/205,
     https://github.com/fmtlib/fmt/pull/208). Thanks @JodiTheTigger.
@@ -5104,7 +5104,7 @@
     https://github.com/fmtlib/fmt/pull/161,
     https://github.com/fmtlib/fmt/issues/162,
     https://github.com/fmtlib/fmt/issues/165,
-    https://github.com/fmtlib/fmt/issues/210). 
+    https://github.com/fmtlib/fmt/issues/210).
     Thanks @syohex.
 -   Fixed out-of-tree documentation build
     (https://github.com/fmtlib/fmt/issues/177). Thanks @jackyf.
@@ -5274,11 +5274,11 @@
 
 # 1.0.0 - 2015-02-05
 
--   Add support for a header-only configuration when `FMT_HEADER_ONLY`
+-   Add support for a header-only configuration when `LAWS3_FMT_HEADER_ONLY`
     is defined before including `format.h`:
 
     ```c++
-    #define FMT_HEADER_ONLY
+    #define LAWS3_FMT_HEADER_ONLY
     #include "format.h"
     ```
 
@@ -5309,7 +5309,7 @@
 
 -   Improvements to documentation build procedure.
 
--   Remove `FMT_SHARED` CMake variable in favor of standard [BUILD_SHARED_LIBS](
+-   Remove `LAWS3_FMT_SHARED` CMake variable in favor of standard [BUILD_SHARED_LIBS](
     http://www.cmake.org/cmake/help/v3.0/variable/BUILD_SHARED_LIBS.html).
 
 -   Fix error handling in `fmt::fprintf`.
@@ -5401,7 +5401,7 @@
     temporary formatter object. This works both with C++11 where
     variadic templates are used and with older standards where variadic
     functions are emulated by providing lightweight wrapper functions
-    defined with the `FMT_VARIADIC` macro. You can use this macro for
+    defined with the `LAWS3_FMT_VARIADIC` macro. You can use this macro for
     defining your own portable variadic functions:
 
     ```c++
@@ -5409,7 +5409,7 @@
       fmt::print("Error: {}");
       fmt::print(format, args);
     }
-    FMT_VARIADIC(void, report_error, const char *)
+    LAWS3_FMT_VARIADIC(void, report_error, const char *)
 
     report_error("file not found: {}", path);
     ```
@@ -5473,7 +5473,7 @@
     print("{:A}", -42.0); // Prints -0X1.5P+5
     ```
 
--   CMake option `FMT_SHARED` that specifies whether to build format as
+-   CMake option `LAWS3_FMT_SHARED` that specifies whether to build format as
     a shared library (off by default).
 
 # 0.9.0 - 2014-05-13

@@ -32,7 +32,7 @@ Python:
 .. code:: c++
 
   std::string s = fmt::format("The answer is {}.", 42);
-  
+
 The ``fmt::format`` function returns a string "The answer is 42.". You can use
 ``fmt::memory_buffer`` to avoid constructing ``std::string``:
 
@@ -69,7 +69,7 @@ You can pass named arguments with ``fmt::arg``:
   fmt::print("Hello, {name}! The answer is {number}. Goodbye, {name}.",
              fmt::arg("name", "World"), fmt::arg("number", 42));
 
-If your compiler supports C++11 user-defined literals, the suffix ``_a`` offers 
+If your compiler supports C++11 user-defined literals, the suffix ``_a`` offers
 an alternative, slightly terser syntax for named arguments:
 
 .. code:: c++
@@ -98,7 +98,7 @@ The code
 
 .. code:: c++
 
-  format(FMT_STRING("The answer is {:d}"), "forty-two");
+  format(LAWS3_FMT_STRING("The answer is {:d}"), "forty-two");
 
 reports a compile-time error on compilers that support relaxed ``constexpr``.
 See `here <api.html#compile-time-format-string-checks>`_ for details.
@@ -108,7 +108,7 @@ The following code
 .. code:: c++
 
   fmt::format("Cyrillic letter {}", L'\x42e');
-  
+
 produces a compile-time error because wide character ``L'\x42e'`` cannot be
 formatted into a narrow string. For comparison, writing a wide character to
 ``std::ostream`` results in its numeric value being written to the stream

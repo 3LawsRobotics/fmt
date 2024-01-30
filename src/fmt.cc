@@ -70,21 +70,21 @@ module;
 
 export module fmt;
 
-#define FMT_EXPORT export
-#define FMT_BEGIN_EXPORT export {
-#define FMT_END_EXPORT }
+#define LAWS3_FMT_EXPORT export
+#define LAWS3_FMT_BEGIN_EXPORT export {
+#define LAWS3_FMT_END_EXPORT }
 
-// If you define FMT_ATTACH_TO_GLOBAL_MODULE
+// If you define LAWS3_FMT_ATTACH_TO_GLOBAL_MODULE
 //  - all declarations are detached from module 'fmt'
 //  - the module behaves like a traditional static library, too
 //  - all library symbols are mangled traditionally
 //  - you can mix TUs with either importing or #including the {fmt} API
-#ifdef FMT_ATTACH_TO_GLOBAL_MODULE
+#ifdef LAWS3_FMT_ATTACH_TO_GLOBAL_MODULE
 extern "C++" {
 #endif
 
-#ifndef FMT_OS
-#  define FMT_OS 1
+#ifndef LAWS3_FMT_OS
+#  define LAWS3_FMT_OS 1
 #endif
 
 // All library-provided declarations and definitions must be in the module
@@ -94,23 +94,23 @@ extern "C++" {
 #include "fmt/color.h"
 #include "fmt/compile.h"
 #include "fmt/format.h"
-#if FMT_OS
+#if LAWS3_FMT_OS
 #  include "fmt/os.h"
 #endif
 #include "fmt/printf.h"
 #include "fmt/std.h"
 #include "fmt/xchar.h"
 
-#ifdef FMT_ATTACH_TO_GLOBAL_MODULE
+#ifdef LAWS3_FMT_ATTACH_TO_GLOBAL_MODULE
 }
 #endif
 
 // gcc doesn't yet implement private module fragments
-#if !FMT_GCC_VERSION
+#if !LAWS3_FMT_GCC_VERSION
 module :private;
 #endif
 
 #include "format.cc"
-#if FMT_OS
+#if LAWS3_FMT_OS
 #  include "os.cc"
 #endif

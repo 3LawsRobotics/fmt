@@ -16,17 +16,18 @@
 #include "gmock/gmock.h"
 #include "util.h"
 
-using fmt::detail::bigint;
-using fmt::detail::fp;
-using fmt::detail::max_value;
+using lll::fmt::detail::bigint;
+using lll::fmt::detail::fp;
+using lll::fmt::detail::max_value;
 
 static_assert(!std::is_copy_constructible<bigint>::value, "");
 static_assert(!std::is_copy_assignable<bigint>::value, "");
 
 TEST(bigint_test, construct) {
-  EXPECT_EQ(fmt::to_string(bigint()), "");
-  EXPECT_EQ(fmt::to_string(bigint(0x42)), "42");
-  EXPECT_EQ(fmt::to_string(bigint(0x123456789abcedf0)), "123456789abcedf0");
+  EXPECT_EQ(lll::fmt::to_string(bigint()), "");
+  EXPECT_EQ(lll::fmt::to_string(bigint(0x42)), "42");
+  EXPECT_EQ(lll::fmt::to_string(bigint(0x123456789abcedf0)),
+            "123456789abcedf0");
 }
 
 TEST(bigint_test, compare) {
@@ -72,56 +73,56 @@ TEST(bigint_test, add_compare) {
 TEST(bigint_test, shift_left) {
   bigint n(0x42);
   n <<= 0;
-  EXPECT_EQ(fmt::to_string(n), "42");
+  EXPECT_EQ(lll::fmt::to_string(n), "42");
   n <<= 1;
-  EXPECT_EQ(fmt::to_string(n), "84");
+  EXPECT_EQ(lll::fmt::to_string(n), "84");
   n <<= 25;
-  EXPECT_EQ(fmt::to_string(n), "108000000");
+  EXPECT_EQ(lll::fmt::to_string(n), "108000000");
 }
 
 TEST(bigint_test, multiply) {
   bigint n(0x42);
   EXPECT_THROW(n *= 0, assertion_failure);
   n *= 1;
-  EXPECT_EQ(fmt::to_string(n), "42");
+  EXPECT_EQ(lll::fmt::to_string(n), "42");
 
   n *= 2;
-  EXPECT_EQ(fmt::to_string(n), "84");
+  EXPECT_EQ(lll::fmt::to_string(n), "84");
   n *= 0x12345678;
-  EXPECT_EQ(fmt::to_string(n), "962fc95e0");
+  EXPECT_EQ(lll::fmt::to_string(n), "962fc95e0");
 
   bigint bigmax(max_value<uint32_t>());
   bigmax *= max_value<uint32_t>();
-  EXPECT_EQ(fmt::to_string(bigmax), "fffffffe00000001");
+  EXPECT_EQ(lll::fmt::to_string(bigmax), "fffffffe00000001");
 
   const auto max64 = max_value<uint64_t>();
   bigmax = max64;
   bigmax *= max64;
-  EXPECT_EQ(fmt::to_string(bigmax), "fffffffffffffffe0000000000000001");
+  EXPECT_EQ(lll::fmt::to_string(bigmax), "fffffffffffffffe0000000000000001");
 
-  const auto max128 = (fmt::detail::uint128_t(max64) << 64) | max64;
+  const auto max128 = (lll::fmt::detail::uint128_t(max64) << 64) | max64;
   bigmax = max128;
   bigmax *= max128;
-  EXPECT_EQ(fmt::to_string(bigmax),
+  EXPECT_EQ(lll::fmt::to_string(bigmax),
             "fffffffffffffffffffffffffffffffe00000000000000000000000000000001");
 }
 
 TEST(bigint_test, square) {
   bigint n0(0);
   n0.square();
-  EXPECT_EQ(fmt::to_string(n0), "0");
+  EXPECT_EQ(lll::fmt::to_string(n0), "0");
   bigint n1(0x100);
   n1.square();
-  EXPECT_EQ(fmt::to_string(n1), "10000");
+  EXPECT_EQ(lll::fmt::to_string(n1), "10000");
   bigint n2(0xfffffffff);
   n2.square();
-  EXPECT_EQ(fmt::to_string(n2), "ffffffffe000000001");
+  EXPECT_EQ(lll::fmt::to_string(n2), "ffffffffe000000001");
   bigint n3(max_value<uint64_t>());
   n3.square();
-  EXPECT_EQ(fmt::to_string(n3), "fffffffffffffffe0000000000000001");
+  EXPECT_EQ(lll::fmt::to_string(n3), "fffffffffffffffe0000000000000001");
   bigint n4;
   n4.assign_pow10(10);
-  EXPECT_EQ(fmt::to_string(n4), "2540be400");
+  EXPECT_EQ(lll::fmt::to_string(n4), "2540be400");
 }
 
 TEST(bigint_test, divmod_assign_zero_divisor) {
@@ -143,7 +144,7 @@ TEST(bigint_test, divmod_assign_unaligned) {
   n2.assign_pow10(100);
   int result = n1.divmod_assign(n2);
   EXPECT_EQ(result, 9406);
-  EXPECT_EQ(fmt::to_string(n1),
+  EXPECT_EQ(lll::fmt::to_string(n1),
             "10f8353019583bfc29ffc8f564e1b9f9d819dbb4cf783e4507eca1539220p96");
 }
 
@@ -152,23 +153,23 @@ TEST(bigint_test, divmod_assign) {
   bigint n1(100);
   int result = n1.divmod_assign(bigint(10));
   EXPECT_EQ(result, 10);
-  EXPECT_EQ(fmt::to_string(n1), "0");
+  EXPECT_EQ(lll::fmt::to_string(n1), "0");
   // pow(10, 100) / (42 << 320):
   n1.assign_pow10(100);
   result = n1.divmod_assign(bigint(42) <<= 320);
   EXPECT_EQ(result, 111);
-  EXPECT_EQ(fmt::to_string(n1),
+  EXPECT_EQ(lll::fmt::to_string(n1),
             "13ad2594c37ceb0b2784c4ce0bf38ace408e211a7caab24308a82e8f10p96");
   // 42 / 100:
   bigint n2(42);
   n1.assign_pow10(2);
   result = n2.divmod_assign(n1);
   EXPECT_EQ(result, 0);
-  EXPECT_EQ(fmt::to_string(n2), "2a");
+  EXPECT_EQ(lll::fmt::to_string(n2), "2a");
 }
 
 template <bool is_iec559> void run_double_tests() {
-  fmt::print("warning: double is not IEC559, skipping FP tests\n");
+  lll::fmt::print("warning: double is not IEC559, skipping FP tests\n");
 }
 
 template <> void run_double_tests<true>() {
@@ -197,62 +198,62 @@ TEST(fp_test, multiply) {
 }
 
 TEST(fp_test, dragonbox_max_k) {
-  using fmt::detail::dragonbox::floor_log10_pow2;
-  using float_info = fmt::detail::dragonbox::float_info<float>;
-  EXPECT_EQ(
-      fmt::detail::const_check(float_info::max_k),
-      float_info::kappa -
-          floor_log10_pow2(std::numeric_limits<float>::min_exponent -
-                           fmt::detail::num_significand_bits<float>() - 1));
-  using double_info = fmt::detail::dragonbox::float_info<double>;
-  EXPECT_EQ(fmt::detail::const_check(double_info::max_k),
+  using lll::fmt::detail::dragonbox::floor_log10_pow2;
+  using float_info = lll::fmt::detail::dragonbox::float_info<float>;
+  EXPECT_EQ(lll::fmt::detail::const_check(float_info::max_k),
+            float_info::kappa -
+                floor_log10_pow2(
+                    std::numeric_limits<float>::min_exponent -
+                    lll::fmt::detail::num_significand_bits<float>() - 1));
+  using double_info = lll::fmt::detail::dragonbox::float_info<double>;
+  EXPECT_EQ(lll::fmt::detail::const_check(double_info::max_k),
             double_info::kappa -
                 floor_log10_pow2(
                     std::numeric_limits<double>::min_exponent -
-                    2 * fmt::detail::num_significand_bits<double>() - 1));
+                    2 * lll::fmt::detail::num_significand_bits<double>() - 1));
 }
 
 TEST(format_impl_test, format_error_code) {
   std::string msg = "error 42", sep = ": ";
   {
-    auto buffer = fmt::memory_buffer();
-    fmt::format_to(fmt::appender(buffer), "garbage");
-    fmt::detail::format_error_code(buffer, 42, "test");
+    auto buffer = lll::fmt::memory_buffer();
+    lll::fmt::format_to(lll::fmt::appender(buffer), "garbage");
+    lll::fmt::detail::format_error_code(buffer, 42, "test");
     EXPECT_EQ(to_string(buffer), "test: " + msg);
   }
   {
-    auto buffer = fmt::memory_buffer();
-    auto prefix =
-        std::string(fmt::inline_buffer_size - msg.size() - sep.size() + 1, 'x');
-    fmt::detail::format_error_code(buffer, 42, prefix);
+    auto buffer = lll::fmt::memory_buffer();
+    auto prefix = std::string(
+        lll::fmt::inline_buffer_size - msg.size() - sep.size() + 1, 'x');
+    lll::fmt::detail::format_error_code(buffer, 42, prefix);
     EXPECT_EQ(msg, to_string(buffer));
   }
   int codes[] = {42, -1};
   for (size_t i = 0, n = sizeof(codes) / sizeof(*codes); i < n; ++i) {
     // Test maximum buffer size.
-    msg = fmt::format("error {}", codes[i]);
-    fmt::memory_buffer buffer;
-    auto prefix =
-        std::string(fmt::inline_buffer_size - msg.size() - sep.size(), 'x');
-    fmt::detail::format_error_code(buffer, codes[i], prefix);
+    msg = lll::fmt::format("error {}", codes[i]);
+    lll::fmt::memory_buffer buffer;
+    auto prefix = std::string(
+        lll::fmt::inline_buffer_size - msg.size() - sep.size(), 'x');
+    lll::fmt::detail::format_error_code(buffer, codes[i], prefix);
     EXPECT_EQ(prefix + sep + msg, to_string(buffer));
-    size_t size = fmt::inline_buffer_size;
+    size_t size = lll::fmt::inline_buffer_size;
     EXPECT_EQ(size, buffer.size());
     buffer.resize(0);
     // Test with a message that doesn't fit into the buffer.
     prefix += 'x';
-    fmt::detail::format_error_code(buffer, codes[i], prefix);
+    lll::fmt::detail::format_error_code(buffer, codes[i], prefix);
     EXPECT_EQ(to_string(buffer), msg);
   }
 }
 
-// Tests fmt::detail::count_digits for integer type Int.
+// Tests lll::fmt::detail::count_digits for integer type Int.
 template <typename Int> void test_count_digits() {
-  for (Int i = 0; i < 10; ++i) EXPECT_EQ(1u, fmt::detail::count_digits(i));
+  for (Int i = 0; i < 10; ++i) EXPECT_EQ(1u, lll::fmt::detail::count_digits(i));
   for (Int i = 1, n = 1, end = max_value<Int>() / 10; n <= end; ++i) {
     n *= 10;
-    EXPECT_EQ(fmt::detail::count_digits(n - 1), i);
-    EXPECT_EQ(fmt::detail::count_digits(n), i + 1);
+    EXPECT_EQ(lll::fmt::detail::count_digits(n - 1), i);
+    EXPECT_EQ(lll::fmt::detail::count_digits(n), i + 1);
   }
 }
 
@@ -262,19 +263,19 @@ TEST(format_impl_test, count_digits) {
 }
 
 TEST(format_impl_test, countl_zero) {
-  constexpr auto num_bits = fmt::detail::num_bits<uint32_t>();
+  constexpr auto num_bits = lll::fmt::detail::num_bits<uint32_t>();
   uint32_t n = 1u;
   for (int i = 1; i < num_bits - 1; i++) {
     n <<= 1;
-    EXPECT_EQ(fmt::detail::countl_zero(n - 1), num_bits - i);
-    EXPECT_EQ(fmt::detail::countl_zero(n), num_bits - i - 1);
+    EXPECT_EQ(lll::fmt::detail::countl_zero(n - 1), num_bits - i);
+    EXPECT_EQ(lll::fmt::detail::countl_zero(n), num_bits - i - 1);
   }
 }
 
-#if FMT_USE_FLOAT128
+#if LAWS3_FMT_USE_FLOAT128
 TEST(format_impl_test, write_float128) {
   auto s = std::string();
-  fmt::detail::write<char>(std::back_inserter(s), __float128(42));
+  lll::fmt::detail::write<char>(std::back_inserter(s), __float128(42));
   EXPECT_EQ(s, "42");
 }
 #endif
@@ -318,7 +319,7 @@ template <> struct is_floating_point<slow_float> : std::true_type {};
 template <> struct numeric_limits<slow_float> : numeric_limits<float> {};
 }  // namespace std
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 template <> struct is_fast_float<slow_float> : std::false_type {};
 namespace dragonbox {
@@ -328,27 +329,28 @@ template <> struct float_info<slow_float> {
 };
 }  // namespace dragonbox
 }  // namespace detail
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE
 
 TEST(format_impl_test, write_double_double) {
   auto s = std::string();
-  fmt::detail::write<char>(std::back_inserter(s), double_double(42), {});
+  lll::fmt::detail::write<char>(std::back_inserter(s), double_double(42), {});
   // Specializing is_floating_point is broken in MSVC.
-  if (!FMT_MSC_VERSION) EXPECT_EQ(s, "42");
+  if (!LAWS3_FMT_MSC_VERSION) EXPECT_EQ(s, "42");
 }
 
 TEST(format_impl_test, write_dragon_even) {
   auto s = std::string();
-  fmt::detail::write<char>(std::back_inserter(s), slow_float(33554450.0f), {});
+  lll::fmt::detail::write<char>(std::back_inserter(s), slow_float(33554450.0f),
+                                {});
   // Specializing is_floating_point is broken in MSVC.
-  if (!FMT_MSC_VERSION) EXPECT_EQ(s, "33554450");
+  if (!LAWS3_FMT_MSC_VERSION) EXPECT_EQ(s, "33554450");
 }
 
-#if defined(_WIN32) && !defined(FMT_WINDOWS_NO_WCHAR)
+#if defined(_WIN32) && !defined(LAWS3_FMT_WINDOWS_NO_WCHAR)
 #  include <windows.h>
 
 TEST(format_impl_test, write_console_signature) {
-  decltype(::WriteConsoleW)* p = fmt::detail::WriteConsoleW;
+  decltype(::WriteConsoleW)* p = lll::fmt::detail::WriteConsoleW;
   (void)p;
 }
 #endif
@@ -359,7 +361,7 @@ constexpr bool unicode_is_surrogate(uint32_t c) {
   return c >= 0xD800U && c <= 0xDFFFU;
 }
 
-FMT_CONSTEXPR char* utf8_encode(char* s, uint32_t c) {
+LAWS3_FMT_CONSTEXPR char* utf8_encode(char* s, uint32_t c) {
   if (c >= (1UL << 16)) {
     s[0] = static_cast<char>(0xf0 | (c >> 18));
     s[1] = static_cast<char>(0x80 | ((c >> 12) & 0x3f));
@@ -389,7 +391,7 @@ TEST(format_impl_test, utf8_decode_decode_all) {
       uint32_t c;
       char buf[8] = {0};
       char* end = utf8_encode(buf, i);
-      const char* res = fmt::detail::utf8_decode(buf, &c, &e);
+      const char* res = lll::fmt::detail::utf8_decode(buf, &c, &e);
       EXPECT_EQ(end, res);
       EXPECT_EQ(c, i);
       EXPECT_EQ(e, 0);
@@ -404,7 +406,7 @@ TEST(format_impl_test, utf8_decode_out_of_range) {
     uint32_t c;
     char buf[8] = {0};
     utf8_encode(buf, i);
-    const char* end = fmt::detail::utf8_decode(buf, &c, &e);
+    const char* end = lll::fmt::detail::utf8_decode(buf, &c, &e);
     EXPECT_NE(e, 0);
     EXPECT_EQ(end - buf, 4);
   }
@@ -417,7 +419,7 @@ TEST(format_impl_test, utf8_decode_surrogate_halves) {
     uint32_t c;
     char buf[8] = {0};
     utf8_encode(buf, i);
-    fmt::detail::utf8_decode(buf, &c, &e);
+    lll::fmt::detail::utf8_decode(buf, &c, &e);
     EXPECT_NE(e, 0);
   }
 }
@@ -429,17 +431,17 @@ TEST(format_impl_test, utf8_decode_non_canonical_encodings) {
   const char* end;
 
   char buf2[8] = {char(0xc0), char(0xA4)};
-  end = fmt::detail::utf8_decode(buf2, &c, &e);
+  end = lll::fmt::detail::utf8_decode(buf2, &c, &e);
   EXPECT_NE(e, 0);           // non-canonical len 2
   EXPECT_EQ(end, buf2 + 2);  // non-canonical recover 2
 
   char buf3[8] = {char(0xe0), char(0x80), char(0xA4)};
-  end = fmt::detail::utf8_decode(buf3, &c, &e);
+  end = lll::fmt::detail::utf8_decode(buf3, &c, &e);
   EXPECT_NE(e, 0);           // non-canonical len 3
   EXPECT_EQ(end, buf3 + 3);  // non-canonical recover 3
 
   char buf4[8] = {char(0xf0), char(0x80), char(0x80), char(0xA4)};
-  end = fmt::detail::utf8_decode(buf4, &c, &e);
+  end = lll::fmt::detail::utf8_decode(buf4, &c, &e);
   EXPECT_NE(e, 0);           // non-canonical encoding len 4
   EXPECT_EQ(end, buf4 + 4);  // non-canonical recover 4
 }
@@ -451,26 +453,26 @@ TEST(format_impl_test, utf8_decode_bogus_byte_sequences) {
 
   // Invalid first byte
   char buf0[4] = {char(0xff)};
-  auto len = fmt::detail::utf8_decode(buf0, &c, &e) - buf0;
+  auto len = lll::fmt::detail::utf8_decode(buf0, &c, &e) - buf0;
   EXPECT_NE(e, 0);    // "bogus [ff] 0x%02x U+%04lx", e, (unsigned long)c);
   EXPECT_EQ(len, 1);  // "bogus [ff] recovery %d", len);
 
   // Invalid first byte
   char buf1[4] = {char(0x80)};
-  len = fmt::detail::utf8_decode(buf1, &c, &e) - buf1;
+  len = lll::fmt::detail::utf8_decode(buf1, &c, &e) - buf1;
   EXPECT_NE(e, 0);    // "bogus [80] 0x%02x U+%04lx", e, (unsigned long)c);
   EXPECT_EQ(len, 1);  // "bogus [80] recovery %d", len);
 
   // Looks like a two-byte sequence but second byte is wrong
   char buf2[4] = {char(0xc0), char(0x0a)};
-  len = fmt::detail::utf8_decode(buf2, &c, &e) - buf2;
+  len = lll::fmt::detail::utf8_decode(buf2, &c, &e) - buf2;
   EXPECT_NE(e, 0);    // "bogus [c0 0a] 0x%02x U+%04lx", e, (unsigned long)c
   EXPECT_EQ(len, 2);  // "bogus [c0 0a] recovery %d", len);
 }
 
 TEST(format_impl_test, to_utf8) {
   auto s = std::string("ёжик");
-  auto u = fmt::detail::to_utf8<wchar_t>(L"\x0451\x0436\x0438\x043A");
+  auto u = lll::fmt::detail::to_utf8<wchar_t>(L"\x0451\x0436\x0438\x043A");
   EXPECT_EQ(s, u.str());
   EXPECT_EQ(s.size(), u.size());
 }

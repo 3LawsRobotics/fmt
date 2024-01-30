@@ -27,11 +27,11 @@ void invoke_fmt(const uint8_t* data, size_t size) {
   size -= fixed_size;
   data_to_string format_str(data, size);
   try {
-#if FMT_FUZZ_FORMAT_TO_STRING
-    std::string message = fmt::format(format_str.get(), *value);
+#if LAWS3_FMT_FUZZ_FORMAT_TO_STRING
+    std::string message = lll::fmt::format(format_str.get(), *value);
 #else
-    auto buf = fmt::memory_buffer();
-    fmt::format_to(std::back_inserter(buf), format_str.get(), *value);
+    auto buf = lll::fmt::memory_buffer();
+    lll::fmt::format_to(std::back_inserter(buf), format_str.get(), *value);
 #endif
   } catch (std::exception&) {
   }

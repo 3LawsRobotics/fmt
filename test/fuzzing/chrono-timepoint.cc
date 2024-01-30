@@ -20,7 +20,7 @@ template <typename C> void doit(const uint8_t* data, size_t size) {
   size -= N;
   data_to_string format_str(data, size);
 
-  std::string message = fmt::format(format_str.get(), timepoint);
+  std::string message = lll::fmt::format(format_str.get(), timepoint);
 }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

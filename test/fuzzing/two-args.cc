@@ -23,12 +23,12 @@ void invoke_fmt(const uint8_t* data, size_t size) {
   data += fixed_size;
   size -= fixed_size;
 
-  auto format_str = fmt::string_view(as_chars(data), size);
-#if FMT_FUZZ_FORMAT_TO_STRING
-  std::string message = fmt::format(format_str, item1, item2);
+  auto format_str = lll::fmt::string_view(as_chars(data), size);
+#if LAWS3_FMT_FUZZ_FORMAT_TO_STRING
+  std::string message = lll::fmt::format(format_str, item1, item2);
 #else
-  auto buf = fmt::memory_buffer();
-  fmt::format_to(std::back_inserter(buf), format_str, item1, item2);
+  auto buf = lll::fmt::memory_buffer();
+  lll::fmt::format_to(std::back_inserter(buf), format_str, item1, item2);
 #endif
 }
 

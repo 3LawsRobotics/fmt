@@ -27,16 +27,16 @@ endfunction()
 # Adds a test.
 # Usage: add_fmt_test(name srcs...)
 function(add_fmt_test name)
-  cmake_parse_arguments(ADD_FMT_TEST "HEADER_ONLY;MODULE" "" "" ${ARGN})
+  cmake_parse_arguments(ADD_LAWS3_FMT_TEST "HEADER_ONLY;MODULE" "" "" ${ARGN})
 
-  set(sources ${name}.cc ${ADD_FMT_TEST_UNPARSED_ARGUMENTS})
-  if (ADD_FMT_TEST_HEADER_ONLY)
+  set(sources ${name}.cc ${ADD_LAWS3_FMT_TEST_UNPARSED_ARGUMENTS})
+  if (ADD_LAWS3_FMT_TEST_HEADER_ONLY)
     set(sources ${sources} ${TEST_MAIN_SRC} ../src/os.cc)
     set(libs gtest fmt-header-only)
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS} -Wno-weak-vtables)
     endif ()
-  elseif (ADD_FMT_TEST_MODULE)
+  elseif (ADD_LAWS3_FMT_TEST_MODULE)
     set(libs test-main test-module)
     set_source_files_properties(${name}.cc PROPERTIES OBJECT_DEPENDS test-module)
   else ()
@@ -46,16 +46,16 @@ function(add_fmt_test name)
   target_link_libraries(${name} ${libs})
 
   # Define if certain C++ features can be used.
-  if (FMT_PEDANTIC)
+  if (LAWS3_FMT_PEDANTIC)
     target_compile_options(${name} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
   endif ()
-  if (FMT_WERROR)
+  if (LAWS3_FMT_WERROR)
     target_compile_options(${name} PRIVATE ${WERROR_FLAG})
   endif ()
   add_test(NAME ${name} COMMAND ${name})
 endfunction()
 
-if (FMT_MODULE)
+if (LAWS3_FMT_MODULE)
   return ()
 endif ()
 
@@ -85,7 +85,7 @@ add_fmt_test(ranges-test ranges-odr-test.cc)
 add_fmt_test(scan-test HEADER_ONLY)
 check_symbol_exists(strptime "time.h" HAVE_STRPTIME)
 if (HAVE_STRPTIME)
-  target_compile_definitions(scan-test PRIVATE FMT_HAVE_STRPTIME)
+  target_compile_definitions(scan-test PRIVATE LAWS3_FMT_HAVE_STRPTIME)
 endif ()
 
 add_fmt_test(std-test)
@@ -104,9 +104,9 @@ endif ()
 add_fmt_test(xchar-test)
 add_fmt_test(enforce-checks-test)
 target_compile_definitions(enforce-checks-test PRIVATE
-                           -DFMT_ENFORCE_COMPILE_STRING)
+                           -DLAWS3_FMT_ENFORCE_COMPILE_STRING)
 
-if (FMT_MODULE)
+if (LAWS3_FMT_MODULE)
   # The tests need {fmt} to be compiled as traditional library
   # because of visibility of implementation details.
   # If module support is present the module tests require a
@@ -143,16 +143,16 @@ if (NOT MSVC_STATIC_RUNTIME)
   target_include_directories(
     posix-mock-test PRIVATE ${PROJECT_SOURCE_DIR}/include)
   target_link_libraries(posix-mock-test gtest)
-  if (FMT_PEDANTIC)
+  if (LAWS3_FMT_PEDANTIC)
     target_compile_options(posix-mock-test PRIVATE ${PEDANTIC_COMPILE_FLAGS})
   endif ()
   add_test(NAME posix-mock-test COMMAND posix-mock-test)
   add_fmt_test(os-test)
 endif ()
 
-message(STATUS "FMT_PEDANTIC: ${FMT_PEDANTIC}")
+message(STATUS "LAWS3_FMT_PEDANTIC: ${LAWS3_FMT_PEDANTIC}")
 
-if (FMT_PEDANTIC)
+if (LAWS3_FMT_PEDANTIC)
   # Test that the library can be compiled with exceptions disabled.
   # -fno-exception is broken in icc: https://github.com/fmtlib/fmt/issues/822.
   if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -171,14 +171,14 @@ if (FMT_PEDANTIC)
   target_include_directories(
     nolocale-test PRIVATE ${PROJECT_SOURCE_DIR}/include)
   target_compile_definitions(
-    nolocale-test PRIVATE FMT_STATIC_THOUSANDS_SEPARATOR=1)
+    nolocale-test PRIVATE LAWS3_FMT_STATIC_THOUSANDS_SEPARATOR=1)
 endif ()
 
 # These tests are disabled on Windows because they take too long.
 # They are disabled on GCC < 4.9 because it can not parse UDLs without
 # a space after `operator""` but that is an incorrect syntax for any more
 # modern compiler.
-if (FMT_PEDANTIC AND NOT WIN32 AND NOT (
+if (LAWS3_FMT_PEDANTIC AND NOT WIN32 AND NOT (
     CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND
     CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9))
   # Test if incorrect API usages produce compilation error.
@@ -193,7 +193,7 @@ if (FMT_PEDANTIC AND NOT WIN32 AND NOT (
     "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
     "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
     "-DCXX_STANDARD_FLAG=${CXX_STANDARD_FLAG}"
-    "-DFMT_DIR=${CMAKE_SOURCE_DIR}")
+    "-DLAWS3_FMT_DIR=${CMAKE_SOURCE_DIR}")
 
   # Test if the targets are found from the build directory.
   add_test(find-package-test ${CMAKE_CTEST_COMMAND}
@@ -207,7 +207,7 @@ if (FMT_PEDANTIC AND NOT WIN32 AND NOT (
     "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
     "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
     "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
-    "-DFMT_DIR=${PROJECT_BINARY_DIR}"
+    "-DLAWS3_FMT_DIR=${PROJECT_BINARY_DIR}"
     "-DPEDANTIC_COMPILE_FLAGS=${PEDANTIC_COMPILE_FLAGS}"
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
@@ -227,7 +227,7 @@ if (FMT_PEDANTIC AND NOT WIN32 AND NOT (
 endif ()
 
 # This test are disabled on Windows because it is only *NIX issue.
-if (FMT_PEDANTIC AND NOT WIN32)
+if (LAWS3_FMT_PEDANTIC AND NOT WIN32)
   add_test(static-export-test ${CMAKE_CTEST_COMMAND}
     -C ${CMAKE_BUILD_TYPE}
     --build-and-test
@@ -243,7 +243,7 @@ endif ()
 
 # Activate optional CUDA tests if CUDA is found. For version selection see
 # https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#cpp14-language-features
-if (FMT_CUDA_TEST)
+if (LAWS3_FMT_CUDA_TEST)
   if (${CMAKE_VERSION} VERSION_LESS 3.15)
     find_package(CUDA 9.0)
   else ()

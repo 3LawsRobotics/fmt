@@ -19,10 +19,10 @@ The {fmt} library API consists of the following parts:
 * :ref:`fmt/ostream.h <ostream-api>`: ``std::ostream`` support
 * :ref:`fmt/args.h <args-api>`: dynamic argument lists
 * :ref:`fmt/printf.h <printf-api>`: ``printf`` formatting
-* :ref:`fmt/xchar.h <xchar-api>`: optional ``wchar_t`` support 
+* :ref:`fmt/xchar.h <xchar-api>`: optional ``wchar_t`` support
 
 All functions and types provided by the library reside in namespace ``fmt`` and
-macros have prefix ``FMT_``.
+macros have prefix ``LAWS3_FMT_``.
 
 .. _base-api:
 
@@ -78,7 +78,7 @@ Compile-Time Format String Checks
 
 Compile-time format string checks are enabled by default on compilers
 that support C++20 ``consteval``. On older compilers you can use the
-:ref:`FMT_STRING <legacy-checks>`: macro defined in ``fmt/format.h`` instead.
+:ref:`LAWS3_FMT_STRING <legacy-checks>`: macro defined in ``fmt/format.h`` instead.
 
 Unused arguments are allowed as in Python's `str.format` and ordinary functions.
 
@@ -392,7 +392,7 @@ The {fmt} library supports custom dynamic memory allocators.
 A custom allocator class can be specified as a template argument to
 :class:`fmt::basic_memory_buffer`::
 
-    using custom_memory_buffer = 
+    using custom_memory_buffer =
       fmt::basic_memory_buffer<char, fmt::inline_buffer_size, custom_allocator>;
 
 It is also possible to write a formatting function that uses a custom
@@ -446,13 +446,13 @@ avoid the expensive ``<locale>`` include.
 Legacy Compile-Time Format String Checks
 ----------------------------------------
 
-``FMT_STRING`` enables compile-time checks on older compilers. It requires C++14
+``LAWS3_FMT_STRING`` enables compile-time checks on older compilers. It requires C++14
 or later and is a no-op in C++11.
 
-.. doxygendefine:: FMT_STRING
+.. doxygendefine:: LAWS3_FMT_STRING
 
 To force the use of legacy compile-time checks, define the preprocessor variable
-``FMT_ENFORCE_COMPILE_STRING``. When set, functions accepting ``FMT_STRING``
+``LAWS3_FMT_ENFORCE_COMPILE_STRING``. When set, functions accepting ``LAWS3_FMT_STRING``
 will fail to compile with regular strings.
 
 .. _ranges-api:
@@ -539,7 +539,7 @@ Formatting Variants
 
 A ``std::variant`` is only formattable if every variant alternative is formattable, and requires the
 ``__cpp_lib_variant`` `library feature <https://en.cppreference.com/w/cpp/feature_test>`_.
-  
+
 **Example**::
 
   #include <fmt/std.h>
@@ -557,8 +557,8 @@ Format String Compilation
 =========================
 
 ``fmt/compile.h`` provides format string compilation enabled via the
-``FMT_COMPILE`` macro or the ``_cf`` user-defined literal. Format strings
-marked with ``FMT_COMPILE`` or ``_cf`` are parsed, checked and converted into
+``LAWS3_FMT_COMPILE`` macro or the ``_cf`` user-defined literal. Format strings
+marked with ``LAWS3_FMT_COMPILE`` or ``_cf`` are parsed, checked and converted into
 efficient formatting code at compile-time. This supports arguments of built-in
 and string types as well as user-defined types with ``format`` functions taking
 the format context type as a template parameter in their ``formatter``
@@ -575,7 +575,7 @@ Format string compilation can generate more binary code compared to the default
 API and is only recommended in places where formatting is a performance
 bottleneck.
 
-.. doxygendefine:: FMT_COMPILE
+.. doxygendefine:: LAWS3_FMT_COMPILE
 
 .. doxygenfunction:: operator""_cf()
 

@@ -5,16 +5,16 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_PRINTF_H_
-#define FMT_PRINTF_H_
+#ifndef LAWS3_FMT_PRINTF_H_
+#define LAWS3_FMT_PRINTF_H_
 
 #include <algorithm>  // std::max
 #include <limits>     // std::numeric_limits
 
 #include "format.h"
 
-FMT_BEGIN_NAMESPACE
-FMT_BEGIN_EXPORT
+LAWS3_FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_EXPORT
 
 template <typename T> struct printf_formatter {
   printf_formatter() = delete;
@@ -75,14 +75,14 @@ template <> struct int_checker<true> {
 };
 
 struct printf_precision_handler {
-  template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(std::is_integral<T>::value)>
   auto operator()(T value) -> int {
     if (!int_checker<std::numeric_limits<T>::is_signed>::fits_in_int(value))
       report_error("number is too big");
     return (std::max)(static_cast<int>(value), 0);
   }
 
-  template <typename T, FMT_ENABLE_IF(!std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(!std::is_integral<T>::value)>
   auto operator()(T) -> int {
     report_error("precision is not integer");
     return 0;
@@ -91,12 +91,12 @@ struct printf_precision_handler {
 
 // An argument visitor that returns true iff arg is a zero integer.
 struct is_zero_int {
-  template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(std::is_integral<T>::value)>
   auto operator()(T value) -> bool {
     return value == 0;
   }
 
-  template <typename T, FMT_ENABLE_IF(!std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(!std::is_integral<T>::value)>
   auto operator()(T) -> bool {
     return false;
   }
@@ -123,7 +123,7 @@ template <typename T, typename Context> class arg_converter {
     if (type_ != 's') operator()<bool>(value);
   }
 
-  template <typename U, FMT_ENABLE_IF(std::is_integral<U>::value)>
+  template <typename U, LAWS3_FMT_ENABLE_IF(std::is_integral<U>::value)>
   void operator()(U value) {
     bool is_signed = type_ == 'd' || type_ == 'i';
     using target_type = conditional_t<std::is_same<T, void>::value, U, T>;
@@ -151,7 +151,7 @@ template <typename T, typename Context> class arg_converter {
     }
   }
 
-  template <typename U, FMT_ENABLE_IF(!std::is_integral<U>::value)>
+  template <typename U, LAWS3_FMT_ENABLE_IF(!std::is_integral<U>::value)>
   void operator()(U) {}  // No conversion needed for non-integral types.
 };
 
@@ -172,13 +172,13 @@ template <typename Context> class char_converter {
  public:
   explicit char_converter(basic_format_arg<Context>& arg) : arg_(arg) {}
 
-  template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(std::is_integral<T>::value)>
   void operator()(T value) {
     auto c = static_cast<typename Context::char_type>(value);
     arg_ = detail::make_arg<Context>(c);
   }
 
-  template <typename T, FMT_ENABLE_IF(!std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(!std::is_integral<T>::value)>
   void operator()(T) {}  // No conversion needed for non-integral types.
 };
 
@@ -198,7 +198,7 @@ class printf_width_handler {
  public:
   explicit printf_width_handler(format_specs& specs) : specs_(specs) {}
 
-  template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(std::is_integral<T>::value)>
   auto operator()(T value) -> unsigned {
     auto width = static_cast<uint32_or_64_or_128_t<T>>(value);
     if (detail::is_negative(value)) {
@@ -210,7 +210,7 @@ class printf_width_handler {
     return static_cast<unsigned>(width);
   }
 
-  template <typename T, FMT_ENABLE_IF(!std::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(!std::is_integral<T>::value)>
   auto operator()(T) -> unsigned {
     report_error("width is not integer");
     return 0;
@@ -247,7 +247,7 @@ class printf_arg_formatter : public arg_formatter<Char> {
 
   void operator()(monostate value) { base::operator()(value); }
 
-  template <typename T, FMT_ENABLE_IF(detail::is_integral<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(detail::is_integral<T>::value)>
   void operator()(T value) {
     // MSVC2013 fails to compile separate overloads for bool and Char so use
     // std::is_same instead.
@@ -269,7 +269,7 @@ class printf_arg_formatter : public arg_formatter<Char> {
     write<Char>(this->out, static_cast<Char>(value), s);
   }
 
-  template <typename T, FMT_ENABLE_IF(std::is_floating_point<T>::value)>
+  template <typename T, LAWS3_FMT_ENABLE_IF(std::is_floating_point<T>::value)>
   void operator()(T value) {
     base::operator()(value);
   }
@@ -381,27 +381,27 @@ inline auto parse_printf_presentation_type(char c, type t, bool& upper)
     return in(t, integral_set) ? pt::oct : pt::none;
   case 'X':
     upper = true;
-    FMT_FALLTHROUGH;
+    LAWS3_FMT_FALLTHROUGH;
   case 'x':
     return in(t, integral_set) ? pt::hex : pt::none;
   case 'E':
     upper = true;
-    FMT_FALLTHROUGH;
+    LAWS3_FMT_FALLTHROUGH;
   case 'e':
     return in(t, float_set) ? pt::exp : pt::none;
   case 'F':
     upper = true;
-    FMT_FALLTHROUGH;
+    LAWS3_FMT_FALLTHROUGH;
   case 'f':
     return in(t, float_set) ? pt::fixed : pt::none;
   case 'G':
     upper = true;
-    FMT_FALLTHROUGH;
+    LAWS3_FMT_FALLTHROUGH;
   case 'g':
     return in(t, float_set) ? pt::general : pt::none;
   case 'A':
     upper = true;
-    FMT_FALLTHROUGH;
+    LAWS3_FMT_FALLTHROUGH;
   case 'a':
     return in(t, float_set) ? pt::hexfloat : pt::none;
   case 'c':
@@ -573,8 +573,8 @@ using wprintf_args = basic_format_args<wprintf_context>;
 
 /**
   \rst
-  Constructs an `~fmt::format_arg_store` object that contains references to
-  arguments and can be implicitly converted to `~fmt::printf_args`.
+  Constructs an `~lll::fmt::format_arg_store` object that contains references to
+  arguments and can be implicitly converted to `~lll::fmt::printf_args`.
   \endrst
  */
 template <typename Char = char, typename... T>
@@ -602,13 +602,14 @@ inline auto vsprintf(basic_string_view<Char> fmt,
 
   **Example**::
 
-    std::string message = fmt::sprintf("The answer is %d", 42);
+    std::string message = lll::fmt::sprintf("The answer is %d", 42);
   \endrst
 */
 template <typename S, typename... T, typename Char = char_t<S>>
 inline auto sprintf(const S& fmt, const T&... args) -> std::basic_string<Char> {
-  return vsprintf(detail::to_string_view(fmt),
-                  fmt::make_format_args<basic_printf_context<Char>>(args...));
+  return vsprintf(
+      detail::to_string_view(fmt),
+      lll::fmt::make_format_args<basic_printf_context<Char>>(args...));
 }
 
 template <typename Char>
@@ -628,7 +629,7 @@ inline auto vfprintf(std::FILE* f, basic_string_view<Char> fmt,
 
   **Example**::
 
-    fmt::fprintf(stderr, "Don't %s!", "panic");
+    lll::fmt::fprintf(stderr, "Don't %s!", "panic");
   \endrst
  */
 template <typename S, typename... T, typename Char = char_t<S>>
@@ -638,8 +639,8 @@ inline auto fprintf(std::FILE* f, const S& fmt, const T&... args) -> int {
 }
 
 template <typename Char>
-FMT_DEPRECATED inline auto vprintf(basic_string_view<Char> fmt,
-                                   typename vprintf_args<Char>::type args)
+LAWS3_FMT_DEPRECATED inline auto vprintf(basic_string_view<Char> fmt,
+                                         typename vprintf_args<Char>::type args)
     -> int {
   return vfprintf(stdout, fmt, args);
 }
@@ -650,7 +651,7 @@ FMT_DEPRECATED inline auto vprintf(basic_string_view<Char> fmt,
 
   **Example**::
 
-    fmt::printf("Elapsed time: %.2f seconds", 1.23);
+    lll::fmt::printf("Elapsed time: %.2f seconds", 1.23);
   \endrst
  */
 template <typename... T>
@@ -658,12 +659,12 @@ inline auto printf(string_view fmt, const T&... args) -> int {
   return vfprintf(stdout, fmt, make_printf_args(args...));
 }
 template <typename... T>
-FMT_DEPRECATED inline auto printf(basic_string_view<wchar_t> fmt,
-                                  const T&... args) -> int {
+LAWS3_FMT_DEPRECATED inline auto printf(basic_string_view<wchar_t> fmt,
+                                        const T&... args) -> int {
   return vfprintf(stdout, fmt, make_printf_args<wchar_t>(args...));
 }
 
-FMT_END_EXPORT
-FMT_END_NAMESPACE
+LAWS3_FMT_END_EXPORT
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_PRINTF_H_
+#endif  // LAWS3_FMT_PRINTF_H_

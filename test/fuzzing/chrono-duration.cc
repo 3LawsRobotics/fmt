@@ -8,14 +8,14 @@
 #include "fuzzer-common.h"
 
 template <typename Period, typename Rep>
-void invoke_inner(fmt::string_view format_str, Rep rep) {
+void invoke_inner(lll::fmt::string_view format_str, Rep rep) {
   auto value = std::chrono::duration<Rep, Period>(rep);
   try {
-#if FMT_FUZZ_FORMAT_TO_STRING
-    std::string message = fmt::format(format_str, value);
+#if LAWS3_FMT_FUZZ_FORMAT_TO_STRING
+    std::string message = lll::fmt::format(format_str, value);
 #else
-    auto buf = fmt::memory_buffer();
-    fmt::format_to(std::back_inserter(buf), format_str, value);
+    auto buf = lll::fmt::memory_buffer();
+    lll::fmt::format_to(std::back_inserter(buf), format_str, value);
 #endif
   } catch (std::exception&) {
   }
@@ -34,7 +34,7 @@ void invoke_outer(const uint8_t* data, size_t size, int period) {
 
   // data is already allocated separately in libFuzzer so reading past the end
   // will most likely be detected anyway.
-  const auto format_str = fmt::string_view(as_chars(data), size);
+  const auto format_str = lll::fmt::string_view(as_chars(data), size);
 
   // yocto, zepto, zetta and yotta are not handled.
   switch (period) {

@@ -68,19 +68,19 @@ def build_docs(version='dev', **kwargs):
       MACRO_EXPANSION   = YES
       PREDEFINED        = _WIN32=1 \
                           __linux__=1 \
-                          FMT_ENABLE_IF(...)= \
-                          FMT_USE_VARIADIC_TEMPLATES=1 \
-                          FMT_USE_RVALUE_REFERENCES=1 \
-                          FMT_USE_USER_DEFINED_LITERALS=1 \
-                          FMT_USE_ALIAS_TEMPLATES=1 \
-                          FMT_USE_NONTYPE_TEMPLATE_ARGS=1 \
-                          FMT_API= \
-                          "FMT_BEGIN_NAMESPACE=namespace fmt {{" \
-                          "FMT_END_NAMESPACE=}}" \
-                          "FMT_STRING_ALIAS=1" \
-                          "FMT_VARIADIC(...)=" \
-                          "FMT_VARIADIC_W(...)=" \
-                          "FMT_DOC=1"
+                          LAWS3_FMT_ENABLE_IF(...)= \
+                          LAWS3_FMT_USE_VARIADIC_TEMPLATES=1 \
+                          LAWS3_FMT_USE_RVALUE_REFERENCES=1 \
+                          LAWS3_FMT_USE_USER_DEFINED_LITERALS=1 \
+                          LAWS3_FMT_USE_ALIAS_TEMPLATES=1 \
+                          LAWS3_FMT_USE_NONTYPE_TEMPLATE_ARGS=1 \
+                          LAWS3_FMT_API= \
+                          "LAWS3_FMT_BEGIN_NAMESPACE=namespace fmt {{" \
+                          "LAWS3_FMT_END_NAMESPACE=}}" \
+                          "LAWS3_FMT_STRING_ALIAS=1" \
+                          "LAWS3_FMT_VARIADIC(...)=" \
+                          "LAWS3_FMT_VARIADIC_W(...)=" \
+                          "LAWS3_FMT_DOC=1"
       EXCLUDE_SYMBOLS   = fmt::formatter fmt::printf_formatter fmt::arg_join \
                           fmt::basic_format_arg::handle
     '''.format(include_dir, doxyxml_dir).encode('UTF-8'))

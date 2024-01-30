@@ -40,7 +40,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=${{matrix.build_type}} ${{matrix.shared}} \
               -DCMAKE_CXX_STANDARD=${{matrix.std}} \
               -DCMAKE_CXX_VISIBILITY_PRESET=hidden -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
-              -DFMT_DOC=OFF -DFMT_PEDANTIC=ON -DFMT_WERROR=ON $GITHUB_WORKSPACE
+              -DLAWS3_FMT_DOC=OFF -DLAWS3_FMT_PEDANTIC=ON -DLAWS3_FMT_WERROR=ON $GITHUB_WORKSPACE
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

@@ -7,10 +7,10 @@ endif ()
 
 # Determine if fmt is built as a subproject (using add_subdirectory)
 # or if it is the master project.
-if (NOT DEFINED FMT_MASTER_PROJECT)
-  set(FMT_MASTER_PROJECT OFF)
+if (NOT DEFINED LAWS3_FMT_MASTER_PROJECT)
+  set(LAWS3_FMT_MASTER_PROJECT OFF)
   if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(FMT_MASTER_PROJECT ON)
+    set(LAWS3_FMT_MASTER_PROJECT ON)
     message(STATUS "CMake version: ${CMAKE_VERSION}")
   endif ()
 endif ()
@@ -128,7 +128,7 @@ endfunction()
 # Set the default CMAKE_BUILD_TYPE to Release.
 # This should be done before the project command since the latter can set
 # CMAKE_BUILD_TYPE itself (it does so for nmake).
-if (FMT_MASTER_PROJECT AND NOT CMAKE_BUILD_TYPE)
+if (LAWS3_FMT_MASTER_PROJECT AND NOT CMAKE_BUILD_TYPE)
   set_verbose(CMAKE_BUILD_TYPE Release CACHE STRING
               "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or "
               "CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
@@ -136,49 +136,49 @@ endif ()
 
 project(FMT CXX)
 include(GNUInstallDirs)
-set_verbose(FMT_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING
+set_verbose(LAWS3_FMT_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING
             "Installation directory for include files, a relative path that "
             "will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
-option(FMT_PEDANTIC "Enable extra warnings and expensive tests." OFF)
-option(FMT_WERROR "Halt the compilation with an error on compiler warnings."
+option(LAWS3_FMT_PEDANTIC "Enable extra warnings and expensive tests." OFF)
+option(LAWS3_FMT_WERROR "Halt the compilation with an error on compiler warnings."
        OFF)
 
 # Options that control generation of various targets.
-option(FMT_DOC "Generate the doc target." ${FMT_MASTER_PROJECT})
-option(FMT_INSTALL "Generate the install target." ON)
-option(FMT_TEST "Generate the test target." ${FMT_MASTER_PROJECT})
-option(FMT_FUZZ "Generate the fuzz target." OFF)
-option(FMT_CUDA_TEST "Generate the cuda-test target." OFF)
-option(FMT_OS "Include OS-specific APIs." ON)
-option(FMT_MODULE "Build a module instead of a traditional library." OFF)
-option(FMT_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
+option(LAWS3_FMT_DOC "Generate the doc target." ${LAWS3_FMT_MASTER_PROJECT})
+option(LAWS3_FMT_INSTALL "Generate the install target." ON)
+option(LAWS3_FMT_TEST "Generate the test target." ${LAWS3_FMT_MASTER_PROJECT})
+option(LAWS3_FMT_FUZZ "Generate the fuzz target." OFF)
+option(LAWS3_FMT_CUDA_TEST "Generate the cuda-test target." OFF)
+option(LAWS3_FMT_OS "Include OS-specific APIs." ON)
+option(LAWS3_FMT_MODULE "Build a module instead of a traditional library." OFF)
+option(LAWS3_FMT_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
-if (FMT_TEST AND FMT_MODULE)
+if (LAWS3_FMT_TEST AND LAWS3_FMT_MODULE)
   # The tests require {fmt} to be compiled as traditional library
   message(STATUS "Testing is incompatible with build mode 'module'.")
 endif ()
-set(FMT_SYSTEM_HEADERS_ATTRIBUTE "")
-if (FMT_SYSTEM_HEADERS)
-  set(FMT_SYSTEM_HEADERS_ATTRIBUTE SYSTEM)
+set(LAWS3_FMT_SYSTEM_HEADERS_ATTRIBUTE "")
+if (LAWS3_FMT_SYSTEM_HEADERS)
+  set(LAWS3_FMT_SYSTEM_HEADERS_ATTRIBUTE SYSTEM)
 endif ()
 if (CMAKE_SYSTEM_NAME STREQUAL "MSDOS")
-  set(FMT_TEST OFF)
+  set(LAWS3_FMT_TEST OFF)
   message(STATUS "MSDOS is incompatible with gtest")
 endif ()
 
 # Get version from base.h
 file(READ include/fmt/base.h core_h)
-if (NOT core_h MATCHES "FMT_VERSION ([0-9]+)([0-9][0-9])([0-9][0-9])")
-  message(FATAL_ERROR "Cannot get FMT_VERSION from base.h.")
+if (NOT core_h MATCHES "LAWS3_FMT_VERSION ([0-9]+)([0-9][0-9])([0-9][0-9])")
+  message(FATAL_ERROR "Cannot get LAWS3_FMT_VERSION from base.h.")
 endif ()
 # Use math to skip leading zeros if any.
 math(EXPR CPACK_PACKAGE_VERSION_MAJOR ${CMAKE_MATCH_1})
 math(EXPR CPACK_PACKAGE_VERSION_MINOR ${CMAKE_MATCH_2})
 math(EXPR CPACK_PACKAGE_VERSION_PATCH ${CMAKE_MATCH_3})
-join(FMT_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.
+join(LAWS3_FMT_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.
                  ${CPACK_PACKAGE_VERSION_PATCH})
-message(STATUS "Version: ${FMT_VERSION}")
+message(STATUS "Version: ${LAWS3_FMT_VERSION}")
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
@@ -192,14 +192,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include(CheckCXXCompilerFlag)
 include(JoinPaths)
 
-if (FMT_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
+if (LAWS3_FMT_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
   set_verbose(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING
               "Preset for the export of private symbols")
   set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS
                hidden default)
 endif ()
 
-if (FMT_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+if (LAWS3_FMT_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
   set_verbose(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL
               "Whether to add a compile flag to hide symbols of inline functions")
 endif ()
@@ -247,7 +247,7 @@ if (MSVC)
   set(WERROR_FLAG /WX)
 endif ()
 
-if (FMT_MASTER_PROJECT AND CMAKE_GENERATOR MATCHES "Visual Studio")
+if (LAWS3_FMT_MASTER_PROJECT AND CMAKE_GENERATOR MATCHES "Visual Studio")
   # If Microsoft SDK is installed create script run-msbuild.bat that
   # calls SetEnv.cmd to set up build environment and runs msbuild.
   # It is useful when building Visual Studio projects with the SDK
@@ -274,28 +274,28 @@ function(add_headers VAR)
 endfunction()
 
 # Define the fmt library, its includes and the needed defines.
-add_headers(FMT_HEADERS args.h chrono.h color.h compile.h base.h format.h
+add_headers(LAWS3_FMT_HEADERS args.h chrono.h color.h compile.h base.h format.h
                         format-inl.h os.h ostream.h printf.h ranges.h std.h
                         xchar.h)
-set(FMT_SOURCES src/format.cc)
+set(LAWS3_FMT_SOURCES src/format.cc)
 
 add_module_library(fmt src/fmt.cc FALLBACK
-                   ${FMT_SOURCES} ${FMT_HEADERS} README.md ChangeLog.md
-                   IF FMT_MODULE)
+                   ${LAWS3_FMT_SOURCES} ${LAWS3_FMT_HEADERS} README.md ChangeLog.md
+                   IF LAWS3_FMT_MODULE)
 add_library(fmt::fmt ALIAS fmt)
-if (FMT_MODULE)
+if (LAWS3_FMT_MODULE)
   enable_module(fmt)
 endif ()
-if (FMT_OS)
+if (LAWS3_FMT_OS)
   target_sources(fmt PRIVATE src/os.cc)
 else()
-  target_compile_definitions(fmt PRIVATE FMT_OS=0)
+  target_compile_definitions(fmt PRIVATE LAWS3_FMT_OS=0)
 endif ()
 
-if (FMT_WERROR)
+if (LAWS3_FMT_WERROR)
   target_compile_options(fmt PRIVATE ${WERROR_FLAG})
 endif ()
-if (FMT_PEDANTIC)
+if (LAWS3_FMT_PEDANTIC)
   target_compile_options(fmt PRIVATE ${PEDANTIC_COMPILE_FLAGS})
 endif ()
 
@@ -305,16 +305,16 @@ else ()
   message(WARNING "Feature cxx_std_11 is unknown for the CXX compiler")
 endif ()
 
-target_include_directories(fmt ${FMT_SYSTEM_HEADERS_ATTRIBUTE} PUBLIC
+target_include_directories(fmt ${LAWS3_FMT_SYSTEM_HEADERS_ATTRIBUTE} PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:${FMT_INC_DIR}>)
+  $<INSTALL_INTERFACE:${LAWS3_FMT_INC_DIR}>)
 
-set(FMT_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
+set(LAWS3_FMT_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 set_target_properties(fmt PROPERTIES
-  VERSION ${FMT_VERSION} SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR}
-  PUBLIC_HEADER "${FMT_HEADERS}"
-  DEBUG_POSTFIX "${FMT_DEBUG_POSTFIX}"
+  VERSION ${LAWS3_FMT_VERSION} SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR}
+  PUBLIC_HEADER "${LAWS3_FMT_HEADERS}"
+  DEBUG_POSTFIX "${LAWS3_FMT_DEBUG_POSTFIX}"
 
   # Workaround for Visual Studio 2017:
   # Ensure the .pdb is created with the same name and in the same directory
@@ -322,37 +322,37 @@ set_target_properties(fmt PROPERTIES
   # harm in setting it for those too. Ignored by other generators.
   COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
   COMPILE_PDB_NAME "fmt"
-  COMPILE_PDB_NAME_DEBUG "fmt${FMT_DEBUG_POSTFIX}")
+  COMPILE_PDB_NAME_DEBUG "fmt${LAWS3_FMT_DEBUG_POSTFIX}")
 
-# Set FMT_LIB_NAME for pkg-config fmt.pc. We cannot use the OUTPUT_NAME target
+# Set LAWS3_FMT_LIB_NAME for pkg-config fmt.pc. We cannot use the OUTPUT_NAME target
 # property because it's not set by default.
-set(FMT_LIB_NAME fmt)
+set(LAWS3_FMT_LIB_NAME fmt)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(FMT_LIB_NAME ${FMT_LIB_NAME}${FMT_DEBUG_POSTFIX})
+  set(LAWS3_FMT_LIB_NAME ${LAWS3_FMT_LIB_NAME}${LAWS3_FMT_DEBUG_POSTFIX})
 endif ()
 
 if (BUILD_SHARED_LIBS)
-  target_compile_definitions(fmt PRIVATE FMT_LIB_EXPORT INTERFACE FMT_SHARED)
+  target_compile_definitions(fmt PRIVATE LAWS3_FMT_LIB_EXPORT INTERFACE LAWS3_FMT_SHARED)
 endif ()
-if (FMT_SAFE_DURATION_CAST)
-  target_compile_definitions(fmt PUBLIC FMT_SAFE_DURATION_CAST)
+if (LAWS3_FMT_SAFE_DURATION_CAST)
+  target_compile_definitions(fmt PUBLIC LAWS3_FMT_SAFE_DURATION_CAST)
 endif ()
 
 add_library(fmt-header-only INTERFACE)
 add_library(fmt::fmt-header-only ALIAS fmt-header-only)
 
-target_compile_definitions(fmt-header-only INTERFACE FMT_HEADER_ONLY=1)
+target_compile_definitions(fmt-header-only INTERFACE LAWS3_FMT_HEADER_ONLY=1)
 target_compile_features(fmt-header-only INTERFACE cxx_std_11)
 
 target_include_directories(fmt-header-only
-  ${FMT_SYSTEM_HEADERS_ATTRIBUTE} INTERFACE
+  ${LAWS3_FMT_SYSTEM_HEADERS_ATTRIBUTE} INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:${FMT_INC_DIR}>)
+  $<INSTALL_INTERFACE:${LAWS3_FMT_INC_DIR}>)
 
 # Install targets.
-if (FMT_INSTALL)
+if (LAWS3_FMT_INSTALL)
   include(CMakePackageConfigHelpers)
-  set_verbose(FMT_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/fmt CACHE STRING
+  set_verbose(LAWS3_FMT_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/fmt CACHE STRING
               "Installation directory for cmake files, a relative path that "
               "will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute "
               "path.")
@@ -361,11 +361,11 @@ if (FMT_INSTALL)
   set(pkgconfig ${PROJECT_BINARY_DIR}/fmt.pc)
   set(targets_export_name fmt-targets)
 
-  set_verbose(FMT_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE STRING
+  set_verbose(LAWS3_FMT_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE STRING
               "Installation directory for libraries, a relative path that "
               "will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
-  set_verbose(FMT_PKGCONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig CACHE STRING
+  set_verbose(LAWS3_FMT_PKGCONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig CACHE STRING
               "Installation directory for pkgconfig (.pc) files, a relative "
               "path that will be joined with ${CMAKE_INSTALL_PREFIX} or an "
               "absolute path.")
@@ -373,11 +373,11 @@ if (FMT_INSTALL)
   # Generate the version, config and target files into the build directory.
   write_basic_package_version_file(
     ${version_config}
-    VERSION ${FMT_VERSION}
+    VERSION ${LAWS3_FMT_VERSION}
     COMPATIBILITY AnyNewerVersion)
 
-  join_paths(libdir_for_pc_file "\${exec_prefix}" "${FMT_LIB_DIR}")
-  join_paths(includedir_for_pc_file "\${prefix}" "${FMT_INC_DIR}")
+  join_paths(libdir_for_pc_file "\${exec_prefix}" "${LAWS3_FMT_LIB_DIR}")
+  join_paths(includedir_for_pc_file "\${prefix}" "${LAWS3_FMT_INC_DIR}")
 
   configure_file(
     "${PROJECT_SOURCE_DIR}/support/cmake/fmt.pc.in"
@@ -386,15 +386,15 @@ if (FMT_INSTALL)
   configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/fmt-config.cmake.in
     ${project_config}
-    INSTALL_DESTINATION ${FMT_CMAKE_DIR})
+    INSTALL_DESTINATION ${LAWS3_FMT_CMAKE_DIR})
 
   set(INSTALL_TARGETS fmt fmt-header-only)
 
   # Install the library and headers.
   install(TARGETS ${INSTALL_TARGETS} EXPORT ${targets_export_name}
-          LIBRARY DESTINATION ${FMT_LIB_DIR}
-          ARCHIVE DESTINATION ${FMT_LIB_DIR}
-          PUBLIC_HEADER DESTINATION "${FMT_INC_DIR}/fmt"
+          LIBRARY DESTINATION ${LAWS3_FMT_LIB_DIR}
+          ARCHIVE DESTINATION ${LAWS3_FMT_LIB_DIR}
+          PUBLIC_HEADER DESTINATION "${LAWS3_FMT_INC_DIR}/fmt"
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   # Use a namespace because CMake provides better diagnostics for namespaced
@@ -405,36 +405,36 @@ if (FMT_INSTALL)
   # Install version, config and target files.
   install(
     FILES ${project_config} ${version_config}
-    DESTINATION ${FMT_CMAKE_DIR})
-  install(EXPORT ${targets_export_name} DESTINATION ${FMT_CMAKE_DIR}
+    DESTINATION ${LAWS3_FMT_CMAKE_DIR})
+  install(EXPORT ${targets_export_name} DESTINATION ${LAWS3_FMT_CMAKE_DIR}
           NAMESPACE fmt::)
 
-  install(FILES "${pkgconfig}" DESTINATION "${FMT_PKGCONFIG_DIR}")
+  install(FILES "${pkgconfig}" DESTINATION "${LAWS3_FMT_PKGCONFIG_DIR}")
 endif ()
 
-if (FMT_DOC)
+if (LAWS3_FMT_DOC)
   add_subdirectory(doc)
 endif ()
 
-if (FMT_TEST)
+if (LAWS3_FMT_TEST)
   enable_testing()
   add_subdirectory(test)
 endif ()
 
 # Control fuzzing independent of the unit tests.
-if (FMT_FUZZ)
+if (LAWS3_FMT_FUZZ)
   add_subdirectory(test/fuzzing)
 
-  # The FMT_FUZZ macro is used to prevent resource exhaustion in fuzzing
+  # The LAWS3_FMT_FUZZ macro is used to prevent resource exhaustion in fuzzing
   # mode and make fuzzing practically possible. It is similar to
   # FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION but uses a different name to
   # avoid interfering with fuzzing of projects that use {fmt}.
   # See also https://llvm.org/docs/LibFuzzer.html#fuzzer-friendly-build-mode.
-  target_compile_definitions(fmt PUBLIC FMT_FUZZ)
+  target_compile_definitions(fmt PUBLIC LAWS3_FMT_FUZZ)
 endif ()
 
 set(gitignore ${PROJECT_SOURCE_DIR}/.gitignore)
-if (FMT_MASTER_PROJECT AND EXISTS ${gitignore})
+if (LAWS3_FMT_MASTER_PROJECT AND EXISTS ${gitignore})
   # Get the list of ignored files from .gitignore.
   file (STRINGS ${gitignore} lines)
   list(REMOVE_ITEM lines /doc/html)
@@ -448,7 +448,7 @@ if (FMT_MASTER_PROJECT AND EXISTS ${gitignore})
 
   set(CPACK_SOURCE_GENERATOR ZIP)
   set(CPACK_SOURCE_IGNORE_FILES ${ignored_files})
-  set(CPACK_SOURCE_PACKAGE_FILE_NAME fmt-${FMT_VERSION})
+  set(CPACK_SOURCE_PACKAGE_FILE_NAME fmt-${LAWS3_FMT_VERSION})
   set(CPACK_PACKAGE_NAME fmt)
   set(CPACK_RESOURCE_FILE_README ${PROJECT_SOURCE_DIR}/README.md)
   include(CPack)

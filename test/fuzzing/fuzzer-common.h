@@ -14,12 +14,12 @@
 // one may be interested in formatting to a string instead to verify it works
 // as intended. To avoid a combinatoric explosion, select this at compile time
 // instead of dynamically from the fuzz data.
-#define FMT_FUZZ_FORMAT_TO_STRING 0
+#define LAWS3_FMT_FUZZ_FORMAT_TO_STRING 0
 
 // If {fmt} is given a buffer that is separately allocated, chances that address
 // sanitizer detects out of bound reads is much higher. However, it slows down
 // the fuzzing.
-#define FMT_FUZZ_SEPARATE_ALLOCATION 1
+#define LAWS3_FMT_FUZZ_SEPARATE_ALLOCATION 1
 
 // The size of the largest possible type in use.
 // To let the the fuzzer mutation be efficient at cross pollinating between
@@ -51,7 +51,7 @@ template <> inline bool assign_from_buf<bool>(const std::uint8_t* data) {
 }
 
 struct data_to_string {
-#if FMT_FUZZ_SEPARATE_ALLOCATION
+#if LAWS3_FMT_FUZZ_SEPARATE_ALLOCATION
   std::vector<char> buffer;
 
   data_to_string(const uint8_t* data, size_t size, bool add_terminator = false)
@@ -61,14 +61,14 @@ struct data_to_string {
     }
   }
 
-  fmt::string_view get() const { return {buffer.data(), buffer.size()}; }
+  lll::fmt::string_view get() const { return {buffer.data(), buffer.size()}; }
 #else
-  fmt::string_view sv;
+  lll::fmt::string_view sv;
 
   data_to_string(const uint8_t* data, size_t size, bool = false)
       : str(as_chars(data), size) {}
 
-  fmt::string_view get() const { return sv; }
+  lll::fmt::string_view get() const { return sv; }
 #endif
 
   const char* data() const { return get().data(); }

@@ -20,7 +20,7 @@ echo $me: root=$root
 here=$(pwd)
 
 CXXFLAGSALL="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION= -g"
-CMAKEFLAGSALL="$root -GNinja -DCMAKE_BUILD_TYPE=Debug -DFMT_DOC=Off -DFMT_TEST=Off -DFMT_FUZZ=On -DCMAKE_CXX_STANDARD=17"
+CMAKEFLAGSALL="$root -GNinja -DCMAKE_BUILD_TYPE=Debug -DLAWS3_FMT_DOC=Off -DLAWS3_FMT_TEST=Off -DLAWS3_FMT_FUZZ=On -DCMAKE_CXX_STANDARD=17"
 
 CLANG=clang++-11
 
@@ -30,7 +30,7 @@ mkdir -p $builddir
 cd $builddir
 CXX="ccache g++" CXXFLAGS="$CXXFLAGSALL -g" cmake \
 $CMAKEFLAGSALL \
--DFMT_FUZZ_LINKMAIN=On \
+-DLAWS3_FMT_FUZZ_LINKMAIN=On \
 -DCMAKE_BUILD_TYPE=Release
 
 cmake --build $builddir
@@ -42,8 +42,8 @@ cd $builddir
 CXX=$CLANG \
 CXXFLAGS="$CXXFLAGSALL -fsanitize=fuzzer-no-link" cmake \
 cmake $CMAKEFLAGSALL \
--DFMT_FUZZ_LINKMAIN=Off \
--DFMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
+-DLAWS3_FMT_FUZZ_LINKMAIN=Off \
+-DLAWS3_FMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
 
 cmake --build $builddir
 
@@ -55,8 +55,8 @@ cd $builddir
 CXX=$CLANG \
 CXXFLAGS="$CXXFLAGSALL -fsanitize=fuzzer-no-link,address,undefined" cmake \
 cmake $CMAKEFLAGSALL \
--DFMT_FUZZ_LINKMAIN=Off \
--DFMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
+-DLAWS3_FMT_FUZZ_LINKMAIN=Off \
+-DLAWS3_FMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
 
 cmake --build $builddir
 
@@ -67,8 +67,8 @@ cd $builddir
 CXX=$CLANG \
 CXXFLAGS="$CXXFLAGSALL -fsanitize=fuzzer-no-link -O3" cmake \
 cmake $CMAKEFLAGSALL \
--DFMT_FUZZ_LINKMAIN=Off \
--DFMT_FUZZ_LDFLAGS="-fsanitize=fuzzer" \
+-DLAWS3_FMT_FUZZ_LINKMAIN=Off \
+-DLAWS3_FMT_FUZZ_LDFLAGS="-fsanitize=fuzzer" \
  -DCMAKE_BUILD_TYPE=Release
 
 cmake --build $builddir
@@ -81,10 +81,9 @@ cd $builddir
 CXX="afl-g++" \
 CXXFLAGS="$CXXFLAGSALL -fsanitize=address,undefined" \
 cmake $CMAKEFLAGSALL \
--DFMT_FUZZ_LINKMAIN=On
+-DLAWS3_FMT_FUZZ_LINKMAIN=On
 
 cmake --build $builddir
 
 
 echo $me: all good
-

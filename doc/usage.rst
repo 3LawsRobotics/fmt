@@ -35,7 +35,7 @@ current directory. Now you can build the library by running :command:`make`.
 Once the library has been built you can invoke :command:`make test` to run
 the tests.
 
-You can control generation of the make ``test`` target with the ``FMT_TEST``
+You can control generation of the make ``test`` target with the ``LAWS3_FMT_TEST``
 CMake option. This can be useful if you include fmt as a subdirectory in
 your project but don't want to add fmt's tests to your ``test`` target.
 

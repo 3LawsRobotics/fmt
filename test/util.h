@@ -13,23 +13,23 @@
 #include "fmt/os.h"
 
 #ifdef _MSC_VER
-#  define FMT_VSNPRINTF vsprintf_s
+#  define LAWS3_FMT_VSNPRINTF vsprintf_s
 #else
-#  define FMT_VSNPRINTF vsnprintf
+#  define LAWS3_FMT_VSNPRINTF vsnprintf
 #endif
 
 template <size_t SIZE>
 void safe_sprintf(char (&buffer)[SIZE], const char* format, ...) {
   std::va_list args;
   va_start(args, format);
-  FMT_VSNPRINTF(buffer, SIZE, format, args);
+  LAWS3_FMT_VSNPRINTF(buffer, SIZE, format, args);
   va_end(args);
 }
 
 extern const char* const file_content;
 
 // Opens a buffered file for reading.
-auto open_buffered_file(FILE** fp = nullptr) -> fmt::buffered_file;
+auto open_buffered_file(FILE** fp = nullptr) -> lll::fmt::buffered_file;
 
 inline auto safe_fopen(const char* filename, const char* mode) -> FILE* {
 #if defined(_WIN32) && !defined(__MINGW32__)

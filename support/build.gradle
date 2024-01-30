@@ -1,7 +1,7 @@
 import java.nio.file.Paths
 
 // General gradle arguments for root project
-buildscript {    
+buildscript {
     repositories {
         google()
         jcenter()
@@ -25,7 +25,7 @@ repositories {
 def rootDir = Paths.get(project.buildDir.getParent()).getParent()
 println("rootDir: ${rootDir}")
 
-// Output: Shared library (.so) for Android 
+// Output: Shared library (.so) for Android
 apply plugin: "com.android.library"
 android {
     compileSdkVersion 25    // Android 7.0
@@ -50,13 +50,13 @@ android {
         targetSdkVersion 25 // Follow Compile SDK
         versionCode 34      // Follow release count
         versionName "7.1.2" // Follow Official version
-        
+
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared"    // Specify Android STL
                 arguments "-DBUILD_SHARED_LIBS=true"    // Build shared object
-                arguments "-DFMT_TEST=false"            // Skip test
-                arguments "-DFMT_DOC=false"             // Skip document
+                arguments "-DLAWS3_FMT_TEST=false"            // Skip test
+                arguments "-DLAWS3_FMT_DOC=false"             // Skip document
                 cppFlags  "-std=c++17"
                 targets   "fmt"
             }
@@ -67,7 +67,7 @@ android {
 
     // External Native build
     //  - Use existing CMakeList.txt
-    //  - Give path to CMake. This gradle file should be 
+    //  - Give path to CMake. This gradle file should be
     //    neighbor of the top level cmake
     externalNativeBuild {
         cmake {
@@ -76,7 +76,7 @@ android {
             // buildStagingDirectory "./build"  // Custom path for cmake output
         }
     }
-    
+
     sourceSets{
         // Android Manifest for Gradle
         main {

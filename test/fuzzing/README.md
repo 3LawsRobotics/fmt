@@ -11,7 +11,7 @@ mkdir build
 cd build
 export CXX=clang++
 export CXXFLAGS="-fsanitize=fuzzer-no-link -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION= -g"
-cmake .. -DFMT_SAFE_DURATION_CAST=On -DFMT_FUZZ=On -DFMT_FUZZ_LINKMAIN=Off -DFMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
+cmake .. -DLAWS3_FMT_SAFE_DURATION_CAST=On -DLAWS3_FMT_FUZZ=On -DLAWS3_FMT_FUZZ_LINKMAIN=Off -DLAWS3_FMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
 cmake --build .
 ```
 should work to build the fuzzers for all platforms which clang supports.

@@ -43,7 +43,7 @@ jobs:
             install: sudo apt install clang-9
           - cxx: clang++-9
             build_type: Debug
-            fuzz: -DFMT_FUZZ=ON -DFMT_FUZZ_LINKMAIN=ON
+            fuzz: -DLAWS3_FMT_FUZZ=ON -DLAWS3_FMT_FUZZ_LINKMAIN=ON
             std: 17
             install: sudo apt install clang-9
           - cxx: clang++-11
@@ -94,9 +94,9 @@ jobs:
         CXXFLAGS: ${{matrix.cxxflags}}
       run: |
         cmake -DCMAKE_BUILD_TYPE=${{matrix.build_type}} ${{matrix.fuzz}} ${{matrix.shared}} \
-              -DCMAKE_CXX_STANDARD=${{matrix.std}} -DFMT_DOC=OFF \
+              -DCMAKE_CXX_STANDARD=${{matrix.std}} -DLAWS3_FMT_DOC=OFF \
               -DCMAKE_CXX_VISIBILITY_PRESET=hidden -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
-              -DFMT_PEDANTIC=ON -DFMT_WERROR=ON $GITHUB_WORKSPACE
+              -DLAWS3_FMT_PEDANTIC=ON -DLAWS3_FMT_WERROR=ON $GITHUB_WORKSPACE
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

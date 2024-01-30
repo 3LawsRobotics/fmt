@@ -15,7 +15,7 @@
 
 using testing::Contains;
 
-TEST(unicode_test, is_utf8) { EXPECT_TRUE(fmt::detail::is_utf8()); }
+TEST(unicode_test, is_utf8) { EXPECT_TRUE(lll::fmt::detail::is_utf8()); }
 
 TEST(unicode_test, legacy_locale) {
   auto loc = get_locale("be_BY.CP1251", "Belarusian_Belarus.1251");
@@ -23,14 +23,14 @@ TEST(unicode_test, legacy_locale) {
 
   auto s = std::string();
   try {
-    s = fmt::format(loc, "Дзень тыдня: {:L}", fmt::weekday(1));
-  } catch (const fmt::format_error& e) {
+    s = lll::fmt::format(loc, "Дзень тыдня: {:L}", lll::fmt::weekday(1));
+  } catch (const lll::fmt::format_error& e) {
     // Formatting can fail due to an unsupported encoding.
-    fmt::print("Format error: {}\n", e.what());
+    lll::fmt::print("Format error: {}\n", e.what());
     return;
   }
 
-#if !FMT_GCC_VERSION || FMT_GCC_VERSION >= 500
+#if !LAWS3_FMT_GCC_VERSION || LAWS3_FMT_GCC_VERSION >= 500
   auto&& os = std::ostringstream();
   os.imbue(loc);
   auto tm = std::tm();
@@ -39,7 +39,7 @@ TEST(unicode_test, legacy_locale) {
   auto wd = os.str();
   if (wd == "??") {
     EXPECT_EQ(s, "Дзень тыдня: ??");
-    fmt::print("std::locale gives ?? as a weekday.\n");
+    lll::fmt::print("std::locale gives ?? as a weekday.\n");
     return;
   }
 #endif
