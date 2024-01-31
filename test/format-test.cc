@@ -10,7 +10,7 @@
 #  include <windows.h>
 #endif
 // clang-format off
-#include "fmt/format.h"
+#include "3laws/fmt/format.h"
 // clang-format on
 
 #include <stdint.h>  // uint32_t

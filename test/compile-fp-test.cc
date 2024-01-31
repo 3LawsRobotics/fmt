@@ -5,7 +5,7 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/compile.h"
+#include "3laws/fmt/compile.h"
 #include "gmock/gmock.h"
 
 #if LAWS3_FMT_USE_CONSTEVAL

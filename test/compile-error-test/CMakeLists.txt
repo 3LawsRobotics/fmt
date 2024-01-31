@@ -5,9 +5,9 @@ project(compile-error-test CXX)
 
 set(fmt_headers
     "
-  #include <fmt/format.h>
-  #include <fmt/xchar.h>
-  #include <fmt/ostream.h>
+  #include <3laws/fmt/format.h>
+  #include <3laws/fmt/xchar.h>
+  #include <3laws/fmt/ostream.h>
   #include <iostream>
 "
 )

@@ -5,7 +5,7 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.h"
 
 #include <cstdlib>  // std::exit
 #include <cstring>

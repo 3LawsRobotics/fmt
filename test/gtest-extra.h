@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.h"
 #include "gmock/gmock.h"
 
 #define LAWS3_FMT_TEST_THROW_(statement, expected_exception, expected_message, \

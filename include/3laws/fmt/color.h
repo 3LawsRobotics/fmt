@@ -539,7 +539,7 @@ inline auto vformat(const text_style& ts, string_view fmt, format_args args)
 
   **Example**::
 
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
     std::string message = lll::fmt::format(lll::fmt::emphasis::bold |
   fg(lll::fmt::color::red), "The answer is {}", 42); \endrst
 */

@@ -5,15 +5,15 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/std.h"
+#include "3laws/fmt/std.h"
 
 #include <bitset>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-#include "fmt/os.h"  // lll::fmt::system_category
-#include "fmt/ranges.h"
+#include "3laws/fmt/os.h"  // lll::fmt::system_category
+#include "3laws/fmt/ranges.h"
 #include "gtest-extra.h"  // StartsWith
 
 #ifdef __cpp_lib_filesystem

@@ -5,7 +5,7 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/format-inl.h"
+#include "3laws/fmt/format-inl.h"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
@@ -29,7 +29,8 @@ template LAWS3_FMT_API auto decimal_point_impl(locale_ref) -> char;
 template LAWS3_FMT_API void buffer<char>::append(const char*, const char*);
 
 template LAWS3_FMT_API void vformat_to(buffer<char>&, string_view,
-                                 typename vformat_args<>::type, locale_ref);
+                                       typename vformat_args<>::type,
+                                       locale_ref);
 
 // Explicit instantiations for wchar_t.
 
@@ -37,7 +38,8 @@ template LAWS3_FMT_API auto thousands_sep_impl(locale_ref)
     -> thousands_sep_result<wchar_t>;
 template LAWS3_FMT_API auto decimal_point_impl(locale_ref) -> wchar_t;
 
-template LAWS3_FMT_API void buffer<wchar_t>::append(const wchar_t*, const wchar_t*);
+template LAWS3_FMT_API void buffer<wchar_t>::append(const wchar_t*,
+                                                    const wchar_t*);
 
 }  // namespace detail
 LAWS3_FMT_END_NAMESPACE

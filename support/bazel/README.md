@@ -1,8 +1,8 @@
 # Bazel support
 
-To get [Bazel](https://bazel.build/) working with {fmt} you can copy the files `BUILD.bazel`, 
-`MODULE.bazel`, `WORKSPACE.bazel`, and `.bazelversion` from this folder (`support/bazel`) to the root folder of this project. 
-This way {fmt} gets bazelized and can be used with Bazel (e.g. doing a `bazel build //...` on {fmt}). 
+To get [Bazel](https://bazel.build/) working with {fmt} you can copy the files `BUILD.bazel`,
+`MODULE.bazel`, `WORKSPACE.bazel`, and `.bazelversion` from this folder (`support/bazel`) to the root folder of this project.
+This way {fmt} gets bazelized and can be used with Bazel (e.g. doing a `bazel build //...` on {fmt}).
 
 ## Using {fmt} as a dependency
 
@@ -43,7 +43,7 @@ example
 *main.cpp*:
 
 ```c++
-#include "fmt/core.h"
+#include "3laws/fmt/core.h"
 
 int main() {
   fmt::print("The answer is {}\n", 42);
@@ -78,7 +78,7 @@ git_repository(
 )
 ```
 
-In the *WORKSPACE* file, the {fmt} GitHub repository is fetched. Using the attribute `patch_cmds` the  files `BUILD.bazel`, `WORKSPACE.bazel`, and `.bazelversion` are moved to the root of the {fmt} repository. This way the {fmt} repository is recognized as a bazelized workspace. 
+In the *WORKSPACE* file, the {fmt} GitHub repository is fetched. Using the attribute `patch_cmds` the  files `BUILD.bazel`, `WORKSPACE.bazel`, and `.bazelversion` are moved to the root of the {fmt} repository. This way the {fmt} repository is recognized as a bazelized workspace.
 
 *BUILD.bazel*:
 

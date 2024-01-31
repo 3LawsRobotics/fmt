@@ -12,7 +12,7 @@
 #include "test-assert.h"
 // clang-format on
 
-#include "fmt/format.h"
+#include "3laws/fmt/format.h"
 #include "gmock/gmock.h"
 #include "util.h"
 

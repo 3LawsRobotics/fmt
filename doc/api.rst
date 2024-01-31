@@ -110,7 +110,7 @@ defined in the same namespace as your type.
 
 Example (https://godbolt.org/z/nvME4arz8)::
 
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.h>
 
   namespace kevin_namespacy {
   enum class film {
@@ -132,7 +132,7 @@ inheritance or composition. This way you can support standard format specifiers
 without implementing them yourself. For example::
 
   // color.h:
-  #include <fmt/base.h>
+  #include <3laws/fmt/base.h>
 
   enum class color {red, green, blue};
 
@@ -145,7 +145,7 @@ without implementing them yourself. For example::
 
   // color.cc:
   #include "color.h"
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.h>
 
   auto fmt::formatter<color>::format(color c, format_context& ctx) const
       -> format_parse_context::iterator {
@@ -174,7 +174,7 @@ formatter to one or more subobjects.
 
 For example::
 
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.h>
 
   struct point {
     double x, y;
@@ -232,7 +232,7 @@ You can also write a formatter for a hierarchy of classes::
 
   // demo.h:
   #include <type_traits>
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.h>
 
   struct A {
     virtual ~A() {}
@@ -253,7 +253,7 @@ You can also write a formatter for a hierarchy of classes::
 
   // demo.cc:
   #include "demo.h"
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.h>
 
   int main() {
     B b;
@@ -279,7 +279,7 @@ binary footprint, for example (https://godbolt.org/z/vajfWEG4b):
 
 .. code:: c++
 
-    #include <fmt/base.h>
+    #include <3laws/fmt/base.h>
 
     void vlog(const char* file, int line, fmt::string_view format,
               fmt::format_args args) {
@@ -427,7 +427,7 @@ All formatting is locale-independent by default. Use the ``'L'`` format
 specifier to insert the appropriate number separator characters from the
 locale::
 
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.h>
   #include <locale>
 
   std::locale::global(std::locale("en_US.UTF-8"));
@@ -462,7 +462,7 @@ Range and Tuple Formatting
 
 The library also supports convenient formatting of ranges and tuples::
 
-  #include <fmt/ranges.h>
+  #include <3laws/fmt/ranges.h>
 
   std::tuple<char, int, float> t{'a', 1, 2.0f};
   // Prints "('a', 1, 2.0)"
@@ -470,7 +470,7 @@ The library also supports convenient formatting of ranges and tuples::
 
 Using ``fmt::join``, you can separate tuple elements with a custom separator::
 
-  #include <fmt/ranges.h>
+  #include <3laws/fmt/ranges.h>
 
   std::tuple<int, char> t = {1, 'a'};
   // Prints "1, a"
@@ -495,7 +495,7 @@ The format syntax is described in :ref:`chrono-specs`.
 
 **Example**::
 
-  #include <fmt/chrono.h>
+  #include <3laws/fmt/chrono.h>
 
   int main() {
     std::time_t t = std::time(nullptr);
@@ -542,7 +542,7 @@ A ``std::variant`` is only formattable if every variant alternative is formattab
 
 **Example**::
 
-  #include <fmt/std.h>
+  #include <3laws/fmt/std.h>
 
   std::variant<char, float> v0{'x'};
   // Prints "variant('x')"
@@ -614,7 +614,7 @@ user-defined types that have an overloaded insertion operator (``operator<<``).
 In order to make a type formattable via ``std::ostream`` you should provide a
 ``formatter`` specialization inherited from ``ostream_formatter``::
 
-  #include <fmt/ostream.h>
+  #include <3laws/fmt/ostream.h>
 
   struct date {
     int year, month, day;

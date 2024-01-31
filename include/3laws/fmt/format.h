@@ -4257,7 +4257,7 @@ template <typename T> struct nested_formatter {
 
   **Example**::
 
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     std::string answer = lll::fmt::to_string(42);
   \endrst
@@ -4417,7 +4417,7 @@ LAWS3_FMT_API auto vformat(string_view fmt, format_args args) -> std::string;
 
   **Example**::
 
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
     std::string message = lll::fmt::format("The answer is {}.", 42);
   \endrst
 */

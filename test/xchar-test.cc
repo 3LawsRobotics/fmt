@@ -5,18 +5,18 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/xchar.h"
+#include "3laws/fmt/xchar.h"
 
 #include <algorithm>
 #include <complex>
 #include <cwchar>
 #include <vector>
 
-#include "fmt/chrono.h"
-#include "fmt/color.h"
-#include "fmt/ostream.h"
-#include "fmt/ranges.h"
-#include "fmt/std.h"
+#include "3laws/fmt/chrono.h"
+#include "3laws/fmt/color.h"
+#include "3laws/fmt/ostream.h"
+#include "3laws/fmt/ranges.h"
+#include "3laws/fmt/std.h"
 #include "gtest-extra.h"  // Contains
 #include "util.h"         // get_locale
 

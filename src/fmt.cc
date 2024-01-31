@@ -89,17 +89,17 @@ extern "C++" {
 
 // All library-provided declarations and definitions must be in the module
 // purview to be exported.
-#include "fmt/args.h"
-#include "fmt/chrono.h"
-#include "fmt/color.h"
-#include "fmt/compile.h"
-#include "fmt/format.h"
+#include "3laws/fmt/args.h"
+#include "3laws/fmt/chrono.h"
+#include "3laws/fmt/color.h"
+#include "3laws/fmt/compile.h"
+#include "3laws/fmt/format.h"
 #if LAWS3_FMT_OS
 #  include "fmt/os.h"
 #endif
-#include "fmt/printf.h"
-#include "fmt/std.h"
-#include "fmt/xchar.h"
+#include "3laws/fmt/printf.h"
+#include "3laws/fmt/std.h"
+#include "3laws/fmt/xchar.h"
 
 #ifdef LAWS3_FMT_ATTACH_TO_GLOBAL_MODULE
 }

@@ -10,7 +10,7 @@
 #include <locale>
 #include <string>
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.h"
 
 #ifdef _MSC_VER
 #  define LAWS3_FMT_VSNPRINTF vsprintf_s

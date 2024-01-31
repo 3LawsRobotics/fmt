@@ -11,7 +11,7 @@
     For example ([godbolt](https://godbolt.org/z/9KhMnq9ba)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       fmt::print("{}\n", std::chrono::days(42)); // prints "42d"
@@ -30,7 +30,7 @@
 
     ```c++
     #include <source_location>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       fmt::print("{}\n", std::source_location::current());
@@ -51,7 +51,7 @@
 
     ```c++
     #include <bitset>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       fmt::print("{}\n", std::bitset<6>(42)); // prints "101010"
@@ -65,7 +65,7 @@
     width, fill and alignment. For example:
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     struct point {
       double x, y;
@@ -97,7 +97,7 @@
 
     ```c++
     #include <filesystem>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       fmt::print("{:g}\n", std::filesystem::path("C:\\foo"));
@@ -311,7 +311,7 @@
 
     ```c++
     #include <vector>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       auto v = std::vector<bool>{true};
@@ -486,7 +486,7 @@
     For example ([godbolt](https://godbolt.org/z/b7rqhq5Kh)):
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     struct floaty_mc_floatface {
       double value;
@@ -510,7 +510,7 @@
     ([godbolt](https://godbolt.org/z/rKP6MGz6c)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       // prints "    2023"
@@ -530,7 +530,7 @@
     ([godbolt](https://godbolt.org/z/45738oGEo)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       // prints 01.234567
@@ -566,7 +566,7 @@
     ([godbolt](https://godbolt.org/z/f7bcznb3W)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       auto t = std::chrono::system_clock::from_time_t(0) -
@@ -591,7 +591,7 @@
     ([godbolt](https://godbolt.org/z/8xoWGs9e4)):
 
     ```c++
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
     #include <vector>
 
     int main() {
@@ -619,7 +619,7 @@
     ([godbolt](https://godbolt.org/z/74h1xY9qK)):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
     #include <stack>
     #include <vector>
 
@@ -824,7 +824,7 @@
     ([godbolt](https://godbolt.org/z/1MW5rMdf8)):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     int main() {
       using namespace fmt::literals;
@@ -859,7 +859,7 @@
     ([godbolt](https://godbolt.org/z/roKqGdj8c)):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
     #include <vector>
 
     int main() {
@@ -941,7 +941,7 @@
 
     ```c++
     #include <array>
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     consteval auto compile_time_dtoa(double value) -> std::array<char, 10> {
       auto result = std::array<char, 10>();
@@ -976,7 +976,7 @@
     example ([godbolt](https://godbolt.org/z/5sEc5qMsf)):
 
     ```c++
-    #include <fmt/ostream.h>
+    #include <3laws/fmt/ostream.h>
 
     struct date {
       int year, month, day;
@@ -998,7 +998,7 @@
 
     ```c++
     #include <thread>
-    #include <fmt/ostream.h>
+    #include <3laws/fmt/ostream.h>
 
     int main() {
       fmt::print("Current thread id: {}\n",
@@ -1022,7 +1022,7 @@
 
     ```c++
     #include <variant>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       auto v = std::variant<int, std::string>(42);
@@ -1045,7 +1045,7 @@
 
     ```c++
     #include <filesystem>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       fmt::print("There is no place like {}.", std::filesystem::path("/home"));
@@ -1063,7 +1063,7 @@
 
     ```c++
     #include <thread>
-    #include <fmt/std.h>
+    #include <3laws/fmt/std.h>
 
     int main() {
       fmt::print("Current thread id: {}\n", std::this_thread::get_id());
@@ -1075,8 +1075,8 @@
     example ([godbolt](https://godbolt.org/z/vWGW7v5M6)):
 
     ```c++
-    #include <fmt/chrono.h>
-    #include <fmt/color.h>
+    #include <3laws/fmt/chrono.h>
+    #include <3laws/fmt/color.h>
 
     int main() {
       auto now = std::chrono::system_clock::now();
@@ -1106,7 +1106,7 @@
 
     ```c++
     #include <vector>
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
 
     int main() {
       fmt::print("{::#x}\n", std::vector{10, 20, 30});
@@ -1331,7 +1331,7 @@
     ([godbolt](https://godbolt.org/z/es7vWTETe)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       fmt::print("{:%S}", std::chrono::milliseconds(1234));
@@ -1354,7 +1354,7 @@
     ([godbolt](https://godbolt.org/z/TxGxG9Poq)):
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     int main() {
       fmt::print("{} dollars", fmt::group_digits(1000000));
@@ -1381,7 +1381,7 @@
     ([godbolt](https://godbolt.org/z/ohGbbvonv)):
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     int main() {
       using namespace fmt::literals;
@@ -1399,7 +1399,7 @@
     ([godbolt](https://godbolt.org/z/rKvM1vKf3)):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
     #include <vector>
 
     int main() {
@@ -1424,7 +1424,7 @@
     ([godbolt](https://godbolt.org/z/seKjoY9W5)):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
     #include <map>
 
     int main() {
@@ -1639,7 +1639,7 @@
     ([godbolt](https://godbolt.org/z/sMxcohGjz)):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{:d}", "I am not a number");
@@ -1668,7 +1668,7 @@
     ([godbolt](https://godbolt.org/z/Mxx9d89jM)):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     consteval auto compile_time_itoa(int value) -> std::array<char, 10> {
       auto result = std::array<char, 10>();
@@ -1733,7 +1733,7 @@
     https://github.com/fmtlib/fmt/pull/2242):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     using namespace fmt::literals;
     auto s = fmt::format(LAWS3_FMT_COMPILE("{}"), 42); // 🙁 not modern
@@ -1761,7 +1761,7 @@
     https://github.com/fmtlib/fmt/pull/2281). For example:
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     using namespace fmt::literals;
     auto s = fmt::format(LAWS3_FMT_COMPILE("{answer}"), "answer"_a = 42);
@@ -1808,7 +1808,7 @@
     https://github.com/fmtlib/fmt/issues/2262). For example:
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
     #include <cstddef>
     #include <vector>
 
@@ -1827,7 +1827,7 @@
     https://github.com/fmtlib/fmt/pull/2345). For example:
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       fmt::print("{}", std::chrono::system_clock::now());
@@ -1841,7 +1841,7 @@
     `'L'` specifier to get localized formatting. For example:
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       std::locale::global(std::locale("ru_RU.UTF-8"));
@@ -1871,7 +1871,7 @@
     (https://github.com/fmtlib/fmt/issues/2208). For example:
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       using tp = std::chrono::time_point<
@@ -1886,7 +1886,7 @@
     by default for consistency with `std::format`. For example:
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{0:.3}", 1.1);
@@ -1904,7 +1904,7 @@
     example:
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
     #include <locale>
 
     int main() {
@@ -1948,7 +1948,7 @@
     https://github.com/fmtlib/fmt/pull/2109). For example:
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{:s}", true);
@@ -1961,7 +1961,7 @@
     (https://github.com/fmtlib/fmt/pull/2131). For example:
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     int main() {
       fmt::print("My main: {}\n", fmt::ptr(main));
@@ -1994,7 +1994,7 @@
     https://github.com/fmtlib/fmt/issues/2091). For example:
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{:-<10}{}\n", "你好", "世界");
@@ -2013,7 +2013,7 @@
     (https://github.com/fmtlib/fmt/issues/2018). For example:
 
     ```c++
-    #include <fmt/os.h>
+    #include <3laws/fmt/os.h>
 
     int main() {
       fmt::ostream out1 = fmt::output_file("guide");
@@ -2301,7 +2301,7 @@
     on common platforms ([godbolt](https://godbolt.org/z/nsTcG8)):
 
     ```c++
-    #include <fmt/os.h>
+    #include <3laws/fmt/os.h>
 
     int main() {
       auto f = fmt::output_file("guide");
@@ -2315,7 +2315,7 @@
     ([godbolt](https://godbolt.org/z/c4M6fh)):
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       auto now = std::chrono::system_clock::now();
@@ -2331,7 +2331,7 @@
     ([godbolt](https://godbolt.org/z/jP63Tv)):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
     #include <range/v3/view/filter.hpp>
 
     int main() {
@@ -2355,7 +2355,7 @@
     example:
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     char* f(char* buf) {
       return fmt::format_to(buf, LAWS3_FMT_COMPILE("x{}"), 42);
@@ -2389,7 +2389,7 @@
     the type name directly in the error message instead of the note:
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     struct how_about_no {};
 
@@ -2432,7 +2432,7 @@
     ([godbolt](https://godbolt.org/z/dPhWvj)):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{:.500}\n", 4.9406564584124654E-324);
@@ -2448,7 +2448,7 @@
     ([godbolt](https://godbolt.org/z/sPjY1K)):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       char buffer[10];
@@ -2463,7 +2463,7 @@
     ([godbolt](https://godbolt.org/z/93h86q)):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     int main() {
       char buffer[8];
@@ -2480,7 +2480,7 @@
     ([godbolt](https://godbolt.org/z/91153r)):
 
     ```c++
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
 
     int main() {
       std::string out;
@@ -2497,7 +2497,7 @@
     For example ([godbolt](https://godbolt.org/z/bhdcW9)):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{:#.2g}", 0.5);
@@ -2657,7 +2657,7 @@
     API](https://fmt.dev/7.0.0/api.html#compile-api):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     // Converts 42 into std::string using the most efficient method and no
     // runtime format string processing.
@@ -2716,7 +2716,7 @@
     For example
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("The answer is {answer}\n", fmt::arg("answer", 42));
@@ -2756,7 +2756,7 @@
     (https://github.com/fmtlib/fmt/issues/1614):
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     int main() {
       fmt::print(LAWS3_FMT_STRING("{0:{1}}"), 42);
@@ -3141,7 +3141,7 @@
 
     ```c++
     #include <cmath>
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       fmt::print("{}", M_PI);
@@ -3212,7 +3212,7 @@
 
     ```c++
     #include <tuple>
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
 
     int main() {
       std::tuple<char, int, float> t{'a', 1, 2.0f};
@@ -3236,8 +3236,8 @@
     (https://github.com/fmtlib/fmt/pull/1406):
 
     ```c++
-    #include <fmt/locale.h>
-    #include <fmt/ostream.h>
+    #include <3laws/fmt/locale.h>
+    #include <3laws/fmt/ostream.h>
 
     struct S {
       double value;
@@ -3374,7 +3374,7 @@
 
     ```c++
     #include <locale>
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     int main() {
       std::locale::global(std::locale("ru_RU.UTF-8"));
@@ -3399,7 +3399,7 @@
 
     ```c++
     #define LAWS3_FMT_USE_GRISU 1
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     auto s = fmt::format("{}", 4.2); // formats 4.2 using Grisu
     ```
@@ -3423,7 +3423,7 @@
 
     ```c++
     #include <iostream>
-    #include <fmt/ostream.h>
+    #include <3laws/fmt/ostream.h>
 
     struct S {};
 
@@ -3451,7 +3451,7 @@
     https://github.com/fmtlib/fmt/pull/1171):
 
     ```c++
-    #include <fmt/compile.h>
+    #include <3laws/fmt/compile.h>
 
     auto f = fmt::compile<int>("{}");
     std::string s = fmt::format(f, 42); // can be called multiple times to
@@ -3514,7 +3514,7 @@
     https://github.com/fmtlib/fmt/pull/994):
 
     ```c++
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
 
     std::string message = fmt::format(fmt::emphasis::bold | fg(fmt::color::red),
                                       "The answer is {}.", 42);
@@ -3733,7 +3733,7 @@
 -   Introduced experimental chrono formatting support:
 
     ```c++
-    #include <fmt/chrono.h>
+    #include <3laws/fmt/chrono.h>
 
     int main() {
       using namespace std::literals::chrono_literals;
@@ -3755,7 +3755,7 @@
     https://github.com/fmtlib/fmt/pull/973):
 
     ```c++
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
 
     int main() {
       print(fg(fmt::color::crimson) | fmt::emphasis::bold,
@@ -3778,7 +3778,7 @@
     https://github.com/fmtlib/fmt/pull/974)
 
     ```c++
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
 
     int main() {
       print(fg(fmt::terminal_color::red), "stop\n");
@@ -3835,7 +3835,7 @@
     (https://github.com/fmtlib/fmt/pull/867):
 
     ```c++
-    #include <fmt/color.h>
+    #include <3laws/fmt/color.h>
 
     int main() {
       print(fg(fmt::color::red), L"{}\n", 42);
@@ -3856,7 +3856,7 @@
 -   Improved locale support:
 
     ```c++
-    #include <fmt/locale.h>
+    #include <3laws/fmt/locale.h>
 
     struct numpunct : std::numpunct<char> {
      protected:
@@ -3982,7 +3982,7 @@
 
     ```c++
     #define LAWS3_FMT_STRING_ALIAS 1
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
     std::string answer = format(fmt("{}"), 42);
     ```
 
@@ -4067,7 +4067,7 @@
     ```c++
     #define LAWS3_FMT_EXTENDED_COLORS
     #define LAWS3_FMT_HEADER_ONLY // or compile fmt with LAWS3_FMT_EXTENDED_COLORS defined
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     fmt::print(fmt::color::steel_blue, "Some beautiful text");
     ```
@@ -4152,7 +4152,7 @@
     For example
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     std::string s = format(fmt("{:d}"), "foo");
     ```
@@ -4214,7 +4214,7 @@
 
     ```c++
     #include <vector>
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     std::vector<char> out;
     fmt::format_to(std::back_inserter(out), "{}", 42);
@@ -4236,7 +4236,7 @@
     function for computing the output size:
 
     ```c++
-    #include <fmt/format.h>
+    #include <3laws/fmt/format.h>
 
     auto size = fmt::formatted_size("{}", 12345); // size == 5
     ```
@@ -4246,7 +4246,7 @@
     API](https://fmt.dev/latest/api.html#core-api):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
 
     fmt::print("The answer is {}.", 42);
     ```
@@ -4289,7 +4289,7 @@
     (https://github.com/fmtlib/fmt/pull/735):
 
     ```c++
-    #include <fmt/ranges.h>
+    #include <3laws/fmt/ranges.h>
 
     std::vector<int> v = {1, 2, 3};
     fmt::print("{}", v); // prints {1, 2, 3}
@@ -4301,7 +4301,7 @@
     (https://github.com/fmtlib/fmt/pull/712):
 
     ```c++
-    #include <fmt/time.h>
+    #include <3laws/fmt/time.h>
 
     std::time_t t = std::time(nullptr);
     auto s = fmt::format(L"The date is {:%Y-%m-%d}.", *std::localtime(&t));
@@ -4321,7 +4321,7 @@
     (https://github.com/fmtlib/fmt/pull/607):
 
     ```c++
-    #include <fmt/core.h>
+    #include <3laws/fmt/core.h>
     #include <experimental/string_view>
 
     fmt::print("{}", std::experimental::string_view("foo"));
@@ -4520,7 +4520,7 @@
     https://github.com/fmtlib/fmt/pull/441):
 
     ```c++
-    #include "fmt/string.h"
+    #include "3laws/fmt/string.h"
 
     std::string answer = fmt::to_string(42);
     ```
@@ -4537,7 +4537,7 @@
     https://github.com/fmtlib/fmt/pull/340):
 
     ```c++
-    #include "fmt/printf.h"
+    #include "3laws/fmt/printf.h"
 
     // %s format specifier can be used with any argument type.
     fmt::printf("%s", 42);
@@ -4557,7 +4557,7 @@
     (https://github.com/fmtlib/fmt/pull/466):
 
     ```c++
-    #include "fmt/format.h"
+    #include "3laws/fmt/format.h"
 
     std::vector<double> v = {1.2, 3.4, 5.6};
     // Prints "(+01.20, +03.40, +05.60)".
@@ -4699,7 +4699,7 @@
     are now located in the `fmt` directory:
 
     ```c++
-    #include "fmt/format.h"
+    #include "3laws/fmt/format.h"
     ```
 
     Including `format.h` from the `cppformat` directory is deprecated
@@ -4715,7 +4715,7 @@
     (https://github.com/fmtlib/fmt/issues/283):
 
     ```c++
-    #include "fmt/time.h"
+    #include "3laws/fmt/time.h"
 
     std::time_t t = std::time(nullptr);
     // Prints "The date is 2016-04-29." (with the current date)
@@ -4727,7 +4727,7 @@
     `fmt/ostream.h`:
 
     ```c++
-    #include "fmt/ostream.h"
+    #include "3laws/fmt/ostream.h"
 
     class Date {
       int year_, month_, day_;

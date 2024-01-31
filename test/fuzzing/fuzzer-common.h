@@ -4,7 +4,7 @@
 #ifndef FUZZER_COMMON_H
 #define FUZZER_COMMON_H
 
-#include <fmt/base.h>
+#include <3laws/fmt/base.h>
 
 #include <cstdint>  // std::uint8_t
 #include <cstring>  // memcpy

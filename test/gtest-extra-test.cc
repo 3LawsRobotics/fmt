@@ -13,7 +13,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.h"
 #include "util.h"
 
 // Tests that assertion macros evaluate their arguments exactly once.

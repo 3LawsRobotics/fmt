@@ -5,13 +5,13 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/printf.h"
+#include "3laws/fmt/printf.h"
 
 #include <cctype>
 #include <climits>
 #include <cstring>
 
-#include "fmt/xchar.h"
+#include "3laws/fmt/xchar.h"
 #include "gtest-extra.h"
 #include "util.h"
 

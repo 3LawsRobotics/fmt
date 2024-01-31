@@ -5,7 +5,7 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/color.h"
+#include "3laws/fmt/color.h"
 
 #include <iterator>  // std::back_inserter
 

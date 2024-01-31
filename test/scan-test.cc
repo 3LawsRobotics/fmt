@@ -12,7 +12,7 @@
 #include <climits>
 #include <thread>
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.h"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 

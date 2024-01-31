@@ -9,7 +9,7 @@
 #include "test-assert.h"
 // clang-format on
 
-#include "fmt/base.h"
+#include "3laws/fmt/base.h"
 
 #include <climits>      // INT_MAX
 #include <cstring>      // std::strlen

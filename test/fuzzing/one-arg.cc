@@ -1,7 +1,7 @@
 // Copyright (c) 2019, Paul Dreik
 // For the license information refer to format.h.
 
-#include <fmt/chrono.h>
+#include <3laws/fmt/chrono.h>
 
 #include <cstdint>
 #include <exception>

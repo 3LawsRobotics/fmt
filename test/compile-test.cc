@@ -5,12 +5,12 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/compile.h"
+#include "3laws/fmt/compile.h"
 
 #include <type_traits>
 
-#include "fmt/chrono.h"
-#include "fmt/ranges.h"
+#include "3laws/fmt/chrono.h"
+#include "3laws/fmt/ranges.h"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 

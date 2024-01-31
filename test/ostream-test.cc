@@ -7,7 +7,7 @@
 
 #include <fstream>
 
-#include "fmt/format.h"
+#include "3laws/fmt/format.h"
 
 using lll::fmt::runtime;
 
@@ -27,9 +27,9 @@ template <> struct formatter<test> : formatter<int> {
 
 #include <sstream>
 
-#include "fmt/compile.h"
-#include "fmt/ostream.h"
-#include "fmt/ranges.h"
+#include "3laws/fmt/compile.h"
+#include "3laws/fmt/ostream.h"
+#include "3laws/fmt/ranges.h"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 #include "util.h"

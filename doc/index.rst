@@ -123,7 +123,7 @@ The library produces compact per-call compiled code. For example
 
 .. code:: c++
 
-   #include <fmt/core.h>
+   #include <3laws/fmt/core.h>
 
    int main() {
      fmt::print("The answer is {}.", 42);

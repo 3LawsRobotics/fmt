@@ -5,7 +5,7 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/ranges.h"
+#include "3laws/fmt/ranges.h"
 
 #include <list>
 #include <map>
@@ -20,7 +20,7 @@
 #  include <ranges>
 #endif
 
-#include "fmt/format.h"
+#include "3laws/fmt/format.h"
 #include "gtest/gtest.h"
 
 #if !LAWS3_FMT_GCC_VERSION || LAWS3_FMT_GCC_VERSION >= 601

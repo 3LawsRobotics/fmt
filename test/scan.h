@@ -10,7 +10,7 @@
 #include <climits>
 #include <tuple>
 
-#include "fmt/format-inl.h"
+#include "3laws/fmt/format-inl.h"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
@@ -342,7 +342,8 @@ class scan_context {
   using iterator = detail::scan_iterator;
   using sentinel = detail::scan_sentinel;
 
-  explicit LAWS3_FMT_CONSTEXPR scan_context(detail::scan_buffer& buf, scan_args args)
+  explicit LAWS3_FMT_CONSTEXPR scan_context(detail::scan_buffer& buf,
+                                            scan_args args)
       : buf_(buf), args_(args) {}
 
   LAWS3_FMT_CONSTEXPR auto arg(int id) const -> scan_arg {
@@ -479,7 +480,8 @@ auto read(scan_iterator it, monostate, const format_specs& = {})
 struct default_arg_scanner {
   scan_iterator it;
 
-  template <typename T> LAWS3_FMT_INLINE auto operator()(T&& value) -> scan_iterator {
+  template <typename T>
+  LAWS3_FMT_INLINE auto operator()(T&& value) -> scan_iterator {
     return read(it, value);
   }
 };
@@ -504,7 +506,7 @@ struct scan_handler {
 
  public:
   LAWS3_FMT_CONSTEXPR scan_handler(string_view format, scan_buffer& buf,
-                             scan_args args)
+                                   scan_args args)
       : parse_ctx_(format), scan_ctx_(buf, args), next_arg_id_(0) {}
 
   auto pos() const -> scan_buffer::iterator { return scan_ctx_.begin(); }
@@ -518,7 +520,9 @@ struct scan_handler {
     scan_ctx_.advance_to(it);
   }
 
-  LAWS3_FMT_CONSTEXPR auto on_arg_id() -> int { return on_arg_id(next_arg_id_++); }
+  LAWS3_FMT_CONSTEXPR auto on_arg_id() -> int {
+    return on_arg_id(next_arg_id_++);
+  }
   LAWS3_FMT_CONSTEXPR auto on_arg_id(int id) -> int {
     if (!scan_ctx_.arg(id)) on_error("argument index out of range");
     return id;

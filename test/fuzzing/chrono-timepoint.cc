@@ -1,6 +1,6 @@
 // Copyright (c) 2021, Paul Dreik
 // For license information refer to format.h.
-#include <fmt/chrono.h>
+#include <3laws/fmt/chrono.h>
 
 #include "fuzzer-common.h"
 

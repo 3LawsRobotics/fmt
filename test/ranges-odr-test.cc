@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "fmt/format.h"
-#include "fmt/ranges.h"
+#include "3laws/fmt/format.h"
+#include "3laws/fmt/ranges.h"
 #include "gtest/gtest.h"
 
 // call lll::fmt::format from another translation unit to test ODR

@@ -74,7 +74,7 @@ See the [documentation](https://fmt.dev) for more details.
 **Print to stdout** ([run](https://godbolt.org/z/Tevcjh))
 
 ``` c++
-#include <fmt/core.h>
+#include <3laws/fmt/core.h>
 
 int main() {
   fmt::print("Hello, world!\n");
@@ -99,7 +99,7 @@ std::string s = fmt::format("I'd rather be {1} than {0}.", "right", "happy");
 **Print dates and times** ([run](https://godbolt.org/z/c31ExdY3W))
 
 ``` c++
-#include <fmt/chrono.h>
+#include <3laws/fmt/chrono.h>
 
 int main() {
   auto now = std::chrono::system_clock::now();
@@ -117,7 +117,7 @@ Output:
 
 ``` c++
 #include <vector>
-#include <fmt/ranges.h>
+#include <3laws/fmt/ranges.h>
 
 int main() {
   std::vector<int> v = {1, 2, 3};
@@ -141,7 +141,7 @@ format specifier for a string.
 **Write a file from a single thread**
 
 ``` c++
-#include <fmt/os.h>
+#include <3laws/fmt/os.h>
 
 int main() {
   auto out = fmt::output_file("guide.txt");
@@ -155,7 +155,7 @@ fprintf](http://www.zverovich.net/2020/08/04/optimal-file-buffer-size.html).
 **Print with colors and text styles**
 
 ``` c++
-#include <fmt/color.h>
+#include <3laws/fmt/color.h>
 
 int main() {
   fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
