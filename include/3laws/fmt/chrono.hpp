@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_CHRONO_H_
 #define LAWS3_FMT_CHRONO_H_
@@ -18,7 +18,7 @@
 #include <ostream>
 #include <type_traits>
 
-#include "format.h"
+#include "format.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 
@@ -329,7 +329,7 @@ inline auto localtime_s(...) -> null<> { return null<>(); }
 inline auto gmtime_r(...) -> null<> { return null<>(); }
 inline auto gmtime_s(...) -> null<> { return null<>(); }
 
-// It is defined here and not in ostream.h because the latter has expensive
+// It is defined here and not in ostream.hpp because the latter has expensive
 // includes.
 template <typename Streambuf> class formatbuf : public Streambuf {
  private:

@@ -3,15 +3,15 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/printf.h"
+#include "3laws/fmt/printf.hpp"
 
 #include <cctype>
 #include <climits>
 #include <cstring>
 
-#include "3laws/fmt/xchar.h"
+#include "3laws/fmt/xchar.hpp"
 #include "gtest-extra.h"
 #include "util.h"
 

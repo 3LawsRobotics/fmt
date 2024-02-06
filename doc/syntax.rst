@@ -597,7 +597,7 @@ prints::
 
 Using type-specific formatting::
 
-   #include <3laws/fmt/chrono.h>
+   #include <3laws/fmt/chrono.hpp>
 
    auto t = tm();
    t.tm_year = 2010 - 1900;
@@ -611,7 +611,7 @@ Using type-specific formatting::
 
 Using the comma as a thousands separator::
 
-   #include <3laws/fmt/format.h>
+   #include <3laws/fmt/format.hpp>
 
    auto s = fmt::format(std::locale("en_US.UTF-8"), "{:L}", 1234567890);
    // s == "1,234,567,890"

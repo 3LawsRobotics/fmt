@@ -3,14 +3,14 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-// Check if fmt/format.h compiles with windows.h included before it.
+// Check if fmt/format.hpp compiles with windows.h included before it.
 #ifdef _WIN32
 #  include <windows.h>
 #endif
 // clang-format off
-#include "3laws/fmt/format.h"
+#include "3laws/fmt/format.hpp"
 // clang-format on
 
 #include <stdint.h>  // uint32_t

@@ -1,8 +1,7 @@
 // A fuzzer for floating-point formatter.
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include <3laws/fmt/format.h>
-
+#include <3laws/fmt/format.hpp>
 #include <cstdint>
 #include <cstdlib>
 #include <limits>

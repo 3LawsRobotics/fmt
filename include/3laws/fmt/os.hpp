@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_OS_H_
 #define LAWS3_FMT_OS_H_
@@ -13,7 +13,7 @@
 #include <cstdio>
 #include <system_error>  // std::system_error
 
-#include "format.h"
+#include "format.hpp"
 
 #if defined __APPLE__ || defined(__FreeBSD__)
 #  if LAWS3_FMT_HAS_INCLUDE(<xlocale.h>)

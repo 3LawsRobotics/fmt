@@ -3,18 +3,18 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <iterator>
 #include <vector>
 
 #define I 42  // simulate https://en.cppreference.com/w/c/numeric/complex/I
-#include "3laws/fmt/chrono.h"
-#include "3laws/fmt/color.h"
-#include "3laws/fmt/format.h"
-#include "3laws/fmt/ostream.h"
-#include "3laws/fmt/ranges.h"
-#include "3laws/fmt/xchar.h"
+#include "3laws/fmt/chrono.hpp"
+#include "3laws/fmt/color.hpp"
+#include "3laws/fmt/format.hpp"
+#include "3laws/fmt/ostream.hpp"
+#include "3laws/fmt/ranges.hpp"
+#include "3laws/fmt/xchar.hpp"
 #undef I
 
 // Exercise the API to verify that everything we expect to can compile.

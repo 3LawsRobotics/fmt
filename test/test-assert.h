@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_TEST_ASSERT_H_
 #define LAWS3_FMT_TEST_ASSERT_H_
@@ -26,14 +26,16 @@ class assertion_failure : public std::logic_error {
 
 void assertion_failure::avoid_weak_vtable() {}
 
-// We use a separate function (rather than throw directly from LAWS3_FMT_ASSERT) to
-// avoid GCC's -Wterminate warning when LAWS3_FMT_ASSERT is used in a destructor.
+// We use a separate function (rather than throw directly from LAWS3_FMT_ASSERT)
+// to avoid GCC's -Wterminate warning when LAWS3_FMT_ASSERT is used in a
+// destructor.
 inline void throw_assertion_failure(const char* message) {
   throw assertion_failure(message);
 }
 
 // Expects an assertion failure.
-#define EXPECT_ASSERT(stmt, message) \
-  LAWS3_FMT_TEST_THROW_(stmt, assertion_failure, message, GTEST_NONFATAL_FAILURE_)
+#define EXPECT_ASSERT(stmt, message)                      \
+  LAWS3_FMT_TEST_THROW_(stmt, assertion_failure, message, \
+                        GTEST_NONFATAL_FAILURE_)
 
 #endif  // LAWS3_FMT_TEST_ASSERT_H_

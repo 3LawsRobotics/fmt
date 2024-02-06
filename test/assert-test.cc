@@ -7,9 +7,9 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/base.h"
+#include "3laws/fmt/base.hpp"
 #include "gtest/gtest.h"
 
 TEST(assert_test, fail) {

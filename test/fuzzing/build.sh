@@ -8,7 +8,7 @@
 #
 # Copyright (c) 2019 Paul Dreik
 #
-# For the license information refer to format.h.
+# For the license information refer to format.hpp.
 
 set -e
 me=$(basename $0)

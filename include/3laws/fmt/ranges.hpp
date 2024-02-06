@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_RANGES_H_
 #define LAWS3_FMT_RANGES_H_
@@ -13,7 +13,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "base.h"
+#include "base.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 

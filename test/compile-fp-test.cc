@@ -3,9 +3,9 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/compile.h"
+#include "3laws/fmt/compile.hpp"
 #include "gmock/gmock.h"
 
 #if LAWS3_FMT_USE_CONSTEVAL

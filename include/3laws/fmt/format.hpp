@@ -51,7 +51,7 @@
 #include <string>        // std::string
 #include <system_error>  // std::system_error
 
-#include "base.h"
+#include "base.hpp"
 
 // Checking LAWS3_FMT_CPLUSPLUS for warning suppression in MSVC.
 #if LAWS3_FMT_HAS_INCLUDE(<bit>) && LAWS3_FMT_CPLUSPLUS >= 201703L
@@ -4257,7 +4257,7 @@ template <typename T> struct nested_formatter {
 
   **Example**::
 
-    #include <3laws/fmt/format.h>
+    #include <3laws/fmt/format.hpp>
 
     std::string answer = lll::fmt::to_string(42);
   \endrst
@@ -4498,7 +4498,7 @@ LAWS3_FMT_END_NAMESPACE
 
 #ifdef LAWS3_FMT_HEADER_ONLY
 #  define LAWS3_FMT_FUNC inline
-#  include "format-inl.h"
+#  include "format-inl.hpp"
 #else
 #  define LAWS3_FMT_FUNC
 #endif

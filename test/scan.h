@@ -3,14 +3,14 @@
 // Copyright (c) 2019 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <array>
 #include <cassert>
 #include <climits>
 #include <tuple>
 
-#include "3laws/fmt/format-inl.h"
+#include "3laws/fmt/format-inl.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {

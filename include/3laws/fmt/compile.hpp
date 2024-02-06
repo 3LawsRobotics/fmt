@@ -3,14 +3,14 @@
 // Copyright (c) 2012 - present, Victor Zverovich and fmt contributors
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_COMPILE_H_
 #define LAWS3_FMT_COMPILE_H_
 
 #include <iterator>  // std::back_inserter
 
-#include "format.h"
+#include "format.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {

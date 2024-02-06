@@ -3,16 +3,16 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_XCHAR_H_
 #define LAWS3_FMT_XCHAR_H_
 
 #include <cwchar>
 
-#include "color.h"
-#include "format.h"
-#include "ranges.h"
+#include "color.hpp"
+#include "format.hpp"
+#include "ranges.hpp"
 
 #ifndef LAWS3_FMT_STATIC_THOUSANDS_SEPARATOR
 #  include <locale>

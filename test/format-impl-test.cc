@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <algorithm>
 #include <cstring>
@@ -12,7 +12,7 @@
 #include "test-assert.h"
 // clang-format on
 
-#include "3laws/fmt/format.h"
+#include "3laws/fmt/format.hpp"
 #include "gmock/gmock.h"
 #include "util.h"
 

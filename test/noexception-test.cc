@@ -3,16 +3,16 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/args.h"
-#include "3laws/fmt/base.h"
-#include "3laws/fmt/chrono.h"
-#include "3laws/fmt/color.h"
-#include "3laws/fmt/compile.h"
-#include "3laws/fmt/format.h"
-#include "3laws/fmt/os.h"
-#include "3laws/fmt/ostream.h"
-#include "3laws/fmt/printf.h"
-#include "3laws/fmt/ranges.h"
-#include "3laws/fmt/xchar.h"
+#include "3laws/fmt/args.hpp"
+#include "3laws/fmt/base.hpp"
+#include "3laws/fmt/chrono.hpp"
+#include "3laws/fmt/color.hpp"
+#include "3laws/fmt/compile.hpp"
+#include "3laws/fmt/format.hpp"
+#include "3laws/fmt/os.hpp"
+#include "3laws/fmt/ostream.hpp"
+#include "3laws/fmt/printf.hpp"
+#include "3laws/fmt/ranges.hpp"
+#include "3laws/fmt/xchar.hpp"

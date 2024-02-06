@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_OSTREAM_H_
 #define LAWS3_FMT_OSTREAM_H_
@@ -18,7 +18,7 @@
 #  include <io.h>
 #endif
 
-#include "chrono.h"  // formatbuf
+#include "chrono.hpp"  // formatbuf
 
 LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {

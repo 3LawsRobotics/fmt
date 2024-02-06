@@ -1,11 +1,10 @@
 // Copyright (c) 2019, Paul Dreik
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef FUZZER_COMMON_H
 #define FUZZER_COMMON_H
 
-#include <3laws/fmt/base.h>
-
+#include <3laws/fmt/base.hpp>
 #include <cstdint>  // std::uint8_t
 #include <cstring>  // memcpy
 #include <vector>

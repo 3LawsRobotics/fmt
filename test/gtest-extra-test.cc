@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include "gtest-extra.h"
 
@@ -13,7 +13,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "3laws/fmt/os.h"
+#include "3laws/fmt/os.hpp"
 #include "util.h"
 
 // Tests that assertion macros evaluate their arguments exactly once.

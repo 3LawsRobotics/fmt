@@ -3,7 +3,7 @@
 // Copyright (c) 2019 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include "scan.h"
 
@@ -12,7 +12,7 @@
 #include <climits>
 #include <thread>
 
-#include "3laws/fmt/os.h"
+#include "3laws/fmt/os.hpp"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 

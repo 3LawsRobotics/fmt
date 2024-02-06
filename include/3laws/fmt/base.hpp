@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_BASE_H_
 #define LAWS3_FMT_BASE_H_
@@ -335,7 +335,7 @@ struct monostate {
 #  define LAWS3_FMT_ENABLE_IF(...) lll::fmt::enable_if_t<(__VA_ARGS__), int> = 0
 #endif
 
-// This is defined in base.h instead of format.h to avoid injecting in std.
+// This is defined in base.hpp instead of format.hpp to avoid injecting in std.
 // It is a template to avoid undesirable implicit conversions to std::byte.
 #ifdef __cpp_lib_byte
 template <typename T, LAWS3_FMT_ENABLE_IF(std::is_same<T, std::byte>::value)>
@@ -3074,6 +3074,6 @@ LAWS3_FMT_GCC_PRAGMA("GCC pop_options")
 LAWS3_FMT_END_NAMESPACE
 
 #ifdef LAWS3_FMT_HEADER_ONLY
-#  include "format.h"
+#  include "format.hpp"
 #endif
 #endif  // LAWS3_FMT_BASE_H_

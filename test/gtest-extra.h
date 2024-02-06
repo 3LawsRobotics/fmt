@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_GTEST_EXTRA_H_
 #define LAWS3_FMT_GTEST_EXTRA_H_
@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "3laws/fmt/os.h"
+#include "3laws/fmt/os.hpp"
 #include "gmock/gmock.h"
 
 #define LAWS3_FMT_TEST_THROW_(statement, expected_exception, expected_message, \

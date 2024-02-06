@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 //
 // Copyright (c) 2021 - present, Daniela Engert
 // All Rights Reserved
@@ -50,7 +50,8 @@ static bool macro_leaked =
     false;
 #endif
 
-#define LAWS3_FMT_OS_H_  // don't pull in os.h, neither directly nor indirectly
+#define LAWS3_FMT_OS_H_  // don't pull in os.hpp, neither directly nor
+                         // indirectly
 #include "gtest-extra.h"
 
 // an implicitly exported namespace must be visible [module.interface]/2.2

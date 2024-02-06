@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_ARGS_H_
 #define LAWS3_FMT_ARGS_H_
@@ -12,7 +12,7 @@
 #include <memory>      // std::unique_ptr
 #include <vector>
 
-#include "format.h"  // std_string_view
+#include "format.hpp"  // std_string_view
 
 LAWS3_FMT_BEGIN_NAMESPACE
 

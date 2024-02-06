@@ -3,14 +3,14 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/compile.h"
+#include "3laws/fmt/compile.hpp"
 
 #include <type_traits>
 
-#include "3laws/fmt/chrono.h"
-#include "3laws/fmt/ranges.h"
+#include "3laws/fmt/chrono.hpp"
+#include "3laws/fmt/ranges.hpp"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 

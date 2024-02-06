@@ -3,18 +3,18 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <fstream>
 
-#include "3laws/fmt/format.h"
+#include "3laws/fmt/format.hpp"
 
 using lll::fmt::runtime;
 
 struct test {};
 
-// Test that there is no issues with specializations when fmt/ostream.h is
-// included after fmt/format.h.
+// Test that there is no issues with specializations when fmt/ostream.hpp is
+// included after fmt/format.hpp.
 namespace lll {
 namespace fmt {
 template <> struct formatter<test> : formatter<int> {
@@ -27,9 +27,9 @@ template <> struct formatter<test> : formatter<int> {
 
 #include <sstream>
 
-#include "3laws/fmt/compile.h"
-#include "3laws/fmt/ostream.h"
-#include "3laws/fmt/ranges.h"
+#include "3laws/fmt/compile.hpp"
+#include "3laws/fmt/ostream.hpp"
+#include "3laws/fmt/ranges.hpp"
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 #include "util.h"

@@ -3,12 +3,12 @@
 // Copyright (c) 2018 - present, Victor Zverovich and fmt contributors
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_COLOR_H_
 #define LAWS3_FMT_COLOR_H_
 
-#include "format.h"
+#include "format.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 LAWS3_FMT_BEGIN_EXPORT
@@ -539,7 +539,7 @@ inline auto vformat(const text_style& ts, string_view fmt, format_args args)
 
   **Example**::
 
-    #include <3laws/fmt/color.h>
+    #include <3laws/fmt/color.hpp>
     std::string message = lll::fmt::format(lll::fmt::emphasis::bold |
   fg(lll::fmt::color::red), "The answer is {}", 42); \endrst
 */

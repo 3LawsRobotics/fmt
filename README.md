@@ -47,8 +47,8 @@ Try {fmt} in [Compiler Explorer](https://godbolt.org/z/8Mx1EW73v).
   hundred million integers to strings per
   second](http://www.zverovich.net/2020/06/13/fast-int-to-string-revisited.html)
 - Small code size both in terms of source code with the minimum
-  configuration consisting of just three files, `core.h`, `format.h`
-  and `format-inl.h`, and compiled code; see [Compile time and code
+  configuration consisting of just three files, `core.h`, `format.hpp`
+  and `format-inl.hpp`, and compiled code; see [Compile time and code
   bloat](#compile-time-and-code-bloat)
 - Reliability: the library has an extensive set of
   [tests](https://github.com/fmtlib/fmt/tree/master/test) and is
@@ -99,7 +99,7 @@ std::string s = fmt::format("I'd rather be {1} than {0}.", "right", "happy");
 **Print dates and times** ([run](https://godbolt.org/z/c31ExdY3W))
 
 ``` c++
-#include <3laws/fmt/chrono.h>
+#include <3laws/fmt/chrono.hpp>
 
 int main() {
   auto now = std::chrono::system_clock::now();
@@ -117,7 +117,7 @@ Output:
 
 ``` c++
 #include <vector>
-#include <3laws/fmt/ranges.h>
+#include <3laws/fmt/ranges.hpp>
 
 int main() {
   std::vector<int> v = {1, 2, 3};
@@ -141,7 +141,7 @@ format specifier for a string.
 **Write a file from a single thread**
 
 ``` c++
-#include <3laws/fmt/os.h>
+#include <3laws/fmt/os.hpp>
 
 int main() {
   auto out = fmt::output_file("guide.txt");
@@ -155,7 +155,7 @@ fprintf](http://www.zverovich.net/2020/08/04/optimal-file-buffer-size.html).
 **Print with colors and text styles**
 
 ``` c++
-#include <3laws/fmt/color.h>
+#include <3laws/fmt/color.hpp>
 
 int main() {
   fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,

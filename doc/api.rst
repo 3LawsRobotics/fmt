@@ -6,20 +6,20 @@ API Reference
 
 The {fmt} library API consists of the following parts:
 
-* :ref:`fmt/base.h <base-api>`: the base API providing main formatting functions
+* :ref:`fmt/base.hpp <base-api>`: the base API providing main formatting functions
   for ``char``/UTF-8 with C++20 compile-time checks and minimal dependencies
-* :ref:`fmt/format.h <format-api>`: the full format API providing additional
+* :ref:`fmt/format.hpp <format-api>`: the full format API providing additional
   formatting functions and locale support
-* :ref:`fmt/ranges.h <ranges-api>`: formatting of ranges and tuples
-* :ref:`fmt/chrono.h <chrono-api>`: date and time formatting
-* :ref:`fmt/std.h <std-api>`: formatters for standard library types
-* :ref:`fmt/compile.h <compile-api>`: format string compilation
-* :ref:`fmt/color.h <color-api>`: terminal color and text style
-* :ref:`fmt/os.h <os-api>`: system APIs
-* :ref:`fmt/ostream.h <ostream-api>`: ``std::ostream`` support
-* :ref:`fmt/args.h <args-api>`: dynamic argument lists
-* :ref:`fmt/printf.h <printf-api>`: ``printf`` formatting
-* :ref:`fmt/xchar.h <xchar-api>`: optional ``wchar_t`` support
+* :ref:`fmt/ranges.hpp <ranges-api>`: formatting of ranges and tuples
+* :ref:`fmt/chrono.hpp <chrono-api>`: date and time formatting
+* :ref:`fmt/std.hpp <std-api>`: formatters for standard library types
+* :ref:`fmt/compile.hpp <compile-api>`: format string compilation
+* :ref:`fmt/color.hpp <color-api>`: terminal color and text style
+* :ref:`fmt/os.hpp <os-api>`: system APIs
+* :ref:`fmt/ostream.hpp <ostream-api>`: ``std::ostream`` support
+* :ref:`fmt/args.hpp <args-api>`: dynamic argument lists
+* :ref:`fmt/printf.hpp <printf-api>`: ``printf`` formatting
+* :ref:`fmt/xchar.hpp <xchar-api>`: optional ``wchar_t`` support
 
 All functions and types provided by the library reside in namespace ``fmt`` and
 macros have prefix ``LAWS3_FMT_``.
@@ -29,7 +29,7 @@ macros have prefix ``LAWS3_FMT_``.
 Base API
 ========
 
-``fmt/base.h`` defines the base API which provides main formatting functions
+``fmt/base.hpp`` defines the base API which provides main formatting functions
 for ``char``/UTF-8 with C++20 compile-time checks. It has minimal include
 dependencies for better compile times. This header is only beneficial when
 using {fmt} as a library (the default) and not in the header-only mode.
@@ -78,7 +78,7 @@ Compile-Time Format String Checks
 
 Compile-time format string checks are enabled by default on compilers
 that support C++20 ``consteval``. On older compilers you can use the
-:ref:`LAWS3_FMT_STRING <legacy-checks>`: macro defined in ``fmt/format.h`` instead.
+:ref:`LAWS3_FMT_STRING <legacy-checks>`: macro defined in ``fmt/format.hpp`` instead.
 
 Unused arguments are allowed as in Python's `str.format` and ordinary functions.
 
@@ -95,9 +95,9 @@ Formatting User-Defined Types
 -----------------------------
 
 The {fmt} library provides formatters for many standard C++ types.
-See :ref:`fmt/ranges.h <ranges-api>` for ranges and tuples including standard
-containers such as ``std::vector``, :ref:`fmt/chrono.h <chrono-api>` for date
-and time formatting and :ref:`fmt/std.h <std-api>` for other standard library
+See :ref:`fmt/ranges.hpp <ranges-api>` for ranges and tuples including standard
+containers such as ``std::vector``, :ref:`fmt/chrono.hpp <chrono-api>` for date
+and time formatting and :ref:`fmt/std.hpp <std-api>` for other standard library
 types.
 
 There are two ways to make a user-defined type formattable: providing a
@@ -110,7 +110,7 @@ defined in the same namespace as your type.
 
 Example (https://godbolt.org/z/nvME4arz8)::
 
-  #include <3laws/fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   namespace kevin_namespacy {
   enum class film {
@@ -131,8 +131,8 @@ The recommended way of defining a formatter is by reusing an existing one via
 inheritance or composition. This way you can support standard format specifiers
 without implementing them yourself. For example::
 
-  // color.h:
-  #include <3laws/fmt/base.h>
+  // color.hpp:
+  #include <3laws/fmt/base.hpp>
 
   enum class color {red, green, blue};
 
@@ -144,8 +144,8 @@ without implementing them yourself. For example::
   };
 
   // color.cc:
-  #include "color.h"
-  #include <3laws/fmt/format.h>
+  #include "color.hpp"
+  #include <3laws/fmt/format.hpp>
 
   auto fmt::formatter<color>::format(color c, format_context& ctx) const
       -> format_parse_context::iterator {
@@ -158,7 +158,7 @@ without implementing them yourself. For example::
     return formatter<string_view>::format(name, ctx);
   }
 
-Note that ``formatter<string_view>::format`` is defined in ``fmt/format.h`` so
+Note that ``formatter<string_view>::format`` is defined in ``fmt/format.hpp`` so
 it has to be included in the source file. Since ``parse`` is inherited from
 ``formatter<string_view>`` it will recognize all string format specifications,
 for example
@@ -174,7 +174,7 @@ formatter to one or more subobjects.
 
 For example::
 
-  #include <3laws/fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   struct point {
     double x, y;
@@ -253,7 +253,7 @@ You can also write a formatter for a hierarchy of classes::
 
   // demo.cc:
   #include "demo.h"
-  #include <3laws/fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   int main() {
     B b;
@@ -279,7 +279,7 @@ binary footprint, for example (https://godbolt.org/z/vajfWEG4b):
 
 .. code:: c++
 
-    #include <3laws/fmt/base.h>
+    #include <3laws/fmt/base.hpp>
 
     void vlog(const char* file, int line, fmt::string_view format,
               fmt::format_args args) {
@@ -322,7 +322,7 @@ times and reduces binary code size compared to a fully parameterized version.
 Dynamic Argument Lists
 ----------------------
 
-The header ``fmt/args.h`` provides ``dynamic_format_arg_store``, a builder-like
+The header ``fmt/args.hpp`` provides ``dynamic_format_arg_store``, a builder-like
 API that can be used to construct format argument lists dynamically.
 
 .. doxygenclass:: fmt::dynamic_format_arg_store
@@ -341,7 +341,7 @@ Compatibility
 Format API
 ==========
 
-``fmt/format.h`` defines the full format API providing additional formatting
+``fmt/format.hpp`` defines the full format API providing additional formatting
 functions and locale support.
 
 .. doxygenfunction:: format(format_string<T...> fmt, T&&... args) -> std::string
@@ -350,7 +350,7 @@ functions and locale support.
 Literal-Based API
 -----------------
 
-The following user-defined literals are defined in ``fmt/format.h``.
+The following user-defined literals are defined in ``fmt/format.hpp``.
 
 .. doxygenfunction:: operator""_a()
 
@@ -433,7 +433,7 @@ locale::
   std::locale::global(std::locale("en_US.UTF-8"));
   auto s = fmt::format("{:L}", 1000000);  // s == "1,000,000"
 
-``fmt/format.h`` provides the following overloads of formatting functions that
+``fmt/format.hpp`` provides the following overloads of formatting functions that
 take ``std::locale`` as a parameter. The locale type is a template parameter to
 avoid the expensive ``<locale>`` include.
 
@@ -462,7 +462,7 @@ Range and Tuple Formatting
 
 The library also supports convenient formatting of ranges and tuples::
 
-  #include <3laws/fmt/ranges.h>
+  #include <3laws/fmt/ranges.hpp>
 
   std::tuple<char, int, float> t{'a', 1, 2.0f};
   // Prints "('a', 1, 2.0)"
@@ -470,7 +470,7 @@ The library also supports convenient formatting of ranges and tuples::
 
 Using ``fmt::join``, you can separate tuple elements with a custom separator::
 
-  #include <3laws/fmt/ranges.h>
+  #include <3laws/fmt/ranges.hpp>
 
   std::tuple<int, char> t = {1, 'a'};
   // Prints "1, a"
@@ -484,7 +484,7 @@ Using ``fmt::join``, you can separate tuple elements with a custom separator::
 Date and Time Formatting
 ========================
 
-``fmt/chrono.h`` provides formatters for
+``fmt/chrono.hpp`` provides formatters for
 
 * `std::chrono::duration <https://en.cppreference.com/w/cpp/chrono/duration>`_
 * `std::chrono::time_point
@@ -495,7 +495,7 @@ The format syntax is described in :ref:`chrono-specs`.
 
 **Example**::
 
-  #include <3laws/fmt/chrono.h>
+  #include <3laws/fmt/chrono.hpp>
 
   int main() {
     std::time_t t = std::time(nullptr);
@@ -521,7 +521,7 @@ The format syntax is described in :ref:`chrono-specs`.
 Standard Library Types Formatting
 =================================
 
-``fmt/std.h`` provides formatters for:
+``fmt/std.hpp`` provides formatters for:
 
 * `std::atomic <https://en.cppreference.com/w/cpp/atomic/atomic>`_
 * `std::atomic_flag <https://en.cppreference.com/w/cpp/atomic/atomic_flag>`_
@@ -542,7 +542,7 @@ A ``std::variant`` is only formattable if every variant alternative is formattab
 
 **Example**::
 
-  #include <3laws/fmt/std.h>
+  #include <3laws/fmt/std.hpp>
 
   std::variant<char, float> v0{'x'};
   // Prints "variant('x')"
@@ -556,7 +556,7 @@ A ``std::variant`` is only formattable if every variant alternative is formattab
 Format String Compilation
 =========================
 
-``fmt/compile.h`` provides format string compilation enabled via the
+``fmt/compile.hpp`` provides format string compilation enabled via the
 ``LAWS3_FMT_COMPILE`` macro or the ``_cf`` user-defined literal. Format strings
 marked with ``LAWS3_FMT_COMPILE`` or ``_cf`` are parsed, checked and converted into
 efficient formatting code at compile-time. This supports arguments of built-in
@@ -584,7 +584,7 @@ bottleneck.
 Terminal Color and Text Style
 =============================
 
-``fmt/color.h`` provides support for terminal color and text style output.
+``fmt/color.hpp`` provides support for terminal color and text style output.
 
 .. doxygenfunction:: print(const text_style &ts, format_string<T...> fmt, T&&... args)
 
@@ -609,12 +609,12 @@ System APIs
 ``std::ostream`` Support
 ========================
 
-``fmt/ostream.h`` provides ``std::ostream`` support including formatting of
+``fmt/ostream.hpp`` provides ``std::ostream`` support including formatting of
 user-defined types that have an overloaded insertion operator (``operator<<``).
 In order to make a type formattable via ``std::ostream`` you should provide a
 ``formatter`` specialization inherited from ``ostream_formatter``::
 
-  #include <3laws/fmt/ostream.h>
+  #include <3laws/fmt/ostream.hpp>
 
   struct date {
     int year, month, day;
@@ -638,7 +638,7 @@ In order to make a type formattable via ``std::ostream`` you should provide a
 ``printf`` Formatting
 =====================
 
-The header ``fmt/printf.h`` provides ``printf``-like formatting functionality.
+The header ``fmt/printf.hpp`` provides ``printf``-like formatting functionality.
 The following functions use `printf format string syntax
 <https://pubs.opengroup.org/onlinepubs/009695399/functions/fprintf.html>`_ with
 the POSIX extension for positional arguments. Unlike their standard
@@ -656,7 +656,7 @@ argument type doesn't match its format specification.
 ``wchar_t`` Support
 ===================
 
-The optional header ``fmt/xchar.h`` provides support for ``wchar_t`` and exotic
+The optional header ``fmt/xchar.hpp`` provides support for ``wchar_t`` and exotic
 character types.
 
 .. doxygenstruct:: fmt::is_char

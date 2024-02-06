@@ -3,14 +3,14 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 // Disable bogus MSVC warnings.
 #if !defined(_CRT_SECURE_NO_WARNINGS) && defined(_MSC_VER)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "3laws/fmt/os.h"
+#include "3laws/fmt/os.hpp"
 
 #include <climits>
 

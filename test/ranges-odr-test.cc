@@ -3,12 +3,12 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <vector>
 
-#include "3laws/fmt/format.h"
-#include "3laws/fmt/ranges.h"
+#include "3laws/fmt/format.hpp"
+#include "3laws/fmt/ranges.hpp"
 #include "gtest/gtest.h"
 
 // call lll::fmt::format from another translation unit to test ODR

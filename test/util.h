@@ -3,14 +3,14 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <cstdarg>
 #include <cstdio>
 #include <locale>
 #include <string>
 
-#include "3laws/fmt/os.h"
+#include "3laws/fmt/os.hpp"
 
 #ifdef _MSC_VER
 #  define LAWS3_FMT_VSNPRINTF vsprintf_s

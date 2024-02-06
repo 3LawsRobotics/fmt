@@ -3,9 +3,9 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/chrono.h"
+#include "3laws/fmt/chrono.hpp"
 
 #include <algorithm>
 #include <ctime>

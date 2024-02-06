@@ -1,8 +1,7 @@
 // Copyright (c) 2019, Paul Dreik
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include <3laws/fmt/chrono.h>
-
+#include <3laws/fmt/chrono.hpp>
 #include <cstdint>
 
 #include "fuzzer-common.h"

@@ -3,13 +3,13 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 // clang-format off
 #include "test-assert.h"
 // clang-format on
 
-#include "3laws/fmt/base.h"
+#include "3laws/fmt/base.hpp"
 
 #include <climits>      // INT_MAX
 #include <cstring>      // std::strlen
@@ -29,7 +29,7 @@ using testing::Invoke;
 using testing::Return;
 
 #ifdef LAWS3_FMT_FORMAT_H_
-#  error core-test includes format.h
+#  error core-test includes format.hpp
 #endif
 
 lll::fmt::appender copy(lll::fmt::string_view s, lll::fmt::appender out) {

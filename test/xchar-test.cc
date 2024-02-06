@@ -3,20 +3,20 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/xchar.h"
+#include "3laws/fmt/xchar.hpp"
 
 #include <algorithm>
 #include <complex>
 #include <cwchar>
 #include <vector>
 
-#include "3laws/fmt/chrono.h"
-#include "3laws/fmt/color.h"
-#include "3laws/fmt/ostream.h"
-#include "3laws/fmt/ranges.h"
-#include "3laws/fmt/std.h"
+#include "3laws/fmt/chrono.hpp"
+#include "3laws/fmt/color.hpp"
+#include "3laws/fmt/ostream.hpp"
+#include "3laws/fmt/ranges.hpp"
+#include "3laws/fmt/std.hpp"
 #include "gtest-extra.h"  // Contains
 #include "util.h"         // get_locale
 

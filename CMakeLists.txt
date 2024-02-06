@@ -205,14 +205,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "MSDOS")
   message(STATUS "MSDOS is incompatible with gtest")
 endif()
 
-# Get version from base.h
-file(READ include/3laws/fmt/base.h core_h)
+# Get version from base.hpp
+file(READ include/3laws/fmt/base.hpp core_h)
 if(NOT
    core_h
    MATCHES
    "LAWS3_FMT_VERSION ([0-9]+)([0-9][0-9])([0-9][0-9])"
 )
-  message(FATAL_ERROR "Cannot get LAWS3_FMT_VERSION from base.h.")
+  message(FATAL_ERROR "Cannot get LAWS3_FMT_VERSION from base.hpp.")
 endif()
 # Use math to skip leading zeros if any.
 math(EXPR CPACK_PACKAGE_VERSION_MAJOR ${CMAKE_MATCH_1})
@@ -378,19 +378,19 @@ endfunction()
 # Define the fmt library, its includes and the needed defines.
 add_headers(
   LAWS3_FMT_HEADERS
-  args.h
-  chrono.h
-  color.h
-  compile.h
-  base.h
-  format.h
-  format-inl.h
-  os.h
-  ostream.h
-  printf.h
-  ranges.h
-  std.h
-  xchar.h
+  args.hpp
+  chrono.hpp
+  color.hpp
+  compile.hpp
+  base.hpp
+  format.hpp
+  format-inl.hpp
+  os.hpp
+  ostream.hpp
+  printf.hpp
+  ranges.hpp
+  std.hpp
+  xchar.hpp
 )
 set(LAWS3_FMT_SOURCES src/format.cc)
 

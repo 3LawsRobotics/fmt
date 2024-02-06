@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_STD_H_
 #define LAWS3_FMT_STD_H_
@@ -19,8 +19,8 @@
 #include <utility>
 #include <vector>
 
-#include "format.h"
-#include "ostream.h"
+#include "format.hpp"
+#include "ostream.hpp"
 
 #if LAWS3_FMT_HAS_INCLUDE(<version>)
 #  include <version>
@@ -55,8 +55,8 @@
 // Check if typeid is available.
 #ifndef LAWS3_FMT_USE_TYPEID
 // __RTTI is for EDG compilers. _CPPRTTI is for MSVC.
-#  if defined(__GXX_RTTI) || LAWS3_FMT_HAS_FEATURE(cxx_rtti) || defined(_CPPRTTI) || \
-      defined(__INTEL_RTTI__) || defined(__RTTI)
+#  if defined(__GXX_RTTI) || LAWS3_FMT_HAS_FEATURE(cxx_rtti) || \
+      defined(_CPPRTTI) || defined(__INTEL_RTTI__) || defined(__RTTI)
 #    define LAWS3_FMT_USE_TYPEID 1
 #  else
 #    define LAWS3_FMT_USE_TYPEID 0
@@ -125,7 +125,8 @@ template <typename Char> struct formatter<std::filesystem::path, Char> {
  public:
   LAWS3_FMT_CONSTEXPR void set_debug_format(bool set = true) { debug_ = set; }
 
-  template <typename ParseContext> LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
+  template <typename ParseContext>
+  LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
     auto it = ctx.begin(), end = ctx.end();
     if (it == end) return it;
 
@@ -222,7 +223,8 @@ struct formatter<std::optional<T>, Char,
   LAWS3_FMT_CONSTEXPR static void maybe_set_debug_format(U&, ...) {}
 
  public:
-  template <typename ParseContext> LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
+  template <typename ParseContext>
+  LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
     maybe_set_debug_format(underlying_, true);
     return underlying_.parse(ctx);
   }
@@ -246,7 +248,8 @@ LAWS3_FMT_END_NAMESPACE
 LAWS3_FMT_BEGIN_NAMESPACE
 LAWS3_FMT_EXPORT
 template <> struct formatter<std::source_location> {
-  template <typename ParseContext> LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
+  template <typename ParseContext>
+  LAWS3_FMT_CONSTEXPR auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
@@ -369,7 +372,8 @@ template <typename Char> struct formatter<std::error_code, Char> {
   }
 
   template <typename FormatContext>
-  LAWS3_FMT_CONSTEXPR auto format(const std::error_code& ec, FormatContext& ctx) const
+  LAWS3_FMT_CONSTEXPR auto format(const std::error_code& ec,
+                                  FormatContext& ctx) const
       -> decltype(ctx.out()) {
     auto out = ctx.out();
     out = detail::write_bytes<Char>(out, ec.category().name(), format_specs());

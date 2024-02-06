@@ -3,9 +3,9 @@
 // Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
-#include "3laws/fmt/ranges.h"
+#include "3laws/fmt/ranges.hpp"
 
 #include <list>
 #include <map>
@@ -20,7 +20,7 @@
 #  include <ranges>
 #endif
 
-#include "3laws/fmt/format.h"
+#include "3laws/fmt/format.hpp"
 #include "gtest/gtest.h"
 
 #if !LAWS3_FMT_GCC_VERSION || LAWS3_FMT_GCC_VERSION >= 601

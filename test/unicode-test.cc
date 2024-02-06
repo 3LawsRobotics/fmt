@@ -3,13 +3,13 @@
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #include <iomanip>
 #include <locale>
 #include <vector>
 
-#include "3laws/fmt/chrono.h"
+#include "3laws/fmt/chrono.hpp"
 #include "gmock/gmock.h"
 #include "util.h"  // get_locale
 

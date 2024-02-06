@@ -3,7 +3,7 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 //
-// For the license information refer to format.h.
+// For the license information refer to format.hpp.
 
 #ifndef LAWS3_FMT_PRINTF_H_
 #define LAWS3_FMT_PRINTF_H_
@@ -11,7 +11,7 @@
 #include <algorithm>  // std::max
 #include <limits>     // std::numeric_limits
 
-#include "format.h"
+#include "format.hpp"
 
 LAWS3_FMT_BEGIN_NAMESPACE
 LAWS3_FMT_BEGIN_EXPORT
