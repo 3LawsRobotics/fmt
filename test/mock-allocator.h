@@ -5,8 +5,8 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_MOCK_ALLOCATOR_H_
-#define FMT_MOCK_ALLOCATOR_H_
+#ifndef LAWS3_FMT_MOCK_ALLOCATOR_H_
+#define LAWS3_FMT_MOCK_ALLOCATOR_H_
 
 #include <assert.h>  // assert
 #include <stddef.h>  // size_t
@@ -74,4 +74,4 @@ template <typename Allocator> class allocator_ref {
   void deallocate(value_type* p, size_t n) { alloc_->deallocate(p, n); }
 };
 
-#endif  // FMT_MOCK_ALLOCATOR_H_
+#endif  // LAWS3_FMT_MOCK_ALLOCATOR_H_

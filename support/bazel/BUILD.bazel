@@ -8,7 +8,7 @@ cc_library(
         "src/os.cc",
     ],
     hdrs = glob([
-        "include/fmt/*.h",
+        "include/3laws/fmt/*.hpp",
     ]),
     copts = select({
         "@platforms//os:windows": ["-utf-8"],

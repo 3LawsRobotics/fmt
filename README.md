@@ -65,7 +65,7 @@ Try {fmt} in [Compiler Explorer](https://godbolt.org/z/8Mx1EW73v).
   `-Wall -Wextra -pedantic`
 - Locale independence by default
 - Optional header-only configuration enabled with the
-  `FMT_HEADER_ONLY` macro
+  `LAWS3_FMT_HEADER_ONLY` macro
 
 See the [documentation](https://fmt.dev) for more details.
 
@@ -74,17 +74,17 @@ See the [documentation](https://fmt.dev) for more details.
 **Print to stdout** ([run](https://godbolt.org/z/Tevcjh))
 
 ``` c++
-#include <fmt/base.h>
+#include <3laws/fmt/base.hpp>
 
 int main() {
-  fmt::print("Hello, world!\n");
+  lll::fmt::print("Hello, world!\n");
 }
 ```
 
 **Format a string** ([run](https://godbolt.org/z/oK8h33))
 
 ``` c++
-std::string s = fmt::format("The answer is {}.", 42);
+std::string s = lll::fmt::format("The answer is {}.", 42);
 // s == "The answer is 42."
 ```
 
@@ -92,19 +92,19 @@ std::string s = fmt::format("The answer is {}.", 42);
 ([run](https://godbolt.org/z/Yn7Txe))
 
 ``` c++
-std::string s = fmt::format("I'd rather be {1} than {0}.", "right", "happy");
+std::string s = lll::fmt::format("I'd rather be {1} than {0}.", "right", "happy");
 // s == "I'd rather be happy than right."
 ```
 
 **Print dates and times** ([run](https://godbolt.org/z/c31ExdY3W))
 
 ``` c++
-#include <fmt/chrono.h>
+#include <3laws/fmt/chrono.hpp>
 
 int main() {
   auto now = std::chrono::system_clock::now();
-  fmt::print("Date and time: {}\n", now);
-  fmt::print("Time: {:%H:%M}\n", now);
+  lll::fmt::print("Date and time: {}\n", now);
+  lll::fmt::print("Time: {:%H:%M}\n", now);
 }
 ```
 
@@ -117,11 +117,11 @@ Output:
 
 ``` c++
 #include <vector>
-#include <fmt/ranges.h>
+#include <3laws/fmt/ranges.hpp>
 
 int main() {
   std::vector<int> v = {1, 2, 3};
-  fmt::print("{}\n", v);
+  lll::fmt::print("{}\n", v);
 }
 ```
 
@@ -132,7 +132,7 @@ Output:
 **Check a format string at compile time**
 
 ``` c++
-std::string s = fmt::format("{:d}", "I am not a number");
+std::string s = lll::fmt::format("{:d}", "I am not a number");
 ```
 
 This gives a compile-time error in C++20 because `d` is an invalid
@@ -141,10 +141,10 @@ format specifier for a string.
 **Write a file from a single thread**
 
 ``` c++
-#include <fmt/os.h>
+#include <3laws/fmt/os.hpp>
 
 int main() {
-  auto out = fmt::output_file("guide.txt");
+  auto out = lll::fmt::output_file("guide.txt");
   out.print("Don't {}", "Panic");
 }
 ```
@@ -155,14 +155,14 @@ fprintf](http://www.zverovich.net/2020/08/04/optimal-file-buffer-size.html).
 **Print with colors and text styles**
 
 ``` c++
-#include <fmt/color.h>
+#include <3laws/fmt/color.hpp>
 
 int main() {
-  fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
+  lll::fmt::print(fg(lll::fmt::color::crimson) | lll::fmt::emphasis::bold,
              "Hello, {}!\n", "world");
-  fmt::print(fg(fmt::color::floral_white) | bg(fmt::color::slate_gray) |
-             fmt::emphasis::underline, "Olá, {}!\n", "Mundo");
-  fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic,
+  lll::fmt::print(fg(lll::fmt::color::floral_white) | bg(lll::fmt::color::slate_gray) |
+             lll::fmt::emphasis::underline, "Olá, {}!\n", "Mundo");
+  lll::fmt::print(fg(lll::fmt::color::steel_blue) | lll::fmt::emphasis::italic,
              "你好{}！\n", "世界");
 }
 ```
@@ -179,7 +179,7 @@ Output on a modern terminal with Unicode support:
 |-------------------|---------------|-------------|
 | libc              | printf        |   0.91      |
 | libc++            | std::ostream  |   2.49      |
-| {fmt} 9.1         | fmt::print    |   0.74      |
+| {fmt} 9.1         | lll::fmt::print    |   0.74      |
 | Boost Format 1.80 | boost::format |   6.26      |
 | Folly Format      | folly::format |   1.87      |
 
@@ -268,7 +268,7 @@ or the bloat test:
 [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) v18 provides the
 [modernize-use-std-print](https://clang.llvm.org/extra/clang-tidy/checks/modernize/use-std-print.html)
 check that is capable of converting occurrences of `printf` and
-`fprintf` to `fmt::print` if configured to do so. (By default it
+`fprintf` to `lll::fmt::print` if configured to do so. (By default it
 converts to `std::print`.)
 
 # Notable projects using this library
@@ -445,7 +445,7 @@ too restrictive for use in some projects.
 This is not a formatting library but I decided to include it here for
 completeness. As iostreams, it suffers from the problem of mixing
 verbatim text with arguments. The library is pretty fast, but slower on
-integer formatting than `fmt::format_to` with format string compilation
+integer formatting than `lll::fmt::format_to` with format string compilation
 on Karma\'s own benchmark, see [Converting a hundred million integers to
 strings per
 second](http://www.zverovich.net/2020/06/13/fast-int-to-string-revisited.html).

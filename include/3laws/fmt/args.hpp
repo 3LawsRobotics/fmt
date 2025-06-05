@@ -5,18 +5,18 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_ARGS_H_
-#define FMT_ARGS_H_
+#ifndef LAWS3_FMT_ARGS_H_
+#define LAWS3_FMT_ARGS_H_
 
-#ifndef FMT_MODULE
+#ifndef LAWS3_FMT_MODULE
 #  include <functional>  // std::reference_wrapper
 #  include <memory>      // std::unique_ptr
 #  include <vector>
 #endif
 
-#include "format.h"  // std_string_view
+#include "format.hpp"  // std_string_view
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 
 template <typename T> struct is_reference_wrapper : std::false_type {};
@@ -45,10 +45,10 @@ class dynamic_arg_list {
     T value;
 
     template <typename Arg>
-    FMT_CONSTEXPR typed_node(const Arg& arg) : value(arg) {}
+    LAWS3_FMT_CONSTEXPR typed_node(const Arg& arg) : value(arg) {}
 
     template <typename Char>
-    FMT_CONSTEXPR typed_node(const basic_string_view<Char>& arg)
+    LAWS3_FMT_CONSTEXPR typed_node(const basic_string_view<Char>& arg)
         : value(arg.data(), arg.size()) {}
   };
 
@@ -68,10 +68,10 @@ class dynamic_arg_list {
 /**
  * A dynamic list of formatting arguments with storage.
  *
- * It can be implicitly converted into `fmt::basic_format_args` for passing
- * into type-erased formatting functions such as `fmt::vformat`.
+ * It can be implicitly converted into `lll::fmt::basic_format_args` for passing
+ * into type-erased formatting functions such as `lll::fmt::vformat`.
  */
-FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
+LAWS3_FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
  private:
   using char_type = typename Context::char_type;
 
@@ -145,11 +145,11 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
    *
    * **Example**:
    *
-   *     fmt::dynamic_format_arg_store<fmt::format_context> store;
+   *     lll::fmt::dynamic_format_arg_store<lll::fmt::format_context> store;
    *     store.push_back(42);
    *     store.push_back("abc");
    *     store.push_back(1.5f);
-   *     std::string result = fmt::vformat("{} and {} and {}", store);
+   *     std::string result = lll::fmt::vformat("{} and {} and {}", store);
    */
   template <typename T> void push_back(const T& arg) {
     if (detail::const_check(need_copy<T>::value))
@@ -164,11 +164,11 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
    *
    * **Example**:
    *
-   *     fmt::dynamic_format_arg_store<fmt::format_context> store;
+   *     lll::fmt::dynamic_format_arg_store<lll::fmt::format_context> store;
    *     char band[] = "Rolling Stones";
    *     store.push_back(std::cref(band));
    *     band[9] = 'c'; // Changing str affects the output.
-   *     std::string result = fmt::vformat("{}", store);
+   *     std::string result = lll::fmt::vformat("{}", store);
    *     // result == "Rolling Scones"
    */
   template <typename T> void push_back(std::reference_wrapper<T> arg) {
@@ -189,9 +189,9 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
         dynamic_args_.push<std::basic_string<char_type>>(arg.name).c_str();
     if (detail::const_check(need_copy<T>::value)) {
       emplace_arg(
-          fmt::arg(arg_name, dynamic_args_.push<stored_t<T>>(arg.value)));
+          lll::fmt::arg(arg_name, dynamic_args_.push<stored_t<T>>(arg.value)));
     } else {
-      emplace_arg(fmt::arg(arg_name, arg.value));
+      emplace_arg(lll::fmt::arg(arg_name, arg.value));
     }
   }
 
@@ -205,8 +205,8 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
   /// Reserves space to store at least `new_cap` arguments including
   /// `new_cap_named` named arguments.
   void reserve(size_t new_cap, size_t new_cap_named) {
-    FMT_ASSERT(new_cap >= new_cap_named,
-               "set of arguments includes set of named arguments");
+    LAWS3_FMT_ASSERT(new_cap >= new_cap_named,
+                     "set of arguments includes set of named arguments");
     data_.reserve(new_cap);
     named_info_.reserve(new_cap_named);
   }
@@ -215,6 +215,6 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
   size_t size() const noexcept { return data_.size(); }
 };
 
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_ARGS_H_
+#endif  // LAWS3_FMT_ARGS_H_

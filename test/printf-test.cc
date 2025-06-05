@@ -5,9 +5,9 @@
 //
 // For the license information refer to format.h.
 
-#include "fmt/printf.h"
+#include "3laws/fmt/printf.hpp"
 // include <format> if possible for https://github.com/fmtlib/fmt/pull/4042
-#if FMT_HAS_INCLUDE(<format>) && FMT_CPLUSPLUS > 201703L
+#if LAWS3_FMT_HAS_INCLUDE(<format>) && LAWS3_FMT_CPLUSPLUS > 201703L
 #  include <format>
 #endif
 
@@ -15,49 +15,50 @@
 #include <climits>
 #include <cstring>
 
-#include "fmt/xchar.h"
+#include "3laws/fmt/xchar.hpp"
 #include "gtest-extra.h"
-#include "util.h"
+#include "util.hpp"
 
-using fmt::format;
-using fmt::format_error;
-using fmt::detail::max_value;
+using lll::fmt::format;
+using lll::fmt::format_error;
+using lll::fmt::detail::max_value;
 
 const unsigned big_num = INT_MAX + 1u;
 
 // Makes format string argument positional.
-static std::string make_positional(fmt::string_view format) {
+static std::string make_positional(lll::fmt::string_view format) {
   std::string s(format.data(), format.size());
   s.replace(s.find('%'), 1, "%1$");
   return s;
 }
 
-static std::wstring make_positional(fmt::basic_string_view<wchar_t> format) {
+static std::wstring make_positional(
+    lll::fmt::basic_string_view<wchar_t> format) {
   std::wstring s(format.data(), format.size());
   s.replace(s.find(L'%'), 1, L"%1$");
   return s;
 }
 
-// A wrapper around fmt::sprintf to workaround bogus warnings about invalid
+// A wrapper around lll::fmt::sprintf to workaround bogus warnings about invalid
 // format strings in MSVC.
 template <typename... Args>
-std::string test_sprintf(fmt::string_view format, const Args&... args) {
-  return fmt::sprintf(format, args...);
+std::string test_sprintf(lll::fmt::string_view format, const Args&... args) {
+  return lll::fmt::sprintf(format, args...);
 }
 template <typename... Args>
-std::wstring test_sprintf(fmt::basic_string_view<wchar_t> format,
+std::wstring test_sprintf(lll::fmt::basic_string_view<wchar_t> format,
                           const Args&... args) {
-  return fmt::sprintf(format, args...);
+  return lll::fmt::sprintf(format, args...);
 }
 
 #define EXPECT_PRINTF(expected_output, format, arg)     \
   EXPECT_EQ(expected_output, test_sprintf(format, arg)) \
       << "format: " << format;                          \
-  EXPECT_EQ(expected_output, fmt::sprintf(make_positional(format), arg))
+  EXPECT_EQ(expected_output, lll::fmt::sprintf(make_positional(format), arg))
 
 TEST(printf_test, no_args) {
   EXPECT_EQ("test", test_sprintf("test"));
-  EXPECT_EQ(L"test", fmt::sprintf(L"test"));
+  EXPECT_EQ(L"test", lll::fmt::sprintf(L"test"));
 }
 
 TEST(printf_test, escape) {
@@ -66,11 +67,11 @@ TEST(printf_test, escape) {
   EXPECT_EQ("% after", test_sprintf("%% after"));
   EXPECT_EQ("before % after", test_sprintf("before %% after"));
   EXPECT_EQ("%s", test_sprintf("%%s"));
-  EXPECT_EQ(L"%", fmt::sprintf(L"%%"));
-  EXPECT_EQ(L"before %", fmt::sprintf(L"before %%"));
-  EXPECT_EQ(L"% after", fmt::sprintf(L"%% after"));
-  EXPECT_EQ(L"before % after", fmt::sprintf(L"before %% after"));
-  EXPECT_EQ(L"%s", fmt::sprintf(L"%%s"));
+  EXPECT_EQ(L"%", lll::fmt::sprintf(L"%%"));
+  EXPECT_EQ(L"before %", lll::fmt::sprintf(L"before %%"));
+  EXPECT_EQ(L"% after", lll::fmt::sprintf(L"%% after"));
+  EXPECT_EQ(L"before % after", lll::fmt::sprintf(L"before %% after"));
+  EXPECT_EQ(L"%s", lll::fmt::sprintf(L"%%s"));
 }
 
 TEST(printf_test, positional_args) {
@@ -205,12 +206,13 @@ TEST(printf_test, space_flag) {
 
 TEST(printf_test, hash_flag) {
   EXPECT_PRINTF("042", "%#o", 042);
-  EXPECT_PRINTF(fmt::format("0{:o}", static_cast<unsigned>(-042)), "%#o", -042);
+  EXPECT_PRINTF(lll::fmt::format("0{:o}", static_cast<unsigned>(-042)), "%#o",
+                -042);
   EXPECT_PRINTF("0", "%#o", 0);
 
   EXPECT_PRINTF("0x42", "%#x", 0x42);
   EXPECT_PRINTF("0X42", "%#X", 0x42);
-  EXPECT_PRINTF(fmt::format("0x{:x}", static_cast<unsigned>(-0x42)), "%#x",
+  EXPECT_PRINTF(lll::fmt::format("0x{:x}", static_cast<unsigned>(-0x42)), "%#x",
                 -0x42);
   EXPECT_PRINTF("0", "%#x", 0);
 
@@ -292,7 +294,7 @@ TEST(printf_test, float_precision) {
 
 TEST(printf_test, string_precision) {
   char test[] = {'H', 'e', 'l', 'l', 'o'};
-  EXPECT_EQ(fmt::sprintf("%.4s", test), "Hell");
+  EXPECT_EQ(lll::fmt::sprintf("%.4s", test), "Hell");
 }
 
 TEST(printf_test, ignore_precision_for_non_numeric_arg) {
@@ -337,7 +339,7 @@ void test_length(const char* length_spec, U value) {
   unsigned long long unsigned_value = 0;
   // Apply integer promotion to the argument.
   unsigned long long max = max_value<U>();
-  using fmt::detail::const_check;
+  using lll::fmt::detail::const_check;
   if (const_check(max <= static_cast<unsigned>(max_value<int>()))) {
     signed_value = static_cast<int>(value);
     unsigned_value = static_cast<unsigned long long>(value);
@@ -355,20 +357,20 @@ void test_length(const char* length_spec, U value) {
   }
   std::ostringstream os;
   os << signed_value;
-  EXPECT_PRINTF(os.str(), fmt::format("%{}d", length_spec), value);
-  EXPECT_PRINTF(os.str(), fmt::format("%{}i", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}d", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}i", length_spec), value);
   os.str("");
   os << unsigned_value;
-  EXPECT_PRINTF(os.str(), fmt::format("%{}u", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}u", length_spec), value);
   os.str("");
   os << std::oct << unsigned_value;
-  EXPECT_PRINTF(os.str(), fmt::format("%{}o", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}o", length_spec), value);
   os.str("");
   os << std::hex << unsigned_value;
-  EXPECT_PRINTF(os.str(), fmt::format("%{}x", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}x", length_spec), value);
   os.str("");
   os << std::hex << std::uppercase << unsigned_value;
-  EXPECT_PRINTF(os.str(), fmt::format("%{}X", length_spec), value);
+  EXPECT_PRINTF(os.str(), lll::fmt::format("%{}X", length_spec), value);
 }
 
 template <typename T> void test_length(const char* length_spec) {
@@ -409,8 +411,8 @@ TEST(printf_test, length) {
   test_length<size_t>("z");
   test_length<std::ptrdiff_t>("t");
   long double max = max_value<long double>();
-  EXPECT_PRINTF(fmt::format("{:.6}", max), "%g", max);
-  EXPECT_PRINTF(fmt::format("{:.6}", max), "%Lg", max);
+  EXPECT_PRINTF(lll::fmt::format("{:.6}", max), "%g", max);
+  EXPECT_PRINTF(lll::fmt::format("{:.6}", max), "%Lg", max);
 }
 
 TEST(printf_test, bool) { EXPECT_PRINTF("1", "%d", true); }
@@ -419,17 +421,17 @@ TEST(printf_test, int) {
   EXPECT_PRINTF("-42", "%d", -42);
   EXPECT_PRINTF("-42", "%i", -42);
   unsigned u = 0 - 42u;
-  EXPECT_PRINTF(fmt::format("{}", u), "%u", -42);
-  EXPECT_PRINTF(fmt::format("{:o}", u), "%o", -42);
-  EXPECT_PRINTF(fmt::format("{:x}", u), "%x", -42);
-  EXPECT_PRINTF(fmt::format("{:X}", u), "%X", -42);
+  EXPECT_PRINTF(lll::fmt::format("{}", u), "%u", -42);
+  EXPECT_PRINTF(lll::fmt::format("{:o}", u), "%o", -42);
+  EXPECT_PRINTF(lll::fmt::format("{:x}", u), "%x", -42);
+  EXPECT_PRINTF(lll::fmt::format("{:X}", u), "%X", -42);
 }
 
 TEST(printf_test, long_long) {
-  // fmt::printf allows passing long long arguments to %d without length
+  // lll::fmt::printf allows passing long long arguments to %d without length
   // specifiers.
   long long max = max_value<long long>();
-  EXPECT_PRINTF(fmt::format("{}", max), "%d", max);
+  EXPECT_PRINTF(lll::fmt::format("{}", max), "%d", max);
 }
 
 TEST(printf_test, float) {
@@ -457,19 +459,19 @@ TEST(printf_test, float) {
 TEST(printf_test, inf) {
   double inf = std::numeric_limits<double>::infinity();
   for (const char* type = "fega"; *type; ++type) {
-    EXPECT_PRINTF("inf", fmt::format("%{}", *type), inf);
+    EXPECT_PRINTF("inf", lll::fmt::format("%{}", *type), inf);
     char upper = static_cast<char>(std::toupper(*type));
-    EXPECT_PRINTF("INF", fmt::format("%{}", upper), inf);
+    EXPECT_PRINTF("INF", lll::fmt::format("%{}", upper), inf);
   }
 }
 
 TEST(printf_test, char) {
   EXPECT_PRINTF("x", "%c", 'x');
   int max = max_value<int>();
-  EXPECT_PRINTF(fmt::format("{}", static_cast<char>(max)), "%c", max);
+  EXPECT_PRINTF(lll::fmt::format("{}", static_cast<char>(max)), "%c", max);
   // EXPECT_PRINTF("x", "%lc", L'x');
   EXPECT_PRINTF(L"x", L"%c", L'x');
-  EXPECT_PRINTF(fmt::format(L"{}", static_cast<wchar_t>(max)), L"%c", max);
+  EXPECT_PRINTF(lll::fmt::format(L"{}", static_cast<wchar_t>(max)), L"%c", max);
 }
 
 TEST(printf_test, string) {
@@ -486,22 +488,22 @@ TEST(printf_test, string) {
 TEST(printf_test, pointer) {
   int n;
   void* p = &n;
-  EXPECT_PRINTF(fmt::format("{}", p), "%p", p);
+  EXPECT_PRINTF(lll::fmt::format("{}", p), "%p", p);
   p = nullptr;
   EXPECT_PRINTF("(nil)", "%p", p);
   EXPECT_PRINTF("     (nil)", "%10p", p);
   const char* s = "test";
-  EXPECT_PRINTF(fmt::format("{:p}", s), "%p", s);
+  EXPECT_PRINTF(lll::fmt::format("{:p}", s), "%p", s);
   const char* null_str = nullptr;
   EXPECT_PRINTF("(nil)", "%p", null_str);
 
   p = &n;
-  EXPECT_PRINTF(fmt::format(L"{}", p), L"%p", p);
+  EXPECT_PRINTF(lll::fmt::format(L"{}", p), L"%p", p);
   p = nullptr;
   EXPECT_PRINTF(L"(nil)", L"%p", p);
   EXPECT_PRINTF(L"     (nil)", L"%10p", p);
   const wchar_t* w = L"test";
-  EXPECT_PRINTF(fmt::format(L"{:p}", w), L"%p", w);
+  EXPECT_PRINTF(lll::fmt::format(L"{:p}", w), L"%p", w);
   const wchar_t* null_wstr = nullptr;
   EXPECT_PRINTF(L"(nil)", L"%p", null_wstr);
 }
@@ -515,38 +517,40 @@ TEST(printf_test, enum) {
   EXPECT_PRINTF("42", "%d", volatile_enum);
 }
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 TEST(printf_test, examples) {
   const char* weekday = "Thursday";
   const char* month = "August";
   int day = 21;
-  EXPECT_WRITE(stdout, fmt::printf("%1$s, %3$d %2$s", weekday, month, day),
+  EXPECT_WRITE(stdout, lll::fmt::printf("%1$s, %3$d %2$s", weekday, month, day),
                "Thursday, 21 August");
 }
 
 TEST(printf_test, printf_error) {
-  auto pipe = fmt::pipe();
-  int result = fmt::fprintf(pipe.read_end.fdopen("r").get(), "test");
+  auto pipe = lll::fmt::pipe();
+  int result = lll::fmt::fprintf(pipe.read_end.fdopen("r").get(), "test");
   EXPECT_LT(result, 0);
 }
 #endif
 
 TEST(printf_test, wide_string) {
-  EXPECT_EQ(L"abc", fmt::sprintf(L"%s", L"abc"));
+  EXPECT_EQ(L"abc", lll::fmt::sprintf(L"%s", L"abc"));
 }
 
 TEST(printf_test, vprintf) {
   int n = 42;
-  auto store = fmt::make_format_args<fmt::printf_context>(n);
-  auto args = fmt::basic_format_args<fmt::printf_context>(store);
-  EXPECT_EQ(fmt::vsprintf(fmt::string_view("%d"), args), "42");
-  EXPECT_WRITE(stdout, fmt::vfprintf(stdout, fmt::string_view("%d"), args),
+  auto store = lll::fmt::make_format_args<lll::fmt::printf_context>(n);
+  auto args = lll::fmt::basic_format_args<lll::fmt::printf_context>(store);
+  EXPECT_EQ(lll::fmt::vsprintf(lll::fmt::string_view("%d"), args), "42");
+  EXPECT_WRITE(stdout,
+               lll::fmt::vfprintf(stdout, lll::fmt::string_view("%d"), args),
                "42");
 }
 
 template <typename... Args>
-void check_format_string_regression(fmt::string_view s, const Args&... args) {
-  fmt::sprintf(s, args...);
+void check_format_string_regression(lll::fmt::string_view s,
+                                    const Args&... args) {
+  lll::fmt::sprintf(s, args...);
 }
 
 TEST(printf_test, check_format_string_regression) {
@@ -554,15 +558,16 @@ TEST(printf_test, check_format_string_regression) {
 }
 
 TEST(printf_test, fixed_large_exponent) {
-  EXPECT_EQ("1000000000000000000000", fmt::sprintf("%.*f", -13, 1e21));
+  EXPECT_EQ("1000000000000000000000", lll::fmt::sprintf("%.*f", -13, 1e21));
 }
 
 TEST(printf_test, make_printf_args) {
   int n = 42;
   EXPECT_EQ("[42] something happened",
-            fmt::vsprintf(fmt::string_view("[%d] %s happened"),
-                          {fmt::make_printf_args(n, "something")}));
+            lll::fmt::vsprintf(lll::fmt::string_view("[%d] %s happened"),
+                               {lll::fmt::make_printf_args(n, "something")}));
   EXPECT_EQ(L"[42] something happened",
-            fmt::vsprintf(fmt::basic_string_view<wchar_t>(L"[%d] %s happened"),
-                          {fmt::make_printf_args<wchar_t>(n, L"something")}));
+            lll::fmt::vsprintf(
+                lll::fmt::basic_string_view<wchar_t>(L"[%d] %s happened"),
+                {lll::fmt::make_printf_args<wchar_t>(n, L"something")}));
 }

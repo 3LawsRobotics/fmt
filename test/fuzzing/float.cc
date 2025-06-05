@@ -1,8 +1,7 @@
 // A fuzzer for floating-point formatter.
 // For the license information refer to format.h.
 
-#include <fmt/format.h>
-
+#include <3laws/fmt/format.hpp>
 #include <cstdint>
 #include <cstdlib>
 #include <limits>
@@ -10,13 +9,13 @@
 
 #include "fuzzer-common.h"
 
-void check_round_trip(fmt::string_view format_str, double value) {
-  auto buffer = fmt::memory_buffer();
-  fmt::format_to(std::back_inserter(buffer), format_str, value);
+void check_round_trip(lll::fmt::string_view format_str, double value) {
+  auto buffer = lll::fmt::memory_buffer();
+  lll::fmt::format_to(std::back_inserter(buffer), format_str, value);
 
   if (std::isnan(value)) {
     auto nan = std::signbit(value) ? "-nan" : "nan";
-    if (fmt::string_view(buffer.data(), buffer.size()) != nan)
+    if (lll::fmt::string_view(buffer.data(), buffer.size()) != nan)
       throw std::runtime_error("round trip failure");
     return;
   }

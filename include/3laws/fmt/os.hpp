@@ -5,76 +5,78 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_OS_H_
-#define FMT_OS_H_
+#ifndef LAWS3_FMT_OS_H_
+#define LAWS3_FMT_OS_H_
 
-#include "format.h"
+#include "format.hpp"
 
-#ifndef FMT_MODULE
+#ifndef LAWS3_FMT_MODULE
 #  include <cerrno>
 #  include <cstddef>
 #  include <cstdio>
 #  include <system_error>  // std::system_error
 
-#  if FMT_HAS_INCLUDE(<xlocale.h>)
+#  if LAWS3_FMT_HAS_INCLUDE(<xlocale.h>)
 #    include <xlocale.h>  // LC_NUMERIC_MASK on macOS
 #  endif
-#endif  // FMT_MODULE
+#endif  // LAWS3_FMT_MODULE
 
-#ifndef FMT_USE_FCNTL
+#ifndef LAWS3_FMT_USE_FCNTL
 // UWP doesn't provide _pipe.
-#  if FMT_HAS_INCLUDE("winapifamily.h")
+#  if LAWS3_FMT_HAS_INCLUDE("winapifamily.hpp")
 #    include <winapifamily.h>
 #  endif
-#  if (FMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
-       defined(__linux__)) &&                              \
-      (!defined(WINAPI_FAMILY) ||                          \
+#  if (LAWS3_FMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
+       defined(__linux__)) &&                                    \
+      (!defined(WINAPI_FAMILY) ||                                \
        (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
 #    include <fcntl.h>  // for O_RDONLY
-#    define FMT_USE_FCNTL 1
+#    define LAWS3_FMT_USE_FCNTL 1
 #  else
-#    define FMT_USE_FCNTL 0
+#    define LAWS3_FMT_USE_FCNTL 0
 #  endif
 #endif
 
-#ifndef FMT_POSIX
+#ifndef LAWS3_FMT_POSIX
 #  if defined(_WIN32) && !defined(__MINGW32__)
 // Fix warnings about deprecated symbols.
-#    define FMT_POSIX(call) _##call
+#    define LAWS3_FMT_POSIX(call) _##call
 #  else
-#    define FMT_POSIX(call) call
+#    define LAWS3_FMT_POSIX(call) call
 #  endif
 #endif
 
-// Calls to system functions are wrapped in FMT_SYSTEM for testability.
-#ifdef FMT_SYSTEM
-#  define FMT_HAS_SYSTEM
-#  define FMT_POSIX_CALL(call) FMT_SYSTEM(call)
+// Calls to system functions are wrapped in LAWS3_FMT_SYSTEM for testability.
+#ifdef LAWS3_FMT_SYSTEM
+#  define LAWS3_FMT_HAS_SYSTEM
+#  define LAWS3_FMT_POSIX_CALL(call) LAWS3_FMT_SYSTEM(call)
 #else
-#  define FMT_SYSTEM(call) ::call
+#  define LAWS3_FMT_SYSTEM(call) ::call
 #  ifdef _WIN32
 // Fix warnings about deprecated symbols.
-#    define FMT_POSIX_CALL(call) ::_##call
+#    define LAWS3_FMT_POSIX_CALL(call) ::_##call
 #  else
-#    define FMT_POSIX_CALL(call) ::call
+#    define LAWS3_FMT_POSIX_CALL(call) ::call
 #  endif
 #endif
 
 // Retries the expression while it evaluates to error_result and errno
 // equals to EINTR.
 #ifndef _WIN32
-#  define FMT_RETRY_VAL(result, expression, error_result) \
-    do {                                                  \
-      (result) = (expression);                            \
+#  define LAWS3_FMT_RETRY_VAL(result, expression, error_result) \
+    do {                                                        \
+      (result) = (expression);                                  \
     } while ((result) == (error_result) && errno == EINTR)
 #else
-#  define FMT_RETRY_VAL(result, expression, error_result) result = (expression)
+#  define LAWS3_FMT_RETRY_VAL(result, expression, error_result) \
+    result = (expression)
 #endif
 
-#define FMT_RETRY(result, expression) FMT_RETRY_VAL(result, expression, -1)
+#define LAWS3_FMT_RETRY(result, expression) \
+  LAWS3_FMT_RETRY_VAL(result, expression, -1)
 
-FMT_BEGIN_NAMESPACE
-FMT_BEGIN_EXPORT
+LAWS3_FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_EXPORT
 
 /**
  * A reference to a null-terminated string. It can be constructed from a C
@@ -111,15 +113,15 @@ using cstring_view = basic_cstring_view<char>;
 using wcstring_view = basic_cstring_view<wchar_t>;
 
 #ifdef _WIN32
-FMT_API const std::error_category& system_category() noexcept;
+LAWS3_FMT_API const std::error_category& system_category() noexcept;
 
 namespace detail {
-FMT_API void format_windows_error(buffer<char>& out, int error_code,
-                                  const char* message) noexcept;
+LAWS3_FMT_API void format_windows_error(buffer<char>& out, int error_code,
+                                        const char* message) noexcept;
 }
 
-FMT_API std::system_error vwindows_error(int error_code, string_view fmt,
-                                         format_args args);
+LAWS3_FMT_API std::system_error vwindows_error(int error_code, string_view fmt,
+                                               format_args args);
 
 /**
  * Constructs a `std::system_error` object with the description of the form
@@ -142,19 +144,20 @@ FMT_API std::system_error vwindows_error(int error_code, string_view fmt,
  *     LPOFSTRUCT of = LPOFSTRUCT();
  *     HFILE file = OpenFile(filename, &of, OF_READ);
  *     if (file == HFILE_ERROR) {
- *       throw fmt::windows_error(GetLastError(),
+ *       throw lll::fmt::windows_error(GetLastError(),
  *                                "cannot open file '{}'", filename);
  *     }
  */
 template <typename... T>
-auto windows_error(int error_code, string_view message, const T&... args)
-    -> std::system_error {
+auto windows_error(int error_code, string_view message,
+                   const T&... args) -> std::system_error {
   return vwindows_error(error_code, message, vargs<T...>{{args...}});
 }
 
 // Reports a Windows error without throwing an exception.
 // Can be used to report errors from destructors.
-FMT_API void report_windows_error(int error_code, const char* message) noexcept;
+LAWS3_FMT_API void report_windows_error(int error_code,
+                                        const char* message) noexcept;
 #else
 inline auto system_category() noexcept -> const std::error_category& {
   return std::system_category();
@@ -186,7 +189,7 @@ class buffered_file {
   inline buffered_file() noexcept : file_(nullptr) {}
 
   // Destroys the object closing the file it represents if any.
-  FMT_API ~buffered_file() noexcept;
+  LAWS3_FMT_API ~buffered_file() noexcept;
 
  public:
   inline buffered_file(buffered_file&& other) noexcept : file_(other.file_) {
@@ -201,33 +204,33 @@ class buffered_file {
   }
 
   // Opens a file.
-  FMT_API buffered_file(cstring_view filename, cstring_view mode);
+  LAWS3_FMT_API buffered_file(cstring_view filename, cstring_view mode);
 
   // Closes the file.
-  FMT_API void close();
+  LAWS3_FMT_API void close();
 
   // Returns the pointer to a FILE object representing this file.
   inline auto get() const noexcept -> FILE* { return file_; }
 
-  FMT_API auto descriptor() const -> int;
+  LAWS3_FMT_API auto descriptor() const -> int;
 
   template <typename... T>
   inline void print(string_view fmt, const T&... args) {
-    fmt::vargs<T...> vargs = {{args...}};
-    detail::is_locking<T...>() ? fmt::vprint_buffered(file_, fmt, vargs)
-                               : fmt::vprint(file_, fmt, vargs);
+    lll::fmt::vargs<T...> vargs = {{args...}};
+    detail::is_locking<T...>() ? lll::fmt::vprint_buffered(file_, fmt, vargs)
+                               : lll::fmt::vprint(file_, fmt, vargs);
   }
 };
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 
 // A file. Closed file is represented by a file object with descriptor -1.
 // Methods that are not declared with noexcept may throw
-// fmt::system_error in case of failure. Note that some errors such as
+// lll::fmt::system_error in case of failure. Note that some errors such as
 // closing the file multiple times will cause a crash on Windows rather
 // than an exception. You can get standard behavior by overriding the
 // invalid parameter handler with _set_invalid_parameter_handler.
-class FMT_API file {
+class LAWS3_FMT_API file {
  private:
   int fd_;  // File descriptor.
 
@@ -239,12 +242,12 @@ class FMT_API file {
  public:
   // Possible values for the oflag argument to the constructor.
   enum {
-    RDONLY = FMT_POSIX(O_RDONLY),  // Open for reading only.
-    WRONLY = FMT_POSIX(O_WRONLY),  // Open for writing only.
-    RDWR = FMT_POSIX(O_RDWR),      // Open for reading and writing.
-    CREATE = FMT_POSIX(O_CREAT),   // Create if the file doesn't exist.
-    APPEND = FMT_POSIX(O_APPEND),  // Open in append mode.
-    TRUNC = FMT_POSIX(O_TRUNC)     // Truncate the content of the file.
+    RDONLY = LAWS3_FMT_POSIX(O_RDONLY),  // Open for reading only.
+    WRONLY = LAWS3_FMT_POSIX(O_WRONLY),  // Open for writing only.
+    RDWR = LAWS3_FMT_POSIX(O_RDWR),      // Open for reading and writing.
+    CREATE = LAWS3_FMT_POSIX(O_CREAT),   // Create if the file doesn't exist.
+    APPEND = LAWS3_FMT_POSIX(O_APPEND),  // Open in append mode.
+    TRUNC = LAWS3_FMT_POSIX(O_TRUNC)     // Truncate the content of the file.
   };
 
   // Constructs a file object which doesn't represent any file.
@@ -309,7 +312,7 @@ class FMT_API file {
 #  endif
 };
 
-struct FMT_API pipe {
+struct LAWS3_FMT_API pipe {
   file read_end;
   file write_end;
 
@@ -326,7 +329,7 @@ namespace detail {
 struct buffer_size {
   constexpr buffer_size() = default;
   size_t value = 0;
-  FMT_CONSTEXPR auto operator=(size_t val) const -> buffer_size {
+  LAWS3_FMT_CONSTEXPR auto operator=(size_t val) const -> buffer_size {
     auto bs = buffer_size();
     bs.value = val;
     return bs;
@@ -360,11 +363,11 @@ struct ostream_params {
 
 }  // namespace detail
 
-FMT_INLINE_VARIABLE constexpr auto buffer_size = detail::buffer_size();
+LAWS3_FMT_INLINE_VARIABLE constexpr auto buffer_size = detail::buffer_size();
 
 /// A fast buffered output stream for writing from a single thread. Writing from
 /// multiple threads without external synchronization may result in a data race.
-class FMT_API ostream : private detail::buffer<char> {
+class LAWS3_FMT_API ostream : private detail::buffer<char> {
  private:
   file file_;
 
@@ -412,16 +415,16 @@ class FMT_API ostream : private detail::buffer<char> {
  *
  * **Example**:
  *
- *     auto out = fmt::output_file("guide.txt");
+ *     auto out = lll::fmt::output_file("guide.txt");
  *     out.print("Don't {}", "Panic");
  */
 template <typename... T>
 inline auto output_file(cstring_view path, T... params) -> ostream {
   return {path, detail::ostream_params(params...)};
 }
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL
 
-FMT_END_EXPORT
-FMT_END_NAMESPACE
+LAWS3_FMT_END_EXPORT
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_OS_H_
+#endif  // LAWS3_FMT_OS_H_

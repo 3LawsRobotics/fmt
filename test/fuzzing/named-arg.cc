@@ -1,8 +1,7 @@
 // Copyright (c) 2019, Paul Dreik
 // For the license information refer to format.h.
 
-#include <fmt/chrono.h>
-
+#include <3laws/fmt/chrono.hpp>
 #include <cstdint>
 #include <type_traits>
 #include <vector>
@@ -24,13 +23,13 @@ void invoke_fmt(const uint8_t* data, size_t size, unsigned arg_name_size) {
 
   data_to_string format_str(data, size);
   try {
-#if FMT_FUZZ_FORMAT_TO_STRING
-    std::string message =
-        fmt::format(format_str.get(), fmt::arg(arg_name.data(), value));
+#if LAWS3_FMT_FUZZ_FORMAT_TO_STRING
+    std::string message = lll::fmt::format(
+        format_str.get(), lll::fmt::arg(arg_name.data(), value));
 #else
-    fmt::memory_buffer out;
-    fmt::format_to(std::back_inserter(out), format_str.get(),
-                   fmt::arg(arg_name.data(), value));
+    lll::fmt::memory_buffer out;
+    lll::fmt::format_to(std::back_inserter(out), format_str.get(),
+                        lll::fmt::arg(arg_name.data(), value));
 #endif
   } catch (std::exception&) {
   }
@@ -39,12 +38,8 @@ void invoke_fmt(const uint8_t* data, size_t size, unsigned arg_name_size) {
 // For dynamic dispatching to an explicit instantiation.
 template <typename Callback> void invoke(int type, Callback callback) {
   switch (type) {
-  case 0:
-    callback(bool());
-    break;
-  case 1:
-    callback(char());
-    break;
+  case 0: callback(bool()); break;
+  case 1: callback(char()); break;
   case 2:
     using sc = signed char;
     callback(sc());
@@ -53,32 +48,20 @@ template <typename Callback> void invoke(int type, Callback callback) {
     using uc = unsigned char;
     callback(uc());
     break;
-  case 4:
-    callback(short());
-    break;
+  case 4: callback(short()); break;
   case 5:
     using us = unsigned short;
     callback(us());
     break;
-  case 6:
-    callback(int());
-    break;
-  case 7:
-    callback(unsigned());
-    break;
-  case 8:
-    callback(long());
-    break;
+  case 6: callback(int()); break;
+  case 7: callback(unsigned()); break;
+  case 8: callback(long()); break;
   case 9:
     using ul = unsigned long;
     callback(ul());
     break;
-  case 10:
-    callback(float());
-    break;
-  case 11:
-    callback(double());
-    break;
+  case 10: callback(float()); break;
+  case 11: callback(double()); break;
   case 12:
     using LD = long double;
     callback(LD());

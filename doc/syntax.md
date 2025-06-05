@@ -1,6 +1,6 @@
 # Format String Syntax
 
-Formatting functions such as [`fmt::format`](api.md#format) and [`fmt::print`](
+Formatting functions such as [`lll::fmt::format`](api.md#format) and [`lll::fmt::print`](
 api.md#print) use the same format string syntax described in this section.
 
 Format strings contain "replacement fields" surrounded by curly braces `{}`.
@@ -251,7 +251,7 @@ The available integer presentation types are:
   <td><code>'b'</code></td>
   <td>
     Binary format. Outputs the number in base 2. Using the <code>'#'</code>
-    option with this type adds the prefix <code>"0b"</code> to the output value.    
+    option with this type adds the prefix <code>"0b"</code> to the output value.
   </td>
 </tr>
 <tr>
@@ -745,21 +745,21 @@ characters or strings are printed according to the provided specification.
 Examples:
 
 ```c++
-fmt::print("{}", std::vector{10, 20, 30});
+lll::fmt::print("{}", std::vector{10, 20, 30});
 // Output: [10, 20, 30]
-fmt::print("{::#x}", std::vector{10, 20, 30});
+lll::fmt::print("{::#x}", std::vector{10, 20, 30});
 // Output: [0xa, 0x14, 0x1e]
-fmt::print("{}", std::vector{'h', 'e', 'l', 'l', 'o'});
+lll::fmt::print("{}", std::vector{'h', 'e', 'l', 'l', 'o'});
 // Output: ['h', 'e', 'l', 'l', 'o']
-fmt::print("{:n}", std::vector{'h', 'e', 'l', 'l', 'o'});
+lll::fmt::print("{:n}", std::vector{'h', 'e', 'l', 'l', 'o'});
 // Output: 'h', 'e', 'l', 'l', 'o'
-fmt::print("{:s}", std::vector{'h', 'e', 'l', 'l', 'o'});
+lll::fmt::print("{:s}", std::vector{'h', 'e', 'l', 'l', 'o'});
 // Output: "hello"
-fmt::print("{:?s}", std::vector{'h', 'e', 'l', 'l', 'o', '\n'});
+lll::fmt::print("{:?s}", std::vector{'h', 'e', 'l', 'l', 'o', '\n'});
 // Output: "hello\n"
-fmt::print("{::}", std::vector{'h', 'e', 'l', 'l', 'o'});
+lll::fmt::print("{::}", std::vector{'h', 'e', 'l', 'l', 'o'});
 // Output: [h, e, l, l, o]
-fmt::print("{::d}", std::vector{'h', 'e', 'l', 'l', 'o'});
+lll::fmt::print("{::d}", std::vector{'h', 'e', 'l', 'l', 'o'});
 // Output: [104, 101, 108, 108, 111]
 ```
 
@@ -778,75 +778,75 @@ the following examples.
 Accessing arguments by position:
 
 ```c++
-fmt::format("{0}, {1}, {2}", 'a', 'b', 'c');
+lll::fmt::format("{0}, {1}, {2}", 'a', 'b', 'c');
 // Result: "a, b, c"
-fmt::format("{}, {}, {}", 'a', 'b', 'c');
+lll::fmt::format("{}, {}, {}", 'a', 'b', 'c');
 // Result: "a, b, c"
-fmt::format("{2}, {1}, {0}", 'a', 'b', 'c');
+lll::fmt::format("{2}, {1}, {0}", 'a', 'b', 'c');
 // Result: "c, b, a"
-fmt::format("{0}{1}{0}", "abra", "cad");  // arguments' indices can be repeated
+lll::fmt::format("{0}{1}{0}", "abra", "cad");  // arguments' indices can be repeated
 // Result: "abracadabra"
 ```
 
 Aligning the text and specifying a width:
 
 ```c++
-fmt::format("{:<30}", "left aligned");
+lll::fmt::format("{:<30}", "left aligned");
 // Result: "left aligned                  "
-fmt::format("{:>30}", "right aligned");
+lll::fmt::format("{:>30}", "right aligned");
 // Result: "                 right aligned"
-fmt::format("{:^30}", "centered");
+lll::fmt::format("{:^30}", "centered");
 // Result: "           centered           "
-fmt::format("{:*^30}", "centered");  // use '*' as a fill char
+lll::fmt::format("{:*^30}", "centered");  // use '*' as a fill char
 // Result: "***********centered***********"
 ```
 
 Dynamic width:
 
 ```c++
-fmt::format("{:<{}}", "left aligned", 30);
+lll::fmt::format("{:<{}}", "left aligned", 30);
 // Result: "left aligned                  "
 ```
 
 Dynamic precision:
 
 ```c++
-fmt::format("{:.{}f}", 3.14, 1);
+lll::fmt::format("{:.{}f}", 3.14, 1);
 // Result: "3.1"
 ```
 
 Replacing `%+f`, `%-f`, and `% f` and specifying a sign:
 
 ```c++
-fmt::format("{:+f}; {:+f}", 3.14, -3.14);  // show it always
+lll::fmt::format("{:+f}; {:+f}", 3.14, -3.14);  // show it always
 // Result: "+3.140000; -3.140000"
-fmt::format("{: f}; {: f}", 3.14, -3.14);  // show a space for positive numbers
+lll::fmt::format("{: f}; {: f}", 3.14, -3.14);  // show a space for positive numbers
 // Result: " 3.140000; -3.140000"
-fmt::format("{:-f}; {:-f}", 3.14, -3.14);  // show only the minus -- same as '{:f}; {:f}'
+lll::fmt::format("{:-f}; {:-f}", 3.14, -3.14);  // show only the minus -- same as '{:f}; {:f}'
 // Result: "3.140000; -3.140000"
 ```
 
 Replacing `%x` and `%o` and converting the value to different bases:
 
 ```c++
-fmt::format("int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+lll::fmt::format("int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
 // Result: "int: 42;  hex: 2a;  oct: 52; bin: 101010"
 // with 0x or 0 or 0b as prefix:
-fmt::format("int: {0:d};  hex: {0:#x};  oct: {0:#o};  bin: {0:#b}", 42);
+lll::fmt::format("int: {0:d};  hex: {0:#x};  oct: {0:#o};  bin: {0:#b}", 42);
 // Result: "int: 42;  hex: 0x2a;  oct: 052;  bin: 0b101010"
 ```
 
 Padded hex byte with prefix and always prints both hex characters:
 
 ```c++
-fmt::format("{:#04x}", 0);
+lll::fmt::format("{:#04x}", 0);
 // Result: "0x00"
 ```
 
 Box drawing using Unicode fill:
 
 ```c++
-fmt::print(
+lll::fmt::print(
     "┌{0:─^{2}}┐\n"
     "│{1: ^{2}}│\n"
     "└{0:─^{2}}┘\n", "", "Hello, world!", 20);
@@ -863,7 +863,7 @@ prints:
 Using type-specific formatting:
 
 ```c++
-#include <fmt/chrono.h>
+#include <3laws/fmt/chrono.hpp>
 
 auto t = tm();
 t.tm_year = 2010 - 1900;
@@ -872,15 +872,15 @@ t.tm_mday = 4;
 t.tm_hour = 12;
 t.tm_min = 15;
 t.tm_sec = 58;
-fmt::print("{:%Y-%m-%d %H:%M:%S}", t);
+lll::fmt::print("{:%Y-%m-%d %H:%M:%S}", t);
 // Prints: 2010-08-04 12:15:58
 ```
 
 Using the comma as a thousands separator:
 
 ```c++
-#include <fmt/format.h>
+#include <3laws/fmt/format.hpp>
 
-auto s = fmt::format(std::locale("en_US.UTF-8"), "{:L}", 1234567890);
+auto s = lll::fmt::format(std::locale("en_US.UTF-8"), "{:L}", 1234567890);
 // s == "1,234,567,890"
 ```

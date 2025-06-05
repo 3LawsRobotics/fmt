@@ -10,12 +10,12 @@
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.hpp"
 
-#ifndef FMT_MODULE
+#ifndef LAWS3_FMT_MODULE
 #  include <climits>
 
-#  if FMT_USE_FCNTL
+#  if LAWS3_FMT_USE_FCNTL
 #    include <sys/stat.h>
 #    include <sys/types.h>
 
@@ -31,7 +31,7 @@
 #      endif
 #      include <io.h>
 #    endif  // _WIN32
-#  endif    // FMT_USE_FCNTL
+#  endif    // LAWS3_FMT_USE_FCNTL
 
 #  ifdef _WIN32
 #    include <windows.h>
@@ -69,7 +69,7 @@ using rwresult = int;
 inline unsigned convert_rwcount(size_t count) {
   return count <= UINT_MAX ? static_cast<unsigned>(count) : UINT_MAX;
 }
-#elif FMT_USE_FCNTL
+#elif LAWS3_FMT_USE_FCNTL
 // Return type of read and write functions.
 using rwresult = ssize_t;
 
@@ -77,7 +77,7 @@ inline size_t convert_rwcount(size_t count) { return count; }
 #endif
 }  // namespace
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 
 #ifdef _WIN32
 namespace detail {
@@ -131,7 +131,7 @@ class utf8_system_category final : public std::error_category {
 
 }  // namespace detail
 
-FMT_API const std::error_category& system_category() noexcept {
+LAWS3_FMT_API const std::error_category& system_category() noexcept {
   static const detail::utf8_system_category category;
   return category;
 }
@@ -144,18 +144,18 @@ std::system_error vwindows_error(int err_code, string_view format_str,
 
 void detail::format_windows_error(detail::buffer<char>& out, int error_code,
                                   const char* message) noexcept {
-  FMT_TRY {
+  LAWS3_FMT_TRY {
     auto&& msg = system_message(error_code);
     if (msg) {
       auto utf8_message = to_utf8<wchar_t>();
       if (utf8_message.convert(msg)) {
-        fmt::format_to(appender(out), FMT_STRING("{}: {}"), message,
-                       string_view(utf8_message));
+        lll::fmt::format_to(appender(out), LAWS3_FMT_STRING("{}: {}"), message,
+                            string_view(utf8_message));
         return;
       }
     }
   }
-  FMT_CATCH(...) {}
+  LAWS3_FMT_CATCH(...) {}
   format_error_code(out, error_code, message);
 }
 
@@ -165,44 +165,45 @@ void report_windows_error(int error_code, const char* message) noexcept {
 #endif  // _WIN32
 
 buffered_file::~buffered_file() noexcept {
-  if (file_ && FMT_SYSTEM(fclose(file_)) != 0)
+  if (file_ && LAWS3_FMT_SYSTEM(fclose(file_)) != 0)
     report_system_error(errno, "cannot close file");
 }
 
 buffered_file::buffered_file(cstring_view filename, cstring_view mode) {
-  FMT_RETRY_VAL(file_, FMT_SYSTEM(fopen(filename.c_str(), mode.c_str())),
-                nullptr);
+  LAWS3_FMT_RETRY_VAL(
+      file_, LAWS3_FMT_SYSTEM(fopen(filename.c_str(), mode.c_str())), nullptr);
   if (!file_)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot open file {}"),
-                           filename.c_str()));
+    LAWS3_FMT_THROW(system_error(errno, LAWS3_FMT_STRING("cannot open file {}"),
+                                 filename.c_str()));
 }
 
 void buffered_file::close() {
   if (!file_) return;
-  int result = FMT_SYSTEM(fclose(file_));
+  int result = LAWS3_FMT_SYSTEM(fclose(file_));
   file_ = nullptr;
   if (result != 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot close file")));
+    LAWS3_FMT_THROW(system_error(errno, LAWS3_FMT_STRING("cannot close file")));
 }
 
 int buffered_file::descriptor() const {
-#ifdef FMT_HAS_SYSTEM
+#ifdef LAWS3_FMT_HAS_SYSTEM
   // fileno is a macro on OpenBSD.
 #  ifdef fileno
 #    undef fileno
 #  endif
-  int fd = FMT_POSIX_CALL(fileno(file_));
+  int fd = LAWS3_FMT_POSIX_CALL(fileno(file_));
 #elif defined(_WIN32)
   int fd = _fileno(file_);
 #else
   int fd = fileno(file_);
 #endif
   if (fd == -1)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot get file descriptor")));
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot get file descriptor")));
   return fd;
 }
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 #  ifdef _WIN32
 using mode_t = int;
 #  endif
@@ -216,17 +217,18 @@ file::file(cstring_view path, int oflag) {
   auto converted = detail::utf8_to_utf16(string_view(path.c_str()));
   *this = file::open_windows_file(converted.c_str(), oflag);
 #  else
-  FMT_RETRY(fd_, FMT_POSIX_CALL(open(path.c_str(), oflag, default_open_mode)));
+  LAWS3_FMT_RETRY(
+      fd_, LAWS3_FMT_POSIX_CALL(open(path.c_str(), oflag, default_open_mode)));
   if (fd_ == -1)
-    FMT_THROW(
-        system_error(errno, FMT_STRING("cannot open file {}"), path.c_str()));
+    LAWS3_FMT_THROW(system_error(errno, LAWS3_FMT_STRING("cannot open file {}"),
+                                 path.c_str()));
 #  endif
 }
 
 file::~file() noexcept {
   // Don't retry close in case of EINTR!
   // See http://linux.derkeiler.com/Mailing-Lists/Kernel/2005-09/3000.html
-  if (fd_ != -1 && FMT_POSIX_CALL(close(fd_)) != 0)
+  if (fd_ != -1 && LAWS3_FMT_POSIX_CALL(close(fd_)) != 0)
     report_system_error(errno, "cannot close file");
 }
 
@@ -234,10 +236,10 @@ void file::close() {
   if (fd_ == -1) return;
   // Don't retry close in case of EINTR!
   // See http://linux.derkeiler.com/Mailing-Lists/Kernel/2005-09/3000.html
-  int result = FMT_POSIX_CALL(close(fd_));
+  int result = LAWS3_FMT_POSIX_CALL(close(fd_));
   fd_ = -1;
   if (result != 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot close file")));
+    LAWS3_FMT_THROW(system_error(errno, LAWS3_FMT_STRING("cannot close file")));
 }
 
 long long file::size() const {
@@ -247,19 +249,20 @@ long long file::size() const {
   // Both functions support large file sizes.
   DWORD size_upper = 0;
   HANDLE handle = reinterpret_cast<HANDLE>(_get_osfhandle(fd_));
-  DWORD size_lower = FMT_SYSTEM(GetFileSize(handle, &size_upper));
+  DWORD size_lower = LAWS3_FMT_SYSTEM(GetFileSize(handle, &size_upper));
   if (size_lower == INVALID_FILE_SIZE) {
     DWORD error = GetLastError();
     if (error != NO_ERROR)
-      FMT_THROW(windows_error(GetLastError(), "cannot get file size"));
+      LAWS3_FMT_THROW(windows_error(GetLastError(), "cannot get file size"));
   }
   unsigned long long long_size = size_upper;
   return (long_size << sizeof(DWORD) * CHAR_BIT) | size_lower;
 #  else
   using Stat = struct stat;
   Stat file_stat = Stat();
-  if (FMT_POSIX_CALL(fstat(fd_, &file_stat)) == -1)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot get file attributes")));
+  if (LAWS3_FMT_POSIX_CALL(fstat(fd_, &file_stat)) == -1)
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot get file attributes")));
   static_assert(sizeof(long long) >= sizeof(file_stat.st_size),
                 "return type of file::size is not large enough");
   return file_stat.st_size;
@@ -268,43 +271,47 @@ long long file::size() const {
 
 size_t file::read(void* buffer, size_t count) {
   rwresult result = 0;
-  FMT_RETRY(result, FMT_POSIX_CALL(read(fd_, buffer, convert_rwcount(count))));
+  LAWS3_FMT_RETRY(
+      result, LAWS3_FMT_POSIX_CALL(read(fd_, buffer, convert_rwcount(count))));
   if (result < 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot read from file")));
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot read from file")));
   return detail::to_unsigned(result);
 }
 
 size_t file::write(const void* buffer, size_t count) {
   rwresult result = 0;
-  FMT_RETRY(result, FMT_POSIX_CALL(write(fd_, buffer, convert_rwcount(count))));
+  LAWS3_FMT_RETRY(
+      result, LAWS3_FMT_POSIX_CALL(write(fd_, buffer, convert_rwcount(count))));
   if (result < 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot write to file")));
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot write to file")));
   return detail::to_unsigned(result);
 }
 
 file file::dup(int fd) {
   // Don't retry as dup doesn't return EINTR.
   // http://pubs.opengroup.org/onlinepubs/009695399/functions/dup.html
-  int new_fd = FMT_POSIX_CALL(dup(fd));
+  int new_fd = LAWS3_FMT_POSIX_CALL(dup(fd));
   if (new_fd == -1)
-    FMT_THROW(system_error(
-        errno, FMT_STRING("cannot duplicate file descriptor {}"), fd));
+    LAWS3_FMT_THROW(system_error(
+        errno, LAWS3_FMT_STRING("cannot duplicate file descriptor {}"), fd));
   return file(new_fd);
 }
 
 void file::dup2(int fd) {
   int result = 0;
-  FMT_RETRY(result, FMT_POSIX_CALL(dup2(fd_, fd)));
+  LAWS3_FMT_RETRY(result, LAWS3_FMT_POSIX_CALL(dup2(fd_, fd)));
   if (result == -1) {
-    FMT_THROW(system_error(
-        errno, FMT_STRING("cannot duplicate file descriptor {} to {}"), fd_,
-        fd));
+    LAWS3_FMT_THROW(system_error(
+        errno, LAWS3_FMT_STRING("cannot duplicate file descriptor {} to {}"),
+        fd_, fd));
   }
 }
 
 void file::dup2(int fd, std::error_code& ec) noexcept {
   int result = 0;
-  FMT_RETRY(result, FMT_POSIX_CALL(dup2(fd_, fd)));
+  LAWS3_FMT_RETRY(result, LAWS3_FMT_POSIX_CALL(dup2(fd_, fd)));
   if (result == -1) ec = std::error_code(errno, std::generic_category());
 }
 
@@ -313,11 +320,12 @@ buffered_file file::fdopen(const char* mode) {
 #  if defined(__MINGW32__) && defined(_POSIX_)
   FILE* f = ::fdopen(fd_, mode);
 #  else
-  FILE* f = FMT_POSIX_CALL(fdopen(fd_, mode));
+  FILE* f = LAWS3_FMT_POSIX_CALL(fdopen(fd_, mode));
 #  endif
   if (!f) {
-    FMT_THROW(system_error(
-        errno, FMT_STRING("cannot associate stream with file descriptor")));
+    LAWS3_FMT_THROW(system_error(
+        errno,
+        LAWS3_FMT_STRING("cannot associate stream with file descriptor")));
   }
   buffered_file bf(f);
   fd_ = -1;
@@ -329,8 +337,9 @@ file file::open_windows_file(wcstring_view path, int oflag) {
   int fd = -1;
   auto err = _wsopen_s(&fd, path.c_str(), oflag, _SH_DENYNO, default_open_mode);
   if (fd == -1) {
-    FMT_THROW(system_error(err, FMT_STRING("cannot open file {}"),
-                           detail::to_utf8<wchar_t>(path.c_str()).c_str()));
+    LAWS3_FMT_THROW(
+        system_error(err, LAWS3_FMT_STRING("cannot open file {}"),
+                     detail::to_utf8<wchar_t>(path.c_str()).c_str()));
   }
   return file(fd);
 }
@@ -341,14 +350,15 @@ pipe::pipe() {
 #  ifdef _WIN32
   // Make the default pipe capacity same as on Linux 2.6.11+.
   enum { DEFAULT_CAPACITY = 65536 };
-  int result = FMT_POSIX_CALL(pipe(fds, DEFAULT_CAPACITY, _O_BINARY));
+  int result = LAWS3_FMT_POSIX_CALL(pipe(fds, DEFAULT_CAPACITY, _O_BINARY));
 #  else
   // Don't retry as the pipe function doesn't return EINTR.
   // http://pubs.opengroup.org/onlinepubs/009696799/functions/pipe.html
-  int result = FMT_POSIX_CALL(pipe(fds));
+  int result = LAWS3_FMT_POSIX_CALL(pipe(fds));
 #  endif
   if (result != 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot create pipe")));
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot create pipe")));
   // The following assignments don't throw.
   read_end = file(fds[0]);
   write_end = file(fds[1]);
@@ -362,13 +372,14 @@ long getpagesize() {
   return si.dwPageSize;
 #    else
 #      ifdef _WRS_KERNEL
-  long size = FMT_POSIX_CALL(getpagesize());
+  long size = LAWS3_FMT_POSIX_CALL(getpagesize());
 #      else
-  long size = FMT_POSIX_CALL(sysconf(_SC_PAGESIZE));
+  long size = LAWS3_FMT_POSIX_CALL(sysconf(_SC_PAGESIZE));
 #      endif
 
   if (size < 0)
-    FMT_THROW(system_error(errno, FMT_STRING("cannot get memory page size")));
+    LAWS3_FMT_THROW(
+        system_error(errno, LAWS3_FMT_STRING("cannot get memory page size")));
   return size;
 #    endif
 }
@@ -394,5 +405,5 @@ ostream::~ostream() {
   flush();
   delete[] data();
 }
-#endif  // FMT_USE_FCNTL
-FMT_END_NAMESPACE
+#endif  // LAWS3_FMT_USE_FCNTL
+LAWS3_FMT_END_NAMESPACE

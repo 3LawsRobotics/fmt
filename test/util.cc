@@ -5,21 +5,21 @@
 //
 // For the license information refer to format.h.
 
-#include "util.h"
+#include "util.hpp"
 
 #include <cstring>
 
 const char* const file_content = "Don't panic!";
 
-fmt::buffered_file open_buffered_file(FILE** fp) {
-#if FMT_USE_FCNTL
-  auto pipe = fmt::pipe();
+lll::fmt::buffered_file open_buffered_file(FILE** fp) {
+#if LAWS3_FMT_USE_FCNTL
+  auto pipe = lll::fmt::pipe();
   pipe.write_end.write(file_content, std::strlen(file_content));
   pipe.write_end.close();
-  fmt::buffered_file f = pipe.read_end.fdopen("r");
+  lll::fmt::buffered_file f = pipe.read_end.fdopen("r");
   if (fp) *fp = f.get();
 #else
-  fmt::buffered_file f("test-file", "w");
+  lll::fmt::buffered_file f("test-file", "w");
   fputs(file_content, f.get());
   if (fp) *fp = f.get();
 #endif
@@ -43,6 +43,6 @@ std::locale get_locale(const char* name, const char* alt_name) {
   loc = std::locale::classic();
 #endif
   if (loc == std::locale::classic())
-    fmt::print(stderr, "{} locale is missing.\n", name);
+    lll::fmt::print(stderr, "{} locale is missing.\n", name);
   return loc;
 }

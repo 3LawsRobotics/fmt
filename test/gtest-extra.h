@@ -5,17 +5,18 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_GTEST_EXTRA_H_
-#define FMT_GTEST_EXTRA_H_
+#ifndef LAWS3_FMT_GTEST_EXTRA_H_
+#define LAWS3_FMT_GTEST_EXTRA_H_
 
 #include <stdlib.h>  // _invalid_parameter_handler
 
 #include <string>
 
-#include "fmt/os.h"
+#include "3laws/fmt/os.hpp"
 #include "gmock/gmock.h"
 
-#define FMT_TEST_THROW_(statement, expected_exception, expected_message, fail) \
+#define LAWS3_FMT_TEST_THROW_(statement, expected_exception, expected_message, \
+                              fail)                                            \
   GTEST_AMBIGUOUS_ELSE_BLOCKER_                                                \
   if (::testing::AssertionResult gtest_ar = ::testing::AssertionSuccess()) {   \
     std::string gtest_expected_message = expected_message;                     \
@@ -50,8 +51,8 @@
 // Tests that the statement throws the expected exception and the exception's
 // what() method returns expected message.
 #define EXPECT_THROW_MSG(statement, expected_exception, expected_message) \
-  FMT_TEST_THROW_(statement, expected_exception, expected_message,        \
-                  GTEST_NONFATAL_FAILURE_)
+  LAWS3_FMT_TEST_THROW_(statement, expected_exception, expected_message,  \
+                        GTEST_NONFATAL_FAILURE_)
 
 inline std::string system_error_message(int error_code,
                                         const std::string& message) {
@@ -63,15 +64,16 @@ inline std::string system_error_message(int error_code,
   EXPECT_THROW_MSG(statement, std::system_error,            \
                    system_error_message(error_code, message))
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 
 // Captures file output by redirecting it to a pipe.
 // The output it can handle is limited by the pipe capacity.
 class output_redirect {
  private:
   FILE* file_;
-  fmt::file original_;  // Original file passed to redirector.
-  fmt::file read_end_;  // Read end of the pipe where the output is redirected.
+  lll::fmt::file original_;  // Original file passed to redirector.
+  lll::fmt::file
+      read_end_;  // Read end of the pipe where the output is redirected.
 
   void flush();
   void restore();
@@ -88,7 +90,7 @@ class output_redirect {
   std::string restore_and_read();
 };
 
-#  define FMT_TEST_WRITE_(statement, expected_output, file, fail)              \
+#  define LAWS3_FMT_TEST_WRITE_(statement, expected_output, file, fail)        \
     GTEST_AMBIGUOUS_ELSE_BLOCKER_                                              \
     if (::testing::AssertionResult gtest_ar = ::testing::AssertionSuccess()) { \
       std::string gtest_expected_output = expected_output;                     \
@@ -106,8 +108,9 @@ class output_redirect {
           : fail(gtest_ar.failure_message())
 
 // Tests that the statement writes the expected output to file.
-#  define EXPECT_WRITE(file, statement, expected_output) \
-    FMT_TEST_WRITE_(statement, expected_output, file, GTEST_NONFATAL_FAILURE_)
+#  define EXPECT_WRITE(file, statement, expected_output)    \
+    LAWS3_FMT_TEST_WRITE_(statement, expected_output, file, \
+                          GTEST_NONFATAL_FAILURE_)
 
 #  ifdef _MSC_VER
 
@@ -146,11 +149,11 @@ class suppress_assert {
     EXPECT_SYSTEM_ERROR(SUPPRESS_ASSERT(statement), error_code, message)
 
 // Attempts to read count characters from a file.
-std::string read(fmt::file& f, size_t count);
+std::string read(lll::fmt::file& f, size_t count);
 
 #  define EXPECT_READ(file, expected_content) \
     EXPECT_EQ(expected_content,               \
-              read(file, fmt::string_view(expected_content).size()))
+              read(file, lll::fmt::string_view(expected_content).size()))
 
 #else
 #  define EXPECT_WRITE(file, statement, expected_output) \
@@ -160,6 +163,6 @@ std::string read(fmt::file& f, size_t count);
       (void)(expected_output);                           \
       SUCCEED();                                         \
     } while (false)
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL
 
-#endif  // FMT_GTEST_EXTRA_H_
+#endif  // LAWS3_FMT_GTEST_EXTRA_H_

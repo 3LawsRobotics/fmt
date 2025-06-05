@@ -5,10 +5,10 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_OSTREAM_H_
-#define FMT_OSTREAM_H_
+#ifndef LAWS3_FMT_OSTREAM_H_
+#define LAWS3_FMT_OSTREAM_H_
 
-#ifndef FMT_MODULE
+#ifndef LAWS3_FMT_MODULE
 #  include <fstream>  // std::filebuf
 #endif
 
@@ -20,17 +20,17 @@
 #  include <io.h>
 #endif
 
-#include "chrono.h"  // formatbuf
+#include "chrono.hpp"  // formatbuf
 
 #ifdef _MSVC_STL_UPDATE
-#  define FMT_MSVC_STL_UPDATE _MSVC_STL_UPDATE
+#  define LAWS3_FMT_MSVC_STL_UPDATE _MSVC_STL_UPDATE
 #elif defined(_MSC_VER) && _MSC_VER < 1912  // VS 15.5
-#  define FMT_MSVC_STL_UPDATE _MSVC_LANG
+#  define LAWS3_FMT_MSVC_STL_UPDATE _MSVC_LANG
 #else
-#  define FMT_MSVC_STL_UPDATE 0
+#  define LAWS3_FMT_MSVC_STL_UPDATE 0
 #endif
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 
 // Generate a unique explicit instantiation in every translation unit using a
@@ -43,7 +43,7 @@ class file_access {
   friend auto get_file(BufType& obj) -> FILE* { return obj.*FileMemberPtr; }
 };
 
-#if FMT_MSVC_STL_UPDATE
+#if LAWS3_FMT_MSVC_STL_UPDATE
 template class file_access<file_access_tag, std::filebuf,
                            &std::filebuf::_Myfile>;
 auto get_file(std::filebuf&) -> FILE*;
@@ -94,8 +94,8 @@ template <typename T, typename Char>
 struct formatter<detail::streamed_view<T>, Char>
     : basic_ostream_formatter<Char> {
   template <typename Context>
-  auto format(detail::streamed_view<T> view, Context& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(detail::streamed_view<T> view,
+              Context& ctx) const -> decltype(ctx.out()) {
     return basic_ostream_formatter<Char>::format(view.value, ctx);
   }
 };
@@ -105,8 +105,8 @@ struct formatter<detail::streamed_view<T>, Char>
  *
  * **Example**:
  *
- *     fmt::print("Current thread id: {}\n",
- *                fmt::streamed(std::this_thread::get_id()));
+ *     lll::fmt::print("Current thread id: {}\n",
+ *                lll::fmt::streamed(std::this_thread::get_id()));
  */
 template <typename T>
 constexpr auto streamed(const T& value) -> detail::streamed_view<T> {
@@ -117,10 +117,10 @@ inline void vprint(std::ostream& os, string_view fmt, format_args args) {
   auto buffer = memory_buffer();
   detail::vformat_to(buffer, fmt, args);
   FILE* f = nullptr;
-#if FMT_MSVC_STL_UPDATE && FMT_USE_RTTI
+#if LAWS3_FMT_MSVC_STL_UPDATE && LAWS3_FMT_USE_RTTI
   if (auto* buf = dynamic_cast<std::filebuf*>(os.rdbuf()))
     f = detail::get_file(*buf);
-#elif defined(_WIN32) && defined(__GLIBCXX__) && FMT_USE_RTTI
+#elif defined(_WIN32) && defined(__GLIBCXX__) && LAWS3_FMT_USE_RTTI
   auto* rdbuf = os.rdbuf();
   if (auto* sfbuf = dynamic_cast<__gnu_cxx::stdio_sync_filebuf<char>*>(rdbuf))
     f = sfbuf->file();
@@ -145,23 +145,23 @@ inline void vprint(std::ostream& os, string_view fmt, format_args args) {
  *
  * **Example**:
  *
- *     fmt::print(cerr, "Don't {}!", "panic");
+ *     lll::fmt::print(cerr, "Don't {}!", "panic");
  */
-FMT_EXPORT template <typename... T>
+LAWS3_FMT_EXPORT template <typename... T>
 void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
-  fmt::vargs<T...> vargs = {{args...}};
+  lll::fmt::vargs<T...> vargs = {{args...}};
   if (detail::const_check(detail::use_utf8)) return vprint(os, fmt.str, vargs);
   auto buffer = memory_buffer();
   detail::vformat_to(buffer, fmt.str, vargs);
   detail::write_buffer(os, buffer);
 }
 
-FMT_EXPORT template <typename... T>
+LAWS3_FMT_EXPORT template <typename... T>
 void println(std::ostream& os, format_string<T...> fmt, T&&... args) {
-  fmt::print(os, FMT_STRING("{}\n"),
-             fmt::format(fmt, std::forward<T>(args)...));
+  lll::fmt::print(os, LAWS3_FMT_STRING("{}\n"),
+                  lll::fmt::format(fmt, std::forward<T>(args)...));
 }
 
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_OSTREAM_H_
+#endif  // LAWS3_FMT_OSTREAM_H_

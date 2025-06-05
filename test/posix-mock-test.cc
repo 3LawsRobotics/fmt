@@ -27,9 +27,9 @@
 
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
-#include "util.h"
+#include "util.hpp"
 
-using fmt::buffered_file;
+using lll::fmt::buffered_file;
 
 using testing::_;
 using testing::Return;
@@ -113,36 +113,36 @@ DWORD test::GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh) {
 
 int test::close(int fildes) {
   // Close the file first because close shouldn't be retried.
-  int result = ::FMT_POSIX(close(fildes));
+  int result = ::LAWS3_FMT_POSIX(close(fildes));
   EMULATE_EINTR(close, -1);
   return result;
 }
 
 int test::dup(int fildes) {
   EMULATE_EINTR(dup, -1);
-  return ::FMT_POSIX(dup(fildes));
+  return ::LAWS3_FMT_POSIX(dup(fildes));
 }
 
 int test::dup2(int fildes, int fildes2) {
   EMULATE_EINTR(dup2, -1);
-  return ::FMT_POSIX(dup2(fildes, fildes2));
+  return ::LAWS3_FMT_POSIX(dup2(fildes, fildes2));
 }
 
 FILE* test::fdopen(int fildes, const char* mode) {
   EMULATE_EINTR(fdopen, nullptr);
-  return ::FMT_POSIX(fdopen(fildes, mode));
+  return ::LAWS3_FMT_POSIX(fdopen(fildes, mode));
 }
 
 test::ssize_t test::read(int fildes, void* buf, test::size_t nbyte) {
   read_nbyte = nbyte;
   EMULATE_EINTR(read, -1);
-  return ::FMT_POSIX(read(fildes, buf, nbyte));
+  return ::LAWS3_FMT_POSIX(read(fildes, buf, nbyte));
 }
 
 test::ssize_t test::write(int fildes, const void* buf, test::size_t nbyte) {
   write_nbyte = nbyte;
   EMULATE_EINTR(write, -1);
-  return ::FMT_POSIX(write(fildes, buf, nbyte));
+  return ::LAWS3_FMT_POSIX(write(fildes, buf, nbyte));
 }
 
 #ifndef _WIN32
@@ -170,9 +170,9 @@ int test::fclose(FILE* stream) {
 int(test::fileno)(FILE* stream) {
   EMULATE_EINTR(fileno, -1);
 #ifdef fileno
-  return FMT_POSIX(fileno(stream));
+  return LAWS3_FMT_POSIX(fileno(stream));
 #else
-  return ::FMT_POSIX(fileno(stream));
+  return ::LAWS3_FMT_POSIX(fileno(stream));
 #endif
 }
 
@@ -191,23 +191,24 @@ int(test::fileno)(FILE* stream) {
 #  define EXPECT_EQ_POSIX(expected, actual)
 #endif
 
-#if FMT_USE_FCNTL
-void write_file(fmt::cstring_view filename, fmt::string_view content) {
-  fmt::buffered_file f(filename, "w");
+#if LAWS3_FMT_USE_FCNTL
+void write_file(lll::fmt::cstring_view filename,
+                lll::fmt::string_view content) {
+  lll::fmt::buffered_file f(filename, "w");
   f.print("{}", content);
 }
 
-using fmt::file;
+using lll::fmt::file;
 
 TEST(os_test, getpagesize) {
 #  ifdef _WIN32
   SYSTEM_INFO si = {};
   GetSystemInfo(&si);
-  EXPECT_EQ(si.dwPageSize, fmt::getpagesize());
+  EXPECT_EQ(si.dwPageSize, lll::fmt::getpagesize());
 #  else
-  EXPECT_EQ(sysconf(_SC_PAGESIZE), fmt::getpagesize());
+  EXPECT_EQ(sysconf(_SC_PAGESIZE), lll::fmt::getpagesize());
   sysconf_error = true;
-  EXPECT_SYSTEM_ERROR(fmt::getpagesize(), EINVAL,
+  EXPECT_SYSTEM_ERROR(lll::fmt::getpagesize(), EINVAL,
                       "cannot get memory page size");
   sysconf_error = false;
 #  endif
@@ -225,7 +226,7 @@ TEST(file_test, open_retry) {
 }
 
 TEST(file_test, close_no_retry_in_dtor) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   std::unique_ptr<file> f(new file(std::move(pipe.read_end)));
   int saved_close_count = 0;
   EXPECT_WRITE(
@@ -241,7 +242,7 @@ TEST(file_test, close_no_retry_in_dtor) {
 }
 
 TEST(file_test, close_no_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   close_count = 1;
   EXPECT_SYSTEM_ERROR(pipe.read_end.close(), EINTR, "cannot close file");
   EXPECT_EQ(2, close_count);
@@ -264,7 +265,7 @@ TEST(file_test, size) {
   }
   fstat_sim = none;
   EXPECT_EQ(error_code,
-            std::error_code(ERROR_ACCESS_DENIED, fmt::system_category()));
+            std::error_code(ERROR_ACCESS_DENIED, lll::fmt::system_category()));
 #  else
   f.close();
   EXPECT_SYSTEM_ERROR(f.size(), EBADF, "cannot get file attributes");
@@ -281,7 +282,7 @@ TEST(file_test, max_size) {
 }
 
 TEST(file_test, read_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   enum { SIZE = 4 };
   pipe.write_end.write("test", SIZE);
   pipe.write_end.close();
@@ -293,7 +294,7 @@ TEST(file_test, read_retry) {
 }
 
 TEST(file_test, write_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   enum { SIZE = 4 };
   size_t count = 0;
   EXPECT_RETRY(count = pipe.write_end.write("test", SIZE), write,
@@ -310,7 +311,7 @@ TEST(file_test, write_retry) {
 
 #  ifdef _WIN32
 TEST(file_test, convert_read_count) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   char c;
   size_t size = UINT_MAX;
   if (sizeof(unsigned) != sizeof(size_t)) ++size;
@@ -322,7 +323,7 @@ TEST(file_test, convert_read_count) {
 }
 
 TEST(file_test, convert_write_count) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   char c;
   size_t size = UINT_MAX;
   if (sizeof(unsigned) != sizeof(size_t)) ++size;
@@ -335,24 +336,24 @@ TEST(file_test, convert_write_count) {
 #  endif
 
 TEST(file_test, dup_no_retry) {
-  int stdout_fd = FMT_POSIX(fileno(stdout));
+  int stdout_fd = LAWS3_FMT_POSIX(fileno(stdout));
   dup_count = 1;
   EXPECT_SYSTEM_ERROR(
       file::dup(stdout_fd), EINTR,
-      fmt::format("cannot duplicate file descriptor {}", stdout_fd));
+      lll::fmt::format("cannot duplicate file descriptor {}", stdout_fd));
   dup_count = 0;
 }
 
 TEST(file_test, dup2_retry) {
-  int stdout_fd = FMT_POSIX(fileno(stdout));
+  int stdout_fd = LAWS3_FMT_POSIX(fileno(stdout));
   file f1 = file::dup(stdout_fd), f2 = file::dup(stdout_fd);
   EXPECT_RETRY(f1.dup2(f2.descriptor()), dup2,
-               fmt::format("cannot duplicate file descriptor {} to {}",
-                           f1.descriptor(), f2.descriptor()));
+               lll::fmt::format("cannot duplicate file descriptor {} to {}",
+                                f1.descriptor(), f2.descriptor()));
 }
 
 TEST(file_test, dup2_no_except_retry) {
-  int stdout_fd = FMT_POSIX(fileno(stdout));
+  int stdout_fd = LAWS3_FMT_POSIX(fileno(stdout));
   file f1 = file::dup(stdout_fd), f2 = file::dup(stdout_fd);
   std::error_code ec;
   dup2_count = 1;
@@ -367,12 +368,12 @@ TEST(file_test, dup2_no_except_retry) {
 
 TEST(file_test, pipe_no_retry) {
   pipe_count = 1;
-  EXPECT_SYSTEM_ERROR(fmt::pipe(), EINTR, "cannot create pipe");
+  EXPECT_SYSTEM_ERROR(lll::fmt::pipe(), EINTR, "cannot create pipe");
   pipe_count = 0;
 }
 
 TEST(file_test, fdopen_no_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   fdopen_count = 1;
   EXPECT_SYSTEM_ERROR(pipe.read_end.fdopen("r"), EINTR,
                       "cannot associate stream with file descriptor");
@@ -387,12 +388,12 @@ TEST(buffered_file_test, open_retry) {
 #  ifndef _WIN32
   char c = 0;
   if (fread(&c, 1, 1, f->get()) < 1)
-    throw fmt::system_error(errno, "fread failed");
+    throw lll::fmt::system_error(errno, "fread failed");
 #  endif
 }
 
 TEST(buffered_file_test, close_no_retry_in_dtor) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   std::unique_ptr<buffered_file> f(
       new buffered_file(pipe.read_end.fdopen("r")));
   int saved_fclose_count = 0;
@@ -409,7 +410,7 @@ TEST(buffered_file_test, close_no_retry_in_dtor) {
 }
 
 TEST(buffered_file_test, close_no_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   buffered_file f = pipe.read_end.fdopen("r");
   fclose_count = 1;
   EXPECT_SYSTEM_ERROR(f.close(), EINTR, "cannot close file");
@@ -418,14 +419,14 @@ TEST(buffered_file_test, close_no_retry) {
 }
 
 TEST(buffered_file_test, fileno_no_retry) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   buffered_file f = pipe.read_end.fdopen("r");
   fileno_count = 1;
   EXPECT_SYSTEM_ERROR((f.descriptor)(), EINTR, "cannot get file descriptor");
   EXPECT_EQ(2, fileno_count);
   fileno_count = 0;
 }
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL
 
 struct test_mock {
   static test_mock* instance;

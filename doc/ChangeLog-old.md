@@ -19,7 +19,7 @@
 
 - Fixed ABI compatibility with 7.0.x
   (https://github.com/fmtlib/fmt/issues/1961).
-- Added the `FMT_ARM_ABI_COMPATIBILITY` macro to work around ABI
+- Added the `LAWS3_FMT_ARM_ABI_COMPATIBILITY` macro to work around ABI
   incompatibility between GCC and Clang on ARM
   (https://github.com/fmtlib/fmt/issues/1919).
 - Worked around a SFINAE bug in GCC 8
@@ -50,7 +50,7 @@
   ![](https://user-images.githubusercontent.com/576385/95684665-11719600-0ba8-11eb-8e5b-972ff4e49428.png)
 
   It is possible to get even better performance at the cost of larger
-  binary size by compiling with the `FMT_USE_FULL_CACHE_DRAGONBOX`
+  binary size by compiling with the `LAWS3_FMT_USE_FULL_CACHE_DRAGONBOX`
   macro set to 1.
 
   Thanks @jk-jeon.
@@ -63,10 +63,10 @@
   on common platforms ([godbolt](https://godbolt.org/z/nsTcG8)):
 
   ```c++
-  #include <fmt/os.h>
+  #include <3laws/fmt/os.hpp>
 
   int main() {
-    auto f = fmt::output_file("guide");
+    auto f = lll::fmt::output_file("guide");
     f.print("The answer is {}.", 42);
   }
   ```
@@ -77,23 +77,23 @@
   ([godbolt](https://godbolt.org/z/c4M6fh)):
 
   ```c++
-  #include <fmt/chrono.h>
+  #include <3laws/fmt/chrono.hpp>
 
   int main() {
     auto now = std::chrono::system_clock::now();
-    fmt::print("The time is {:%H:%M:%S}.\n", now);
+    lll::fmt::print("The time is {:%H:%M:%S}.\n", now);
   }
   ```
 
   Thanks @adamburgess.
 
-- Added support for ranges with non-const `begin`/`end` to `fmt::join`
+- Added support for ranges with non-const `begin`/`end` to `lll::fmt::join`
   (https://github.com/fmtlib/fmt/issues/1784,
   https://github.com/fmtlib/fmt/pull/1786). For example
   ([godbolt](https://godbolt.org/z/jP63Tv)):
 
   ```c++
-  #include <fmt/ranges.h>
+  #include <3laws/fmt/ranges.hpp>
   #include <range/v3/view/filter.hpp>
 
   int main() {
@@ -102,7 +102,7 @@
     auto range = strs | ranges::views::filter(
       [] (const std::string &x) { return x.size() != 2; }
     );
-    fmt::print("{}\n", fmt::join(range, ""));
+    lll::fmt::print("{}\n", lll::fmt::join(range, ""));
   }
   ```
 
@@ -113,14 +113,14 @@
 - Added a `memory_buffer::append` overload that takes a range
   (https://github.com/fmtlib/fmt/pull/1806). Thanks @BRevzin.
 
-- Improved handling of single code units in `FMT_COMPILE`. For
+- Improved handling of single code units in `LAWS3_FMT_COMPILE`. For
   example:
 
   ```c++
-  #include <fmt/compile.h>
+  #include <3laws/fmt/compile.hpp>
 
   char* f(char* buf) {
-    return fmt::format_to(buf, FMT_COMPILE("x{}"), 42);
+    return lll::fmt::format_to(buf, LAWS3_FMT_COMPILE("x{}"), 42);
   }
   ```
 
@@ -151,18 +151,18 @@
   the type name directly in the error message instead of the note:
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   struct how_about_no {};
 
   int main() {
-    fmt::print("{}", how_about_no());
+    lll::fmt::print("{}", how_about_no());
   }
   ```
 
   Error ([godbolt](https://godbolt.org/z/GoxM4e)):
 
-  `fmt/core.h:1438:3: error: static_assert failed due to requirement 'fmt::v7::formattable<how_about_no>()' "Cannot format an argument. To make type T formattable provide a formatter<T> specialization: https://fmt.dev/latest/api.html#udt" ...`
+  `fmt/core.h:1438:3: error: static_assert failed due to requirement 'lll::fmt::v7::formattable<how_about_no>()' "Cannot format an argument. To make type T formattable provide a formatter<T> specialization: https://fmt.dev/latest/api.html#udt" ...`
 
 - Added the
   [make_args_checked](https://fmt.dev/7.1.0/api.html#argument-lists)
@@ -171,20 +171,20 @@
   ([godbolt](https://godbolt.org/z/PEf9qr)):
 
   ```c++
-  void vlog(const char* file, int line, fmt::string_view format,
-            fmt::format_args args) {
-    fmt::print("{}: {}: ", file, line);
-    fmt::vprint(format, args);
+  void vlog(const char* file, int line, lll::fmt::string_view format,
+            lll::fmt::format_args args) {
+    lll::fmt::print("{}: {}: ", file, line);
+    lll::fmt::vprint(format, args);
   }
 
   template <typename S, typename... Args>
   void log(const char* file, int line, const S& format, Args&&... args) {
     vlog(file, line, format,
-        fmt::make_args_checked<Args...>(format, args...));
+        lll::fmt::make_args_checked<Args...>(format, args...));
   }
 
   #define MY_LOG(format, ...) \
-    log(__FILE__, __LINE__, FMT_STRING(format), __VA_ARGS__)
+    log(__FILE__, __LINE__, LAWS3_FMT_STRING(format), __VA_ARGS__)
 
   MY_LOG("invalid squishiness: {}", 42);
   ```
@@ -194,10 +194,10 @@
   ([godbolt](https://godbolt.org/z/dPhWvj)):
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
-    fmt::print("{:.500}\n", 4.9406564584124654E-324);
+    lll::fmt::print("{:.500}\n", 4.9406564584124654E-324);
   }
   ```
 
@@ -210,44 +210,44 @@
   ([godbolt](https://godbolt.org/z/sPjY1K)):
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
     char buffer[10];
-    auto result = fmt::format_to_n(buffer, sizeof(buffer), "{}", 42);
+    auto result = lll::fmt::format_to_n(buffer, sizeof(buffer), "{}", 42);
   }
   ```
 
-- Added `fmt::format_to_n` overload with format string compilation
+- Added `lll::fmt::format_to_n` overload with format string compilation
   (https://github.com/fmtlib/fmt/issues/1764,
   https://github.com/fmtlib/fmt/pull/1767,
   https://github.com/fmtlib/fmt/pull/1869). For example
   ([godbolt](https://godbolt.org/z/93h86q)):
 
   ```c++
-  #include <fmt/compile.h>
+  #include <3laws/fmt/compile.hpp>
 
   int main() {
     char buffer[8];
-    fmt::format_to_n(buffer, sizeof(buffer), FMT_COMPILE("{}"), 42);
+    lll::fmt::format_to_n(buffer, sizeof(buffer), LAWS3_FMT_COMPILE("{}"), 42);
   }
   ```
 
   Thanks @Kurkin and @alexezeder.
 
-- Added `fmt::format_to` overload that take `text_style`
+- Added `lll::fmt::format_to` overload that take `text_style`
   (https://github.com/fmtlib/fmt/issues/1593,
   https://github.com/fmtlib/fmt/issues/1842,
   https://github.com/fmtlib/fmt/pull/1843). For example
   ([godbolt](https://godbolt.org/z/91153r)):
 
   ```c++
-  #include <fmt/color.h>
+  #include <3laws/fmt/color.hpp>
 
   int main() {
     std::string out;
-    fmt::format_to(std::back_inserter(out),
-                   fmt::emphasis::bold | fg(fmt::color::red),
+    lll::fmt::format_to(std::back_inserter(out),
+                   lll::fmt::emphasis::bold | fg(lll::fmt::color::red),
                    "The answer is {}.", 42);
   }
   ```
@@ -259,10 +259,10 @@
   For example ([godbolt](https://godbolt.org/z/bhdcW9)):
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
-    fmt::print("{:#.2g}", 0.5);
+    lll::fmt::print("{:#.2g}", 0.5);
   }
   ```
 
@@ -280,7 +280,7 @@
   (https://github.com/fmtlib/fmt/issues/1873,
   https://github.com/fmtlib/fmt/issues/1917).
 
-- Made `fmt::to_string` fallback on `ostream` insertion operator if
+- Made `lll::fmt::to_string` fallback on `ostream` insertion operator if
   the `formatter` specialization is not provided
   (https://github.com/fmtlib/fmt/issues/1815,
   https://github.com/fmtlib/fmt/pull/1829). Thanks @alexezeder.
@@ -304,7 +304,7 @@
   (https://github.com/fmtlib/fmt/issues/1870,
   https://github.com/fmtlib/fmt/issues/1932).
 
-- Improved `FMT_ALWAYS_INLINE`
+- Improved `LAWS3_FMT_ALWAYS_INLINE`
   (https://github.com/fmtlib/fmt/pull/1878). Thanks @jk-jeon.
 
 - Removed dependency on `windows.h`
@@ -323,14 +323,14 @@
   https://github.com/fmtlib/fmt/pull/1939).
   Thanks @leolchat, @pepsiman, @Klaim, @ravijanjam, @francesco-st and @udnaan.
 
-- Added the `FMT_REDUCE_INT_INSTANTIATIONS` CMake option that reduces
+- Added the `LAWS3_FMT_REDUCE_INT_INSTANTIATIONS` CMake option that reduces
   the binary code size at the cost of some integer formatting
   performance. This can be useful for extremely memory-constrained
   embedded systems
   (https://github.com/fmtlib/fmt/issues/1778,
   https://github.com/fmtlib/fmt/pull/1781). Thanks @kammce.
 
-- Added the `FMT_USE_INLINE_NAMESPACES` macro to control usage of
+- Added the `LAWS3_FMT_USE_INLINE_NAMESPACES` macro to control usage of
   inline namespaces
   (https://github.com/fmtlib/fmt/pull/1945). Thanks @darklukee.
 
@@ -419,14 +419,14 @@
   API](https://fmt.dev/7.0.0/api.html#compile-api):
 
   ```c++
-  #include <fmt/compile.h>
+  #include <3laws/fmt/compile.hpp>
 
   // Converts 42 into std::string using the most efficient method and no
   // runtime format string processing.
-  std::string s = fmt::format(FMT_COMPILE("{}"), 42);
+  std::string s = lll::fmt::format(LAWS3_FMT_COMPILE("{}"), 42);
   ```
 
-  The old `fmt::compile` API is now deprecated.
+  The old `lll::fmt::compile` API is now deprecated.
 
 - Optimized integer formatting: `format_to` with format string
   compilation and a stack-allocated buffer is now [faster than
@@ -436,7 +436,7 @@
 - Optimized handling of small format strings. For example,
 
   ```c++
-  fmt::format("Result: {}: ({},{},{},{})", str1, str2, str3, str4, str5)
+  lll::fmt::format("Result: {}: ({},{},{},{})", str1, str2, str3, str4, str5)
   ```
 
   is now \~40% faster
@@ -478,10 +478,10 @@
   For example
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
-    fmt::print("The answer is {answer}\n", fmt::arg("answer", 42));
+    lll::fmt::print("The answer is {answer}\n", lll::fmt::arg("answer", 42));
   }
   ```
 
@@ -504,8 +504,8 @@
           mov     DWORD PTR [rsp+16], 42
           mov     QWORD PTR [rsp+32], OFFSET FLAT:.LC0
           mov     DWORD PTR [rsp+40], 0
-          call    fmt::v6::vprint(fmt::v6::basic_string_view<char>,
-                                  fmt::v6::format_args)
+          call    lll::fmt::v6::vprint(lll::fmt::v6::basic_string_view<char>,
+                                  lll::fmt::v6::format_args)
           xor     eax, eax
           add     rsp, 56
           ret
@@ -518,10 +518,10 @@
   (https://github.com/fmtlib/fmt/issues/1614):
 
   ```c++
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   int main() {
-    fmt::print(FMT_STRING("{0:{1}}"), 42);
+    lll::fmt::print(LAWS3_FMT_STRING("{0:{1}}"), 42);
   }
   ```
 
@@ -530,7 +530,7 @@
       In file included from test.cc:1:
       include/fmt/format.h:2726:27: error: constexpr variable 'invalid_format' must be
       initialized by a constant expression
-        FMT_CONSTEXPR_DECL bool invalid_format =
+        LAWS3_FMT_CONSTEXPR_DECL bool invalid_format =
                                 ^
       ...
       include/fmt/core.h:569:26: note: in call to
@@ -538,7 +538,7 @@
           if (id >= num_args_) on_error("argument not found");
                               ^
 
-- Added sentinel support to `fmt::join`
+- Added sentinel support to `lll::fmt::join`
   (https://github.com/fmtlib/fmt/pull/1689)
 
   ```c++
@@ -552,7 +552,7 @@
     zstring_sentinel end() const { return {}; }
   };
 
-  auto s = fmt::format("{}", fmt::join(zstring{"hello"}, "_"));
+  auto s = lll::fmt::format("{}", lll::fmt::join(zstring{"hello"}, "_"));
   // s == "h_e_l_l_o"
   ```
 
@@ -572,30 +572,30 @@
 - Replaced the `'n'` format specifier with `'L'` for compatibility
   with `std::format`
   (https://github.com/fmtlib/fmt/issues/1624). The `'n'`
-  specifier can be enabled via the `FMT_DEPRECATED_N_SPECIFIER` macro.
+  specifier can be enabled via the `LAWS3_FMT_DEPRECATED_N_SPECIFIER` macro.
 
 - The `'='` format specifier is now disabled by default for
   compatibility with `std::format`. It can be enabled via the
-  `FMT_DEPRECATED_NUMERIC_ALIGN` macro.
+  `LAWS3_FMT_DEPRECATED_NUMERIC_ALIGN` macro.
 
 - Removed the following deprecated APIs:
 
-  -   `FMT_STRING_ALIAS` and `fmt` macros - replaced by `FMT_STRING`
-  -   `fmt::basic_string_view::char_type` - replaced by
-      `fmt::basic_string_view::value_type`
+  -   `LAWS3_FMT_STRING_ALIAS` and `fmt` macros - replaced by `LAWS3_FMT_STRING`
+  -   `lll::fmt::basic_string_view::char_type` - replaced by
+      `lll::fmt::basic_string_view::value_type`
   -   `convert_to_int`
   -   `format_arg_store::types`
   -   `*parse_context` - replaced by `*format_parse_context`
-  -   `FMT_DEPRECATED_INCLUDE_OS`
-  -   `FMT_DEPRECATED_PERCENT` - incompatible with `std::format`
+  -   `LAWS3_FMT_DEPRECATED_INCLUDE_OS`
+  -   `LAWS3_FMT_DEPRECATED_PERCENT` - incompatible with `std::format`
   -   `*writer` - replaced by compiled format API
 
 - Renamed the `internal` namespace to `detail`
   (https://github.com/fmtlib/fmt/issues/1538). The former is
-  still provided as an alias if the `FMT_USE_INTERNAL` macro is
+  still provided as an alias if the `LAWS3_FMT_USE_INTERNAL` macro is
   defined.
 
-- Improved compatibility between `fmt::printf` with the standard specs
+- Improved compatibility between `lll::fmt::printf` with the standard specs
   (https://github.com/fmtlib/fmt/issues/1595,
   https://github.com/fmtlib/fmt/pull/1682,
   https://github.com/fmtlib/fmt/pull/1683,
@@ -605,13 +605,13 @@
 - Fixed handling of `operator<<` overloads that use `copyfmt`
   (https://github.com/fmtlib/fmt/issues/1666).
 
-- Added the `FMT_OS` CMake option to control inclusion of OS-specific
+- Added the `LAWS3_FMT_OS` CMake option to control inclusion of OS-specific
   APIs in the fmt target. This can be useful for embedded platforms
   (https://github.com/fmtlib/fmt/issues/1654,
   https://github.com/fmtlib/fmt/pull/1656). Thanks @kwesolowski.
 
 - Replaced `FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION` with the
-  `FMT_FUZZ` macro to prevent interfering with fuzzing of projects
+  `LAWS3_FMT_FUZZ` macro to prevent interfering with fuzzing of projects
   using {fmt} (https://github.com/fmtlib/fmt/pull/1650).
   Thanks @asraa.
 
@@ -691,7 +691,7 @@
   non-formattable type:
 
   ```c++
-  fmt::format("{}", S());
+  lll::fmt::format("{}", S());
   ```
 
   now gives:
@@ -704,8 +704,8 @@
           ^
       ...
       note: in instantiation of function template specialization
-      'fmt::v6::format<char [3], S, char>' requested here
-        fmt::format("{}", S());
+      'lll::fmt::v6::format<char [3], S, char>' requested here
+        lll::fmt::format("{}", S());
              ^
 
   if `S` is not formattable.
@@ -717,7 +717,7 @@
   https://github.com/fmtlib/fmt/issues/1498):
 
   ```c++
-  fmt::print("{:#.0f}", 42.0);
+  lll::fmt::print("{:#.0f}", 42.0);
   ```
 
   now prints `42.`
@@ -728,13 +728,13 @@
   release.
 
 - Moved OS-specific APIs such as `windows_error` from `fmt/format.h`
-  to `fmt/os.h`. You can define `FMT_DEPRECATED_INCLUDE_OS` to
+  to `fmt/os.h`. You can define `LAWS3_FMT_DEPRECATED_INCLUDE_OS` to
   automatically include `fmt/os.h` from `fmt/format.h` for
   compatibility but this will be disabled in the next major release.
 
 - Added precision overflow detection in floating-point formatting.
 
-- Implemented detection of invalid use of `fmt::arg`.
+- Implemented detection of invalid use of `lll::fmt::arg`.
 
 - Used `type_identity` to block unnecessary template argument
   deduction. Thanks Tim Song.
@@ -743,7 +743,7 @@
   (https://github.com/fmtlib/fmt/issues/1109):
 
   ```c++
-  fmt::print("┌{0:─^{2}}┐\n"
+  lll::fmt::print("┌{0:─^{2}}┐\n"
              "│{1: ^{2}}│\n"
              "└{0:─^{2}}┘\n", "", "Прывітанне, свет!", 21);
   ```
@@ -761,10 +761,10 @@
   https://github.com/fmtlib/fmt/pull/1584):
 
   ```c++
-  fmt::dynamic_format_arg_store<fmt::format_context> store;
+  lll::fmt::dynamic_format_arg_store<lll::fmt::format_context> store;
   store.push_back("answer");
   store.push_back(42);
-  fmt::vprint("The {} is {}.\n", store);
+  lll::fmt::vprint("The {} is {}.\n", store);
   ```
 
   prints:
@@ -773,7 +773,7 @@
 
   Thanks @vsolontsov-ll.
 
-- Made `fmt::join` accept `initializer_list`
+- Made `lll::fmt::join` accept `initializer_list`
   (https://github.com/fmtlib/fmt/pull/1591). Thanks @Rapotkinnik.
 
 - Fixed handling of empty tuples
@@ -789,11 +789,11 @@
   (https://github.com/fmtlib/fmt/pull/1553). Thanks @dominicpoeschko.
 
 - Added the ability to disable floating-point formatting via
-  `FMT_USE_FLOAT`, `FMT_USE_DOUBLE` and `FMT_USE_LONG_DOUBLE` macros
+  `LAWS3_FMT_USE_FLOAT`, `LAWS3_FMT_USE_DOUBLE` and `LAWS3_FMT_USE_LONG_DOUBLE` macros
   for extremely memory-constrained embedded system
   (https://github.com/fmtlib/fmt/pull/1590). Thanks @albaguirre.
 
-- Made `FMT_STRING` work with `constexpr` `string_view`
+- Made `LAWS3_FMT_STRING` work with `constexpr` `string_view`
   (https://github.com/fmtlib/fmt/pull/1589). Thanks @scramsby.
 
 - Implemented a minor optimization in the format string parser
@@ -879,7 +879,7 @@
   (https://github.com/fmtlib/fmt/issues/1471).
 - Fixed handling types convertible to `std::string_view`
   (https://github.com/fmtlib/fmt/pull/1451). Thanks @denizevrenci.
-- Made CUDA test an opt-in enabled via the `FMT_CUDA_TEST` CMake
+- Made CUDA test an opt-in enabled via the `LAWS3_FMT_CUDA_TEST` CMake
   option.
 - Fixed sign conversion warnings
   (https://github.com/fmtlib/fmt/pull/1440). Thanks @0x8000-0000.
@@ -903,10 +903,10 @@
 
   ```c++
   #include <cmath>
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
-    fmt::print("{}", M_PI);
+    lll::fmt::print("{}", M_PI);
   }
   ```
 
@@ -930,14 +930,14 @@
 
 - {fmt} no longer converts `float` arguments to `double`. In
   particular this improves the default (shortest) representation of
-  floats and makes `fmt::format` consistent with `std::format` specs
+  floats and makes `lll::fmt::format` consistent with `std::format` specs
   (https://github.com/fmtlib/fmt/issues/1336,
   https://github.com/fmtlib/fmt/issues/1353,
   https://github.com/fmtlib/fmt/pull/1360,
   https://github.com/fmtlib/fmt/pull/1361):
 
   ```c++
-  fmt::print("{}", 0.1f);
+  lll::fmt::print("{}", 0.1f);
   ```
 
   prints `0.1` instead of `0.10000000149011612`.
@@ -953,7 +953,7 @@
   (https://github.com/fmtlib/fmt/pull/1287):
 
   ```c++
-  fmt::print("{}", std::numeric_limits<__int128_t>::max());
+  lll::fmt::print("{}", std::numeric_limits<__int128_t>::max());
   ```
 
   prints `170141183460469231731687303715884105727`.
@@ -968,17 +968,17 @@
   the number of template instantiations. `wchar_t` overload of
   `vprint` was moved from `fmt/core.h` to `fmt/format.h`.
 
-- Added an overload of `fmt::join` that works with tuples
+- Added an overload of `lll::fmt::join` that works with tuples
   (https://github.com/fmtlib/fmt/issues/1322,
   https://github.com/fmtlib/fmt/pull/1330):
 
   ```c++
   #include <tuple>
-  #include <fmt/ranges.h>
+  #include <3laws/fmt/ranges.hpp>
 
   int main() {
     std::tuple<char, int, float> t{'a', 1, 2.0f};
-    fmt::print("{}", t);
+    lll::fmt::print("{}", t);
   }
   ```
 
@@ -989,7 +989,7 @@
 - Changed formatting of octal zero with prefix from \"00\" to \"0\":
 
   ```c++
-  fmt::print("{:#o}", 0);
+  lll::fmt::print("{:#o}", 0);
   ```
 
   prints `0`.
@@ -998,8 +998,8 @@
   (https://github.com/fmtlib/fmt/pull/1406):
 
   ```c++
-  #include <fmt/locale.h>
-  #include <fmt/ostream.h>
+  #include <3laws/fmt/locale.h>
+  #include <3laws/fmt/ostream.hpp>
 
   struct S {
     double value;
@@ -1010,7 +1010,7 @@
   }
 
   int main() {
-    auto s = fmt::format(std::locale("fr_FR.UTF-8"), "{}", S{0.42});
+    auto s = lll::fmt::format(std::locale("fr_FR.UTF-8"), "{}", S{0.42});
     // s == "0,42"
   }
   ```
@@ -1032,7 +1032,7 @@
     operator const char*() && = delete;
   };
   mystring str;
-  fmt::print("{}", str); // now compiles
+  lll::fmt::print("{}", str); // now compiles
   ```
 
 - Enums are now mapped to correct underlying types instead of `int`
@@ -1136,11 +1136,11 @@
 
   ```c++
   #include <locale>
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
   int main() {
     std::locale::global(std::locale("ru_RU.UTF-8"));
-    fmt::print("value = {}", 4.2);
+    lll::fmt::print("value = {}", 4.2);
   }
   ```
 
@@ -1150,20 +1150,20 @@
 
   ```c++
   std::locale::global(std::locale("ru_RU.UTF-8"));
-  fmt::print("value = {:n}", 4.2);
+  lll::fmt::print("value = {:n}", 4.2);
   ```
 
   prints \"value = 4,2\".
 
 - Added an experimental Grisu floating-point formatting algorithm
   implementation (disabled by default). To enable it compile with the
-  `FMT_USE_GRISU` macro defined to 1:
+  `LAWS3_FMT_USE_GRISU` macro defined to 1:
 
   ```c++
-  #define FMT_USE_GRISU 1
-  #include <fmt/format.h>
+  #define LAWS3_FMT_USE_GRISU 1
+  #include <3laws/fmt/format.hpp>
 
-  auto s = fmt::format("{}", 4.2); // formats 4.2 using Grisu
+  auto s = lll::fmt::format("{}", 4.2); // formats 4.2 using Grisu
   ```
 
   With Grisu enabled, {fmt} is 13x faster than `std::ostringstream`
@@ -1185,7 +1185,7 @@
 
   ```c++
   #include <iostream>
-  #include <fmt/ostream.h>
+  #include <3laws/fmt/ostream.hpp>
 
   struct S {};
 
@@ -1194,7 +1194,7 @@
   }
 
   template <>
-  struct fmt::formatter<S> : fmt::formatter<int> {
+  struct lll::fmt::formatter<S> : lll::fmt::formatter<int> {
     auto format(S, format_context& ctx) {
       return formatter<int>::format(2, ctx);
     }
@@ -1202,21 +1202,21 @@
 
   int main() {
     std::cout << S() << "\n"; // prints 1 using operator<<
-    fmt::print("{}\n", S());  // prints 2 using formatter
+    lll::fmt::print("{}\n", S());  // prints 2 using formatter
   }
   ```
 
-- Introduced the experimental `fmt::compile` function that does format
+- Introduced the experimental `lll::fmt::compile` function that does format
   string compilation
   (https://github.com/fmtlib/fmt/issues/618,
   https://github.com/fmtlib/fmt/issues/1169,
   https://github.com/fmtlib/fmt/pull/1171):
 
   ```c++
-  #include <fmt/compile.h>
+  #include <3laws/fmt/compile.hpp>
 
-  auto f = fmt::compile<int>("{}");
-  std::string s = fmt::format(f, 42); // can be called multiple times to
+  auto f = lll::fmt::compile<int>("{}");
+  std::string s = lll::fmt::format(f, 42); // can be called multiple times to
                                       // format different values
   // s == "42"
   ```
@@ -1232,7 +1232,7 @@
   https://github.com/fmtlib/fmt/pull/1071):
 
   ```c++
-  auto s = fmt::format("{:.1%}", 0.42); // s == "42.0%"
+  auto s = lll::fmt::format("{:.1%}", 0.42); // s == "42.0%"
   ```
 
   Thanks @gawain-bolton.
@@ -1242,7 +1242,7 @@
   https://github.com/fmtlib/fmt/pull/1012):
 
   ```c++
-  auto s = fmt::format("{:.1}", std::chrono::duration<double>(1.234));
+  auto s = lll::fmt::format("{:.1}", std::chrono::duration<double>(1.234));
   // s == 1.2s
   ```
 
@@ -1253,8 +1253,8 @@
   (https://github.com/fmtlib/fmt/pull/1019):
 
   ```c++
-  auto value = fmt::format("{:%Q}", 42s); // value == "42"
-  auto unit  = fmt::format("{:%q}", 42s); // unit == "s"
+  auto value = lll::fmt::format("{:%Q}", 42s); // value == "42"
+  auto unit  = lll::fmt::format("{:%q}", 42s); // unit == "s"
   ```
 
   Thanks @DanielaE.
@@ -1262,7 +1262,7 @@
 - Fixed handling of dynamic width in chrono formatter:
 
   ```c++
-  auto s = fmt::format("{0:{1}%H:%M:%S}", std::chrono::seconds(12345), 12);
+  auto s = lll::fmt::format("{0:{1}%H:%M:%S}", std::chrono::seconds(12345), 12);
   //                        ^ width argument index                     ^ width
   // s == "03:25:45    "
   ```
@@ -1271,14 +1271,14 @@
 
 - Removed deprecated `fmt/time.h`. Use `fmt/chrono.h` instead.
 
-- Added `fmt::format` and `fmt::vformat` overloads that take
+- Added `lll::fmt::format` and `lll::fmt::vformat` overloads that take
   `text_style` (https://github.com/fmtlib/fmt/issues/993,
   https://github.com/fmtlib/fmt/pull/994):
 
   ```c++
-  #include <fmt/color.h>
+  #include <3laws/fmt/color.hpp>
 
-  std::string message = fmt::format(fmt::emphasis::bold | fg(fmt::color::red),
+  std::string message = lll::fmt::format(lll::fmt::emphasis::bold | fg(lll::fmt::color::red),
                                     "The answer is {}.", 42);
   ```
 
@@ -1288,11 +1288,11 @@
   namely `print` overloads that take `text_style` instead.
 
 - Made `std::unique_ptr` and `std::shared_ptr` formattable as pointers
-  via `fmt::ptr` (https://github.com/fmtlib/fmt/pull/1121):
+  via `lll::fmt::ptr` (https://github.com/fmtlib/fmt/pull/1121):
 
   ```c++
   std::unique_ptr<int> p = ...;
-  fmt::print("{}", fmt::ptr(p)); // prints p as a pointer
+  lll::fmt::print("{}", lll::fmt::ptr(p)); // prints p as a pointer
   ```
 
   Thanks @sighingnow.
@@ -1344,7 +1344,7 @@
   https://github.com/fmtlib/fmt/blob/master/support/C%2B%2B.sublime-syntax)
   (https://github.com/fmtlib/fmt/issues/1037). Thanks @Kronuz.
 
-- Added the `FMT_ENFORCE_COMPILE_STRING` macro to enforce the use of
+- Added the `LAWS3_FMT_ENFORCE_COMPILE_STRING` macro to enforce the use of
   compile-time format strings
   (https://github.com/fmtlib/fmt/pull/1231). Thanks @jackoalan.
 
@@ -1495,12 +1495,12 @@
 - Introduced experimental chrono formatting support:
 
   ```c++
-  #include <fmt/chrono.h>
+  #include <3laws/fmt/chrono.hpp>
 
   int main() {
     using namespace std::literals::chrono_literals;
-    fmt::print("Default format: {} {}\n", 42s, 100ms);
-    fmt::print("strftime-like format: {:%H:%M:%S}\n", 3h + 15min + 30s);
+    lll::fmt::print("Default format: {} {}\n", 42s, 100ms);
+    lll::fmt::print("strftime-like format: {:%H:%M:%S}\n", 3h + 15min + 30s);
   }
   ```
 
@@ -1517,14 +1517,14 @@
   https://github.com/fmtlib/fmt/pull/973):
 
   ```c++
-  #include <fmt/color.h>
+  #include <3laws/fmt/color.hpp>
 
   int main() {
-    fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
+    lll::fmt::print(fg(lll::fmt::color::crimson) | lll::fmt::emphasis::bold,
                "Hello, {}!\n", "world");
-    fmt::print(fg(fmt::color::floral_white) | bg(fmt::color::slate_gray) |
-               fmt::emphasis::underline, "Olá, {}!\n", "Mundo");
-    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic,
+    lll::fmt::print(fg(lll::fmt::color::floral_white) | bg(lll::fmt::color::slate_gray) |
+               lll::fmt::emphasis::underline, "Olá, {}!\n", "Mundo");
+    lll::fmt::print(fg(lll::fmt::color::steel_blue) | lll::fmt::emphasis::italic,
                "你好{}！\n", "世界");
   }
   ```
@@ -1540,10 +1540,10 @@
   https://github.com/fmtlib/fmt/pull/974)
 
   ```c++
-  #include <fmt/color.h>
+  #include <3laws/fmt/color.hpp>
 
   int main() {
-    print(fg(fmt::terminal_color::red), "stop\n");
+    print(fg(lll::fmt::terminal_color::red), "stop\n");
   }
   ```
 
@@ -1561,7 +1561,7 @@
   https://github.com/fmtlib/fmt/pull/897,
   https://github.com/fmtlib/fmt/issues/920). Any object of
   type `S` that has an overloaded `to_string_view(const S&)` returning
-  `fmt::string_view` can be used as a format string:
+  `lll::fmt::string_view` can be used as a format string:
 
   ```c++
   namespace my_ns {
@@ -1570,7 +1570,7 @@
   }
   }
 
-  std::string message = fmt::format(my_string("The answer is {}."), 42);
+  std::string message = lll::fmt::format(my_string("The answer is {}."), 42);
   ```
 
   Thanks @DanielaE.
@@ -1579,7 +1579,7 @@
   (https://github.com/fmtlib/fmt/pull/898):
 
   ```c++
-  auto message = fmt::format(std::string_view("The answer is {}."), 42);
+  auto message = lll::fmt::format(std::string_view("The answer is {}."), 42);
   ```
 
   Thanks @DanielaE.
@@ -1597,10 +1597,10 @@
   (https://github.com/fmtlib/fmt/pull/867):
 
   ```c++
-  #include <fmt/color.h>
+  #include <3laws/fmt/color.hpp>
 
   int main() {
-    print(fg(fmt::color::red), L"{}\n", 42);
+    print(fg(lll::fmt::color::red), L"{}\n", 42);
   }
   ```
 
@@ -1611,14 +1611,14 @@
   https://github.com/fmtlib/fmt/pull/891):
 
   ```c++
-  using namespace fmt::literals;
-  auto s = fmt::format("{:*^5}"_u, "🤡"_u); // s == "**🤡**"_u
+  using namespace lll::fmt::literals;
+  auto s = lll::fmt::format("{:*^5}"_u, "🤡"_u); // s == "**🤡**"_u
   ```
 
 - Improved locale support:
 
   ```c++
-  #include <fmt/locale.h>
+  #include <3laws/fmt/locale.h>
 
   struct numpunct : std::numpunct<char> {
    protected:
@@ -1626,7 +1626,7 @@
   };
 
   std::locale loc;
-  auto s = fmt::format(std::locale(loc, new numpunct()), "{:n}", 1234567);
+  auto s = lll::fmt::format(std::locale(loc, new numpunct()), "{:n}", 1234567);
   // s == "1~234~567"
   ```
 
@@ -1636,8 +1636,8 @@
 - Added `make_printf_args` and `make_wprintf_args` functions
   (https://github.com/fmtlib/fmt/pull/934). Thanks @tnovotny.
 
-- Deprecated `fmt::visit`, `parse_context`, and `wparse_context`. Use
-  `fmt::visit_format_arg`, `format_parse_context`, and
+- Deprecated `lll::fmt::visit`, `parse_context`, and `wparse_context`. Use
+  `lll::fmt::visit_format_arg`, `format_parse_context`, and
   `wformat_parse_context` instead.
 
 - Removed undocumented `basic_fixed_buffer` which has been superseded
@@ -1648,7 +1648,7 @@
 - Disallowed repeated leading zeros in an argument ID:
 
   ```c++
-  fmt::print("{000}", 42); // error
+  lll::fmt::print("{000}", 42); // error
   ```
 
 - Reintroduced support for gcc 4.4.
@@ -1710,7 +1710,7 @@
 - Fixed `visit` lookup issues on gcc 7 & 8
   (https://github.com/fmtlib/fmt/pull/870). Thanks @medithe.
 - Fixed linkage errors on older gcc.
-- Prevented `fmt/range.h` from specializing `fmt::basic_string_view`
+- Prevented `fmt/range.h` from specializing `lll::fmt::basic_string_view`
   (https://github.com/fmtlib/fmt/issues/865,
   https://github.com/fmtlib/fmt/pull/868). Thanks @hhggit.
 - Improved error message when formatting unknown types
@@ -1730,44 +1730,44 @@
 
   | Method                     | Time, s         | Speedup |
   | -------------------------- | --------------: | ------: |
-  | fmt::format 5.1            | 0.58            |         |
-  | fmt::format 5.2            | 0.35            |   1.66x |
-  | fmt::format_to 5.1         | 0.51            |         |
-  | fmt::format_to 5.2         | 0.23            |   2.22x |
+  | lll::fmt::format 5.1            | 0.58            |         |
+  | lll::fmt::format 5.2            | 0.35            |   1.66x |
+  | lll::fmt::format_to 5.1         | 0.51            |         |
+  | lll::fmt::format_to 5.2         | 0.23            |   2.22x |
   | sprintf                    | 0.71            |         |
   | std::to_string             | 1.01            |         |
   | std::stringstream          | 1.73            |         |
 
 - Changed the `fmt` macro from opt-out to opt-in to prevent name
-  collisions. To enable it define the `FMT_STRING_ALIAS` macro to 1
+  collisions. To enable it define the `LAWS3_FMT_STRING_ALIAS` macro to 1
   before including `fmt/format.h`:
 
   ```c++
-  #define FMT_STRING_ALIAS 1
-  #include <fmt/format.h>
+  #define LAWS3_FMT_STRING_ALIAS 1
+  #include <3laws/fmt/format.hpp>
   std::string answer = format(fmt("{}"), 42);
   ```
 
 - Added compile-time format string checks to `format_to` overload that
-  takes `fmt::memory_buffer`
+  takes `lll::fmt::memory_buffer`
   (https://github.com/fmtlib/fmt/issues/783):
 
   ```c++
-  fmt::memory_buffer buf;
+  lll::fmt::memory_buffer buf;
   // Compile-time error: invalid type specifier.
-  fmt::format_to(buf, fmt("{:d}"), "foo");
+  lll::fmt::format_to(buf, fmt("{:d}"), "foo");
   ```
 
 - Moved experimental color support to `fmt/color.h` and enabled the
   new API by default. The old API can be enabled by defining the
-  `FMT_DEPRECATED_COLORS` macro.
+  `LAWS3_FMT_DEPRECATED_COLORS` macro.
 
 - Added formatting support for types explicitly convertible to
-  `fmt::string_view`:
+  `lll::fmt::string_view`:
 
   ```c++
   struct foo {
-    explicit operator fmt::string_view() const { return "foo"; }
+    explicit operator lll::fmt::string_view() const { return "foo"; }
   };
   auto s = format("{}", foo());
   ```
@@ -1803,7 +1803,7 @@
 
   ```c++
   // This works on compilers with constexpr support.
-  static const std::string answer = fmt::format("{}", 42);
+  static const std::string answer = lll::fmt::format("{}", 42);
   ```
 
 - Fixed various compiler warnings and errors
@@ -1824,14 +1824,14 @@
 # 5.1.0 - 2018-07-05
 
 - Added experimental support for RGB color output enabled with the
-  `FMT_EXTENDED_COLORS` macro:
+  `LAWS3_FMT_EXTENDED_COLORS` macro:
 
   ```c++
-  #define FMT_EXTENDED_COLORS
-  #define FMT_HEADER_ONLY // or compile fmt with FMT_EXTENDED_COLORS defined
-  #include <fmt/format.h>
+  #define LAWS3_FMT_EXTENDED_COLORS
+  #define LAWS3_FMT_HEADER_ONLY // or compile fmt with LAWS3_FMT_EXTENDED_COLORS defined
+  #include <3laws/fmt/format.hpp>
 
-  fmt::print(fmt::color::steel_blue, "Some beautiful text");
+  lll::fmt::print(lll::fmt::color::steel_blue, "Some beautiful text");
   ```
 
   The old API (the `print_colored` and `vprint_colored` functions and
@@ -1855,7 +1855,7 @@
   https://github.com/fmtlib/fmt/pull/759). Thanks @drrlvn.
 
 - Added more compilers to continuous integration and increased
-  `FMT_PEDANTIC` warning levels
+  `LAWS3_FMT_PEDANTIC` warning levels
   (https://github.com/fmtlib/fmt/pull/736). Thanks @eliaskosunen.
 
 - Fixed compilation with MSVC 2013.
@@ -1898,7 +1898,7 @@
 # 5.0.0 - 2018-05-21
 
 - Added a requirement for partial C++11 support, most importantly
-  variadic templates and type traits, and dropped `FMT_VARIADIC_*`
+  variadic templates and type traits, and dropped `LAWS3_FMT_VARIADIC_*`
   emulation macros. Variadic templates are available since GCC 4.4,
   Clang 2.9 and MSVC 18.0 (2013). For older compilers use {fmt}
   [version 4.x](https://github.com/fmtlib/fmt/releases/tag/4.1.0)
@@ -1914,7 +1914,7 @@
   For example
 
   ```c++
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   std::string s = format(fmt("{:d}"), "foo");
   ```
@@ -1923,7 +1923,7 @@
   strings ([godbolt](https://godbolt.org/g/rnCy9Q)):
 
       ...
-      <source>:4:19: note: in instantiation of function template specialization 'fmt::v5::format<S, char [4]>' requested here
+      <source>:4:19: note: in instantiation of function template specialization 'lll::fmt::v5::format<S, char [4]>' requested here
         std::string s = format(fmt("{:d}"), "foo");
                         ^
       format.h:1337:13: note: non-constexpr function 'on_error' cannot be used in a constant expression
@@ -1976,10 +1976,10 @@
 
   ```c++
   #include <vector>
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
   std::vector<char> out;
-  fmt::format_to(std::back_inserter(out), "{}", 42);
+  lll::fmt::format_to(std::back_inserter(out), "{}", 42);
   ```
 
 - Added the
@@ -1989,7 +1989,7 @@
 
   ```c++
   char out[4];
-  fmt::format_to_n(out, sizeof(out), "{}", 12345);
+  lll::fmt::format_to_n(out, sizeof(out), "{}", 12345);
   // out == "1234" (without terminating '\0')
   ```
 
@@ -1998,9 +1998,9 @@
   function for computing the output size:
 
   ```c++
-  #include <fmt/format.h>
+  #include <3laws/fmt/format.hpp>
 
-  auto size = fmt::formatted_size("{}", 12345); // size == 5
+  auto size = lll::fmt::formatted_size("{}", 12345); // size == 5
   ```
 
 - Improved compile times by reducing dependencies on standard headers
@@ -2008,9 +2008,9 @@
   API](https://fmt.dev/latest/api.html#core-api):
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
 
-  fmt::print("The answer is {}.", 42);
+  lll::fmt::print("The answer is {}.", 42);
   ```
 
   See [Compile time and code
@@ -2022,13 +2022,13 @@
 
   ```c++
   // Prints formatted error message.
-  void vreport_error(const char *format, fmt::format_args args) {
-    fmt::print("Error: ");
-    fmt::vprint(format, args);
+  void vreport_error(const char *format, lll::fmt::format_args args) {
+    lll::fmt::print("Error: ");
+    lll::fmt::vprint(format, args);
   }
   template <typename... Args>
   void report_error(const char *format, const Args & ... args) {
-    vreport_error(format, fmt::make_format_args(args...));
+    vreport_error(format, lll::fmt::make_format_args(args...));
   }
   ```
 
@@ -2051,10 +2051,10 @@
   (https://github.com/fmtlib/fmt/pull/735):
 
   ```c++
-  #include <fmt/ranges.h>
+  #include <3laws/fmt/ranges.hpp>
 
   std::vector<int> v = {1, 2, 3};
-  fmt::print("{}", v); // prints {1, 2, 3}
+  lll::fmt::print("{}", v); // prints {1, 2, 3}
   ```
 
   Thanks @Remotion.
@@ -2063,10 +2063,10 @@
   (https://github.com/fmtlib/fmt/pull/712):
 
   ```c++
-  #include <fmt/time.h>
+  #include <3laws/fmt/time.h>
 
   std::time_t t = std::time(nullptr);
-  auto s = fmt::format(L"The date is {:%Y-%m-%d}.", *std::localtime(&t));
+  auto s = lll::fmt::format(L"The date is {:%Y-%m-%d}.", *std::localtime(&t));
   ```
 
   Thanks @DanielaE.
@@ -2075,7 +2075,7 @@
   (https://github.com/fmtlib/fmt/pull/724). Thanks @DanielaE.
 
 - Switched from a custom null-terminated string view class to
-  `string_view` in the format API and provided `fmt::string_view`
+  `string_view` in the format API and provided `lll::fmt::string_view`
   which implements a subset of `std::string_view` API for pre-C++17
   systems.
 
@@ -2083,10 +2083,10 @@
   (https://github.com/fmtlib/fmt/pull/607):
 
   ```c++
-  #include <fmt/core.h>
+  #include <3laws/fmt/core.hpp>
   #include <experimental/string_view>
 
-  fmt::print("{}", std::experimental::string_view("foo"));
+  lll::fmt::print("{}", std::experimental::string_view("foo"));
   ```
 
   Thanks @virgiliofornazin.
@@ -2094,7 +2094,7 @@
 - Allowed mixing named and automatic arguments:
 
   ```c++
-  fmt::format("{} {two}", 1, fmt::arg("two", 2));
+  lll::fmt::format("{} {two}", 1, lll::fmt::arg("two", 2));
   ```
 
 - Removed the write API in favor of the [format
@@ -2133,12 +2133,12 @@
 - Added Gradle build file `support/build.gradle`
   (https://github.com/fmtlib/fmt/pull/649). Thanks @luncliff.
 
-- Removed `FMT_CPPFORMAT` CMake option.
+- Removed `LAWS3_FMT_CPPFORMAT` CMake option.
 
 - Fixed a name conflict with the macro `CHAR_WIDTH` in glibc
   (https://github.com/fmtlib/fmt/pull/616). Thanks @aroig.
 
-- Fixed handling of nested braces in `fmt::join`
+- Fixed handling of nested braces in `lll::fmt::join`
   (https://github.com/fmtlib/fmt/issues/638).
 
 - Added `SOURCELINK_SUFFIX` for compatibility with Sphinx 1.5
@@ -2219,7 +2219,7 @@
 - Disabled unsafe implicit conversion to `std::string`
   (https://github.com/fmtlib/fmt/issues/729).
 
-- Fixed handling of reused format specs (as in `fmt::join`) for
+- Fixed handling of reused format specs (as in `lll::fmt::join`) for
   pointers (https://github.com/fmtlib/fmt/pull/725). Thanks @mwinterb.
 
 - Fixed installation of `fmt/ranges.h`
@@ -2227,7 +2227,7 @@
 
 # 4.1.0 - 2017-12-20
 
-- Added `fmt::to_wstring()` in addition to `fmt::to_string()`
+- Added `lll::fmt::to_wstring()` in addition to `lll::fmt::to_string()`
   (https://github.com/fmtlib/fmt/pull/559). Thanks @alabuzhev.
 - Added support for C++17 `std::string_view`
   (https://github.com/fmtlib/fmt/pull/571 and
@@ -2235,14 +2235,14 @@
   Thanks @thelostt and @mwinterb.
 - Enabled stream exceptions to catch errors
   (https://github.com/fmtlib/fmt/issues/581). Thanks @crusader-mike.
-- Allowed formatting of class hierarchies with `fmt::format_arg()`
+- Allowed formatting of class hierarchies with `lll::fmt::format_arg()`
   (https://github.com/fmtlib/fmt/pull/547). Thanks @rollbear.
 - Removed limitations on character types
   (https://github.com/fmtlib/fmt/pull/563). Thanks @Yelnats321.
 - Conditionally enabled use of `std::allocator_traits`
   (https://github.com/fmtlib/fmt/pull/583). Thanks @mwinterb.
 - Added support for `const` variadic member function emulation with
-  `FMT_VARIADIC_CONST`
+  `LAWS3_FMT_VARIADIC_CONST`
   (https://github.com/fmtlib/fmt/pull/591). Thanks @ludekvodicka.
 - Various bugfixes: bad overflow check, unsupported implicit type
   conversion when determining formatting function, test segfaults
@@ -2276,20 +2276,20 @@
 - Removed old compatibility headers `cppformat/*.h` and CMake options
   (https://github.com/fmtlib/fmt/pull/527). Thanks @maddinat0r.
 
-- Added `string.h` containing `fmt::to_string()` as alternative to
+- Added `string.h` containing `lll::fmt::to_string()` as alternative to
   `std::to_string()` as well as other string writer functionality
   (https://github.com/fmtlib/fmt/issues/326 and
   https://github.com/fmtlib/fmt/pull/441):
 
   ```c++
-  #include "fmt/string.h"
+  #include "3laws/fmt/string.hpp"
 
-  std::string answer = fmt::to_string(42);
+  std::string answer = lll::fmt::to_string(42);
   ```
 
   Thanks @glebov-andrey.
 
-- Moved `fmt::printf()` to new `printf.h` header and allowed `%s` as
+- Moved `lll::fmt::printf()` to new `printf.h` header and allowed `%s` as
   generic specifier (https://github.com/fmtlib/fmt/pull/453),
   made `%.f` more conformant to regular `printf()`
   (https://github.com/fmtlib/fmt/pull/490), added custom
@@ -2299,10 +2299,10 @@
   https://github.com/fmtlib/fmt/pull/340):
 
   ```c++
-  #include "fmt/printf.h"
+  #include "3laws/fmt/printf.hpp"
 
   // %s format specifier can be used with any argument type.
-  fmt::printf("%s", 42);
+  lll::fmt::printf("%s", 42);
   ```
 
   Thanks @mojoBrendan, @manylegged and @spacemoose.
@@ -2314,16 +2314,16 @@
   containers like `std::vector`
   (https://github.com/fmtlib/fmt/pull/450). Thanks @polyvertex.
 
-- Added `fmt::join()` function that takes a range and formats its
+- Added `lll::fmt::join()` function that takes a range and formats its
   elements separated by a given string
   (https://github.com/fmtlib/fmt/pull/466):
 
   ```c++
-  #include "fmt/format.h"
+  #include "3laws/fmt/format.hpp"
 
   std::vector<double> v = {1.2, 3.4, 5.6};
   // Prints "(+01.20, +03.40, +05.60)".
-  fmt::print("({:+06.2f})", fmt::join(v.begin(), v.end(), ", "));
+  lll::fmt::print("({:+06.2f})", lll::fmt::join(v.begin(), v.end(), ", "));
   ```
 
   Thanks @olivier80.
@@ -2333,11 +2333,11 @@
   (https://github.com/fmtlib/fmt/pull/444). Thanks @polyvertex.
   See also https://github.com/fmtlib/fmt/issues/439.
 
-- Added `fmt::format_system_error()` for error code formatting
+- Added `lll::fmt::format_system_error()` for error code formatting
   (https://github.com/fmtlib/fmt/issues/323 and
   https://github.com/fmtlib/fmt/pull/526). Thanks @maddinat0r.
 
-- Added thread-safe `fmt::localtime()` and `fmt::gmtime()` as
+- Added thread-safe `lll::fmt::localtime()` and `lll::fmt::gmtime()` as
   replacement for the standard version to `time.h`
   (https://github.com/fmtlib/fmt/pull/396). Thanks @codicodi.
 
@@ -2350,7 +2350,7 @@
   https://github.com/fmtlib/fmt/issues/480 and
   https://github.com/fmtlib/fmt/issues/491.
 
-- Fixed handling of wide strings in `fmt::StringWriter`.
+- Fixed handling of wide strings in `lll::fmt::StringWriter`.
 
 - Improved compiler error messages
   (https://github.com/fmtlib/fmt/issues/357).
@@ -2382,9 +2382,9 @@
 
 # 3.0.2 - 2017-06-14
 
-- Added `FMT_VERSION` macro
+- Added `LAWS3_FMT_VERSION` macro
   (https://github.com/fmtlib/fmt/issues/411).
-- Used `FMT_NULL` instead of literal `0`
+- Used `LAWS3_FMT_NULL` instead of literal `0`
   (https://github.com/fmtlib/fmt/pull/409). Thanks @alabuzhev.
 - Added extern templates for `format_float`
   (https://github.com/fmtlib/fmt/issues/413).
@@ -2461,7 +2461,7 @@
   are now located in the `fmt` directory:
 
   ```c++
-  #include "fmt/format.h"
+  #include "3laws/fmt/format.hpp"
   ```
 
   Including `format.h` from the `cppformat` directory is deprecated
@@ -2477,11 +2477,11 @@
   (https://github.com/fmtlib/fmt/issues/283):
 
   ```c++
-  #include "fmt/time.h"
+  #include "3laws/fmt/time.hpp"
 
   std::time_t t = std::time(nullptr);
   // Prints "The date is 2016-04-29." (with the current date)
-  fmt::print("The date is {:%Y-%m-%d}.", *std::localtime(&t));
+  lll::fmt::print("The date is {:%Y-%m-%d}.", *std::localtime(&t));
   ```
 
 - `std::ostream` support including formatting of user-defined types
@@ -2489,7 +2489,7 @@
   `fmt/ostream.h`:
 
   ```c++
-  #include "fmt/ostream.h"
+  #include "3laws/fmt/ostream.hpp"
 
   class Date {
     int year_, month_, day_;
@@ -2501,7 +2501,7 @@
     }
   };
 
-  std::string s = fmt::format("The date is {}", Date(2012, 12, 9));
+  std::string s = lll::fmt::format("The date is {}", Date(2012, 12, 9));
   // s == "The date is 2012-12-9"
   ```
 
@@ -2514,7 +2514,7 @@
 
   ```c++
   std::setlocale(LC_ALL, "en_US.utf8");
-  fmt::print("cppformat: {:n}\n", 1234567); // prints 1,234,567
+  lll::fmt::print("cppformat: {:n}\n", 1234567); // prints 1,234,567
   ```
 
 - Sign is now preserved when formatting an integer with an incorrect
@@ -2522,7 +2522,7 @@
   (https://github.com/fmtlib/fmt/issues/265):
 
   ```c++
-  fmt::printf("%lld", -42); // prints -42
+  lll::fmt::printf("%lld", -42); // prints -42
   ```
 
   Note that it would be an undefined behavior in `std::printf`.
@@ -2532,7 +2532,7 @@
   (https://github.com/fmtlib/fmt/issues/255):
 
   ```c++
-  fmt::printf("%d", std::numeric_limits<long long>::max());
+  lll::fmt::printf("%d", std::numeric_limits<long long>::max());
   ```
 
   Note that it would be an undefined behavior in `std::printf`.
@@ -2618,7 +2618,7 @@
 # 2.1.1 - 2016-04-11
 
 - The install location for generated CMake files is now configurable
-  via the `FMT_CMAKE_DIR` CMake variable
+  via the `LAWS3_FMT_CMAKE_DIR` CMake variable
   (https://github.com/fmtlib/fmt/pull/299). Thanks @niosHD.
 - Documentation fixes
   (https://github.com/fmtlib/fmt/issues/252).
@@ -2637,7 +2637,7 @@
       configuration.
   -   Targets `doc`, `install`, and `test` are now disabled if C++
       Format is included as a CMake subproject. They can be enabled by
-      setting `FMT_DOC`, `FMT_INSTALL`, and `FMT_TEST` in the parent
+      setting `LAWS3_FMT_DOC`, `LAWS3_FMT_INSTALL`, and `LAWS3_FMT_TEST` in the parent
       project.
 
   Thanks @niosHD.
@@ -2662,7 +2662,7 @@
   https://github.com/fmtlib/fmt/pull/174):
 
   ```c++
-  fmt::print("The answer is {answer}.", fmt::arg("answer", 42));
+  lll::fmt::print("The answer is {answer}.", lll::fmt::arg("answer", 42));
   ```
 
   Thanks @jamboree.
@@ -2673,8 +2673,8 @@
   https://github.com/fmtlib/fmt/pull/207):
 
   ```c++
-  using namespace fmt::literals;
-  fmt::print("The answer is {answer}.", "answer"_a=42);
+  using namespace lll::fmt::literals;
+  lll::fmt::print("The answer is {answer}.", "answer"_a=42);
   ```
 
   Thanks @dean0x7d.
@@ -2687,7 +2687,7 @@
   (https://github.com/fmtlib/fmt/pull/168):
 
   ```c++
-  fmt::format("{0:{1}}", 42, 5); // gives "   42"
+  lll::fmt::format("{0:{1}}", 42, 5); // gives "   42"
   ```
 
   Thanks @jamboree.
@@ -2700,22 +2700,22 @@
   \"false\" (https://github.com/fmtlib/fmt/issues/170):
 
   ```c++
-  fmt::print("{}", true); // prints "true"
+  lll::fmt::print("{}", true); // prints "true"
   ```
 
   To print `bool` as a number use numeric format specifier such as
   `d`:
 
   ```c++
-  fmt::print("{:d}", true); // prints "1"
+  lll::fmt::print("{:d}", true); // prints "1"
   ```
 
-- `fmt::printf` and `fmt::sprintf` now support formatting of `bool`
+- `lll::fmt::printf` and `lll::fmt::sprintf` now support formatting of `bool`
   with the `%s` specifier giving textual output, \"true\" or \"false\"
   (https://github.com/fmtlib/fmt/pull/223):
 
   ```c++
-  fmt::printf("%s", true); // prints "true"
+  lll::fmt::printf("%s", true); // prints "true"
   ```
 
   Thanks @LarsGullik.
@@ -2728,23 +2728,23 @@
   specifier (https://github.com/fmtlib/fmt/pull/223):
 
   ```c++
-  fmt::print("{:p}", "test"); // prints pointer value
+  lll::fmt::print("{:p}", "test"); // prints pointer value
   ```
 
   Thanks @LarsGullik.
 
-- \[Breaking\] `fmt::printf` and `fmt::sprintf` now print null
+- \[Breaking\] `lll::fmt::printf` and `lll::fmt::sprintf` now print null
   pointers as `(nil)` and null strings as `(null)` for consistency
   with glibc (https://github.com/fmtlib/fmt/pull/226).
   Thanks @LarsGullik.
 
-- \[Breaking\] `fmt::(s)printf` now supports formatting of objects of
+- \[Breaking\] `lll::fmt::(s)printf` now supports formatting of objects of
   user-defined types that provide an overloaded `std::ostream`
   insertion operator (`operator<<`)
   (https://github.com/fmtlib/fmt/issues/201):
 
   ```c++
-  fmt::printf("The date is %s", Date(2012, 12, 9));
+  lll::fmt::printf("The date is %s", Date(2012, 12, 9));
   ```
 
 - \[Breaking\] The `Buffer` template is now part of the public API and
@@ -2768,7 +2768,7 @@
 - Dependency on pthreads introduced by Google Test is now optional
   (https://github.com/fmtlib/fmt/issues/185).
 
-- New CMake options `FMT_DOC`, `FMT_INSTALL` and `FMT_TEST` to control
+- New CMake options `LAWS3_FMT_DOC`, `LAWS3_FMT_INSTALL` and `LAWS3_FMT_TEST` to control
   generation of `doc`, `install` and `test` targets respectively, on
   by default (https://github.com/fmtlib/fmt/issues/197,
   https://github.com/fmtlib/fmt/issues/198,
@@ -2778,11 +2778,11 @@
   (https://github.com/fmtlib/fmt/pull/215). Thanks @dmkrepo.
 
 - Added an option to disable use of `windows.h` when
-  `FMT_USE_WINDOWS_H` is defined as 0 before including `format.h`
+  `LAWS3_FMT_USE_WINDOWS_H` is defined as 0 before including `format.h`
   (https://github.com/fmtlib/fmt/issues/171). Thanks @alfps.
 
 - \[Breaking\] `windows.h` is now included with `NOMINMAX` unless
-  `FMT_WIN_MINMAX` is defined. This is done to prevent breaking code
+  `LAWS3_FMT_WIN_MINMAX` is defined. This is done to prevent breaking code
   using `std::min` and `std::max` and only affects the header-only
   configuration (https://github.com/fmtlib/fmt/issues/152,
   https://github.com/fmtlib/fmt/pull/153,
@@ -2791,7 +2791,7 @@
 - Improved support for custom character types
   (https://github.com/fmtlib/fmt/issues/171). Thanks @alfps.
 
-- Added an option to disable use of IOStreams when `FMT_USE_IOSTREAMS`
+- Added an option to disable use of IOStreams when `LAWS3_FMT_USE_IOSTREAMS`
   is defined as 0 before including `format.h`
   (https://github.com/fmtlib/fmt/issues/205,
   https://github.com/fmtlib/fmt/pull/208). Thanks @JodiTheTigger.
@@ -2803,7 +2803,7 @@
 - Made formatting of user-defined types more efficient with a custom
   stream buffer (https://github.com/fmtlib/fmt/issues/92,
   https://github.com/fmtlib/fmt/pull/230). Thanks @NotImplemented.
-- Further improved performance of `fmt::Writer` on integer formatting
+- Further improved performance of `lll::fmt::Writer` on integer formatting
   and fixed a minor regression. Now it is \~7% faster than
   `karma::generate` on Karma\'s benchmark
   (https://github.com/fmtlib/fmt/issues/186).
@@ -2866,7 +2866,7 @@
   https://github.com/fmtlib/fmt/pull/161,
   https://github.com/fmtlib/fmt/issues/162,
   https://github.com/fmtlib/fmt/issues/165,
-  https://github.com/fmtlib/fmt/issues/210). 
+  https://github.com/fmtlib/fmt/issues/210).
   Thanks @syohex.
 - Fixed out-of-tree documentation build
   (https://github.com/fmtlib/fmt/issues/177). Thanks @jackyf.
@@ -2877,13 +2877,13 @@
   (https://github.com/fmtlib/fmt/issues/136). Thanks @Gachapen.
 
 - \[Breaking\] Fixed formatting of enums with numeric format
-  specifiers in `fmt::(s)printf`
+  specifiers in `lll::fmt::(s)printf`
   (https://github.com/fmtlib/fmt/issues/131,
   https://github.com/fmtlib/fmt/issues/139):
 
   ```c++
   enum { ANSWER = 42 };
-  fmt::printf("%d", ANSWER);
+  lll::fmt::printf("%d", ANSWER);
   ```
 
   Thanks @Naios.
@@ -2976,7 +2976,7 @@
 
   ```c++
   char buffer[100];
-  fmt::ArrayWriter w(buffer);
+  lll::fmt::ArrayWriter w(buffer);
   w.write("The answer is {}", 42);
   ```
 
@@ -3036,12 +3036,12 @@
 
 # 1.0.0 - 2015-02-05
 
-- Add support for a header-only configuration when `FMT_HEADER_ONLY`
+- Add support for a header-only configuration when `LAWS3_FMT_HEADER_ONLY`
   is defined before including `format.h`:
 
   ```c++
-  #define FMT_HEADER_ONLY
-  #include "format.h"
+  #define LAWS3_FMT_HEADER_ONLY
+  #include "format.hpp"
   ```
 
 - Compute string length in the constructor of `BasicStringRef` instead
@@ -3054,7 +3054,7 @@
   `std::wostream` (https://github.com/fmtlib/fmt/issues/86):
 
   ```c++
-  fmt::format(L"The date is {0}", Date(2012, 12, 9));
+  lll::fmt::format(L"The date is {0}", Date(2012, 12, 9));
   ```
 
 - Fix linkage of tests on Arch Linux
@@ -3064,17 +3064,17 @@
   (https://github.com/fmtlib/fmt/issues/90):
 
   ```c++
-  fmt::print("{:.3}\n", "Carpet"); // prints "Car"
+  lll::fmt::print("{:.3}\n", "Carpet"); // prints "Car"
   ```
 
 - Fix build on Android NDK (https://github.com/fmtlib/fmt/issues/93).
 
 - Improvements to documentation build procedure.
 
-- Remove `FMT_SHARED` CMake variable in favor of standard [BUILD_SHARED_LIBS](
+- Remove `LAWS3_FMT_SHARED` CMake variable in favor of standard [BUILD_SHARED_LIBS](
   http://www.cmake.org/cmake/help/v3.0/variable/BUILD_SHARED_LIBS.html).
 
-- Fix error handling in `fmt::fprintf`.
+- Fix error handling in `lll::fmt::fprintf`.
 
 - Fix a number of warnings.
 
@@ -3083,26 +3083,26 @@
 - \[Breaking\] Improved separation between formatting and buffer
   management. `Writer` is now a base class that cannot be instantiated
   directly. The new `MemoryWriter` class implements the default buffer
-  management with small allocations done on stack. So `fmt::Writer`
-  should be replaced with `fmt::MemoryWriter` in variable
+  management with small allocations done on stack. So `lll::fmt::Writer`
+  should be replaced with `lll::fmt::MemoryWriter` in variable
   declarations.
 
   Old code:
 
   ```c++
-  fmt::Writer w;
+  lll::fmt::Writer w;
   ```
 
   New code:
 
   ```c++
-  fmt::MemoryWriter w;
+  lll::fmt::MemoryWriter w;
   ```
 
-  If you pass `fmt::Writer` by reference, you can continue to do so:
+  If you pass `lll::fmt::Writer` by reference, you can continue to do so:
 
   ```c++
-  void f(fmt::Writer &w);
+  void f(lll::fmt::Writer &w);
   ```
 
   This doesn\'t affect the formatting API.
@@ -3137,15 +3137,15 @@
   arguments:
 
   ```c++
-  fmt::printf("Elapsed time: %.2f seconds", 1.23);
-  fmt::printf("%1$s, %3$d %2$s", weekday, month, day);
+  lll::fmt::printf("Elapsed time: %.2f seconds", 1.23);
+  lll::fmt::printf("%1$s, %3$d %2$s", weekday, month, day);
   ```
 
 - Arguments of `char` type can now be formatted as integers (Issue
   https://github.com/fmtlib/fmt/issues/55):
 
   ```c++
-  fmt::format("0x{0:02X}", 'a');
+  lll::fmt::format("0x{0:02X}", 'a');
   ```
 
 - Deprecated parts of the API removed.
@@ -3163,15 +3163,15 @@
   temporary formatter object. This works both with C++11 where
   variadic templates are used and with older standards where variadic
   functions are emulated by providing lightweight wrapper functions
-  defined with the `FMT_VARIADIC` macro. You can use this macro for
+  defined with the `LAWS3_FMT_VARIADIC` macro. You can use this macro for
   defining your own portable variadic functions:
 
   ```c++
-  void report_error(const char *format, const fmt::ArgList &args) {
-    fmt::print("Error: {}");
-    fmt::print(format, args);
+  void report_error(const char *format, const lll::fmt::ArgList &args) {
+    lll::fmt::print("Error: {}");
+    lll::fmt::print(format, args);
   }
-  FMT_VARIADIC(void, report_error, const char *)
+  LAWS3_FMT_VARIADIC(void, report_error, const char *)
 
   report_error("file not found: {}", path);
   ```
@@ -3195,11 +3195,11 @@
   std::string s = str(Format("The answer is {}.") << 42);
   ```
 
-  Instead of unsafe `c_str` function, `fmt::Writer` should be used
+  Instead of unsafe `c_str` function, `lll::fmt::Writer` should be used
   directly to bypass creation of `std::string`:
 
   ```c++
-  fmt::Writer w;
+  lll::fmt::Writer w;
   w.write("The answer is {}.", 42);
   w.c_str();  // returns a C string
   ```
@@ -3223,8 +3223,8 @@
   progress):
 
   ```c++
-  fmt::printf("The answer is %d.", 42);
-  std::string s = fmt::sprintf("Look, a %s!", "string");
+  lll::fmt::printf("The answer is %d.", 42);
+  std::string s = lll::fmt::sprintf("Look, a %s!", "string");
   ```
 
 - Support for hexadecimal floating point format specifiers `a` and
@@ -3235,7 +3235,7 @@
   print("{:A}", -42.0); // Prints -0X1.5P+5
   ```
 
-- CMake option `FMT_SHARED` that specifies whether to build format as
+- CMake option `LAWS3_FMT_SHARED` that specifies whether to build format as
   a shared library (off by default).
 
 # 0.9.0 - 2014-05-13

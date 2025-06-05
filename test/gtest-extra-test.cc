@@ -13,8 +13,8 @@
 #include <memory>
 #include <stdexcept>
 
-#include "fmt/os.h"
-#include "util.h"
+#include "3laws/fmt/os.hpp"
+#include "util.hpp"
 
 // Tests that assertion macros evaluate their arguments exactly once.
 namespace {
@@ -41,10 +41,10 @@ int single_evaluation_test::b_;
 
 void do_nothing() {}
 
-FMT_NORETURN void throw_exception() { throw std::runtime_error("test"); }
+LAWS3_FMT_NORETURN void throw_exception() { throw std::runtime_error("test"); }
 
-FMT_NORETURN void throw_system_error() {
-  throw fmt::system_error(EDOM, "test");
+LAWS3_FMT_NORETURN void throw_system_error() {
+  throw lll::fmt::system_error(EDOM, "test");
 }
 
 // Tests that when EXPECT_THROW_MSG fails, it evaluates its message argument
@@ -144,7 +144,7 @@ TEST_F(single_evaluation_test, system_error_tests) {
   EXPECT_EQ(4, b_);
 }
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 // Tests that when EXPECT_WRITE fails, it evaluates its message argument
 // exactly once.
 TEST_F(single_evaluation_test, failed_expect_write) {
@@ -195,7 +195,7 @@ TEST(gtest_extra_test, expect_write_streaming) {
                               << "expected failure",
                           "expected failure");
 }
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL
 
 // Tests that the compiler will not complain about unreachable code in the
 // EXPECT_THROW_MSG macro.
@@ -215,11 +215,12 @@ TEST(gtest_extra_test, expect_throw_no_unreachable_code_warning) {
 TEST(gtest_extra_test, expect_system_error_no_unreachable_code_warning) {
   int n = 0;
   (void)n;
-  EXPECT_SYSTEM_ERROR(throw fmt::system_error(EDOM, "test"), EDOM, "test");
+  EXPECT_SYSTEM_ERROR(throw lll::fmt::system_error(EDOM, "test"), EDOM, "test");
   EXPECT_NONFATAL_FAILURE(EXPECT_SYSTEM_ERROR(n++, EDOM, ""), "");
   EXPECT_NONFATAL_FAILURE(EXPECT_SYSTEM_ERROR(throw 1, EDOM, ""), "");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_SYSTEM_ERROR(throw fmt::system_error(EDOM, "aaa"), EDOM, "bbb"),
+      EXPECT_SYSTEM_ERROR(throw lll::fmt::system_error(EDOM, "aaa"), EDOM,
+                          "bbb"),
       "");
 }
 
@@ -284,7 +285,7 @@ TEST(gtest_extra_test, expect_system_error) {
       "  Actual: it throws nothing.");
   EXPECT_NONFATAL_FAILURE(
       EXPECT_SYSTEM_ERROR(throw_system_error(), EDOM, "other"),
-      fmt::format(
+      lll::fmt::format(
           "throw_system_error() throws an exception with a different message.\n"
           "Expected: {}\n"
           "  Actual: {}",
@@ -310,13 +311,13 @@ TEST(gtest_extra_test, expect_system_error_streaming) {
       "expected failure");
 }
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 
-using fmt::buffered_file;
-using fmt::file;
+using lll::fmt::buffered_file;
+using lll::fmt::file;
 
 TEST(output_redirect_test, scoped_redirect) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   {
     buffered_file file(pipe.write_end.fdopen("w"));
     std::fprintf(file.get(), "[[[");
@@ -331,13 +332,13 @@ TEST(output_redirect_test, scoped_redirect) {
 
 // Test that output_redirect handles errors in flush correctly.
 TEST(output_redirect_test, flush_error_in_ctor) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   int write_fd = pipe.write_end.descriptor();
   file write_copy = pipe.write_end.dup(write_fd);
   buffered_file f = pipe.write_end.fdopen("w");
   // Put a character in a file buffer.
   EXPECT_EQ('x', fputc('x', f.get()));
-  FMT_POSIX(close(write_fd));
+  LAWS3_FMT_POSIX(close(write_fd));
   std::unique_ptr<output_redirect> redir{nullptr};
   EXPECT_SYSTEM_ERROR_NOASSERT(redir.reset(new output_redirect(f.get())), EBADF,
                                "cannot flush stream");
@@ -349,16 +350,16 @@ TEST(output_redirect_test, dup_error_in_ctor) {
   buffered_file f = open_buffered_file();
   int fd = (f.descriptor)();
   file copy = file::dup(fd);
-  FMT_POSIX(close(fd));
+  LAWS3_FMT_POSIX(close(fd));
   std::unique_ptr<output_redirect> redir{nullptr};
   EXPECT_SYSTEM_ERROR_NOASSERT(
       redir.reset(new output_redirect(f.get(), false)), EBADF,
-      fmt::format("cannot duplicate file descriptor {}", fd));
+      lll::fmt::format("cannot duplicate file descriptor {}", fd));
   copy.dup2(fd);  // "undo" close or dtor will fail
 }
 
 TEST(output_redirect_test, restore_and_read) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   buffered_file file(pipe.write_end.fdopen("w"));
   std::fprintf(file.get(), "[[[");
   output_redirect redir(file.get());
@@ -372,21 +373,21 @@ TEST(output_redirect_test, restore_and_read) {
 
 // Test that OutputRedirect handles errors in flush correctly.
 TEST(output_redirect_test, flush_error_in_restore_and_read) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   int write_fd = pipe.write_end.descriptor();
   file write_copy = pipe.write_end.dup(write_fd);
   buffered_file f = pipe.write_end.fdopen("w");
   output_redirect redir(f.get());
   // Put a character in a file buffer.
   EXPECT_EQ('x', fputc('x', f.get()));
-  FMT_POSIX(close(write_fd));
+  LAWS3_FMT_POSIX(close(write_fd));
   EXPECT_SYSTEM_ERROR_NOASSERT(redir.restore_and_read(), EBADF,
                                "cannot flush stream");
   write_copy.dup2(write_fd);  // "undo" close or dtor will fail
 }
 
 TEST(output_redirect_test, error_in_dtor) {
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   int write_fd = pipe.write_end.descriptor();
   file write_copy = pipe.write_end.dup(write_fd);
   buffered_file f = pipe.write_end.fdopen("w");
@@ -400,11 +401,11 @@ TEST(output_redirect_test, error_in_dtor) {
         // otherwise the system may recycle closed file descriptor when
         // redirecting the output in EXPECT_STDERR and the second close
         // will break output redirection.
-        FMT_POSIX(close(write_fd));
+        LAWS3_FMT_POSIX(close(write_fd));
         SUPPRESS_ASSERT(redir.reset(nullptr));
       },
       system_error_message(EBADF, "cannot flush stream"));
   write_copy.dup2(write_fd);  // "undo" close or dtor of buffered_file will fail
 }
 
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL

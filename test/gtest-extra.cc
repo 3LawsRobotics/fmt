@@ -7,17 +7,17 @@
 
 #include "gtest-extra.h"
 
-#if FMT_USE_FCNTL
+#if LAWS3_FMT_USE_FCNTL
 
-using fmt::file;
+using lll::fmt::file;
 
 output_redirect::output_redirect(FILE* f, bool flush) : file_(f) {
   if (flush) this->flush();
-  int fd = FMT_POSIX(fileno(f));
+  int fd = LAWS3_FMT_POSIX(fileno(f));
   // Create a file object referring to the original file.
   original_ = file::dup(fd);
   // Create a pipe.
-  auto pipe = fmt::pipe();
+  auto pipe = lll::fmt::pipe();
   read_end_ = std::move(pipe.read_end);
   // Connect the passed FILE object to the write end of the pipe.
   pipe.write_end.dup2(fd);
@@ -36,14 +36,14 @@ void output_redirect::flush() {
   do {
     result = fflush(file_);
   } while (result == EOF && errno == EINTR);
-  if (result != 0) throw fmt::system_error(errno, "cannot flush stream");
+  if (result != 0) throw lll::fmt::system_error(errno, "cannot flush stream");
 }
 
 void output_redirect::restore() {
   if (original_.descriptor() == -1) return;  // Already restored.
   flush();
   // Restore the original file.
-  original_.dup2(FMT_POSIX(fileno(file_)));
+  original_.dup2(LAWS3_FMT_POSIX(fileno(file_)));
   original_.close();
 }
 
@@ -77,4 +77,4 @@ std::string read(file& f, size_t count) {
   return buffer;
 }
 
-#endif  // FMT_USE_FCNTL
+#endif  // LAWS3_FMT_USE_FCNTL

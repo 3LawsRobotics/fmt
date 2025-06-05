@@ -8,8 +8,8 @@ with CMake, while the [Build Systems](#build-systems) section covers the rest.
 
 ## CMake
 
-{fmt} provides two CMake targets: `fmt::fmt` for the compiled library and
-`fmt::fmt-header-only` for the header-only library. It is recommended to use
+{fmt} provides two CMake targets: `lll::fmt::fmt` for the compiled library and
+`lll::fmt::fmt-header-only` for the header-only library. It is recommended to use
 the compiled library for improved build times.
 
 There are three primary ways to use {fmt} with CMake:
@@ -26,19 +26,19 @@ There are three primary ways to use {fmt} with CMake:
           GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
         FetchContent_MakeAvailable(fmt)
 
-        target_link_libraries(<your-target> fmt::fmt)
+        target_link_libraries(<your-target> lll::fmt::fmt)
 
 * **Installed**: You can find and use an [installed](#installation) version of
   {fmt} in your `CMakeLists.txt` file as follows:
 
         find_package(fmt)
-        target_link_libraries(<your-target> fmt::fmt)
+        target_link_libraries(<your-target> lll::fmt::fmt)
 
 * **Embedded**: You can add the {fmt} source tree to your project and include it
   in your `CMakeLists.txt` file:
 
         add_subdirectory(fmt)
-        target_link_libraries(<your-target> fmt::fmt)
+        target_link_libraries(<your-target> lll::fmt::fmt)
 
 ## Installation
 
@@ -95,7 +95,7 @@ current directory. Now you can build the library by running `make`.
 
 Once the library has been built you can invoke `make test` to run the tests.
 
-You can control generation of the make `test` target with the `FMT_TEST`
+You can control generation of the make `test` target with the `LAWS3_FMT_TEST`
 CMake option. This can be useful if you include fmt as a subdirectory in
 your project but don't want to add fmt's tests to your `test` target.
 

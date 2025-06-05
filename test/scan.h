@@ -10,9 +10,9 @@
 #include <climits>
 #include <tuple>
 
-#include "fmt/format-inl.h"
+#include "3laws/fmt/format-inl.hpp"
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 
 inline auto is_whitespace(char c) -> bool { return c == ' ' || c == '\n'; }
@@ -116,7 +116,7 @@ class scan_buffer {
     return {nullptr, nullptr};
   }
   friend auto advance(iterator it, size_t n) -> iterator {
-    FMT_ASSERT(it.buf_->is_contiguous(), "");
+    LAWS3_FMT_ASSERT(it.buf_->is_contiguous(), "");
     const char*& ptr = it.buf_->ptr_;
     ptr += n;
     it.value_ = *ptr;
@@ -131,7 +131,7 @@ class scan_buffer {
 
   // Tries consuming a single code unit. Returns true iff there is more input.
   auto try_consume() -> bool {
-    FMT_ASSERT(ptr_ != end_, "");
+    LAWS3_FMT_ASSERT(ptr_ != end_, "");
     ++ptr_;
     if (ptr_ != end_) return true;
     consume();
@@ -153,13 +153,13 @@ class string_scan_buffer final : public scan_buffer {
 
 class file_scan_buffer final : public scan_buffer {
  private:
-  template <typename F, FMT_ENABLE_IF(sizeof(F::_IO_read_ptr) != 0 &&
-                                      !FMT_USE_FALLBACK_FILE)>
+  template <typename F, LAWS3_FMT_ENABLE_IF(sizeof(F::_IO_read_ptr) != 0 &&
+                                            !LAWS3_FMT_USE_FALLBACK_FILE)>
   static auto get_file(F* f, int) -> glibc_file<F> {
     return f;
   }
-  template <typename F,
-            FMT_ENABLE_IF(sizeof(F::_p) != 0 && !FMT_USE_FALLBACK_FILE)>
+  template <typename F, LAWS3_FMT_ENABLE_IF(sizeof(F::_p) != 0 &&
+                                            !LAWS3_FMT_USE_FALLBACK_FILE)>
   static auto get_file(F* f, int) -> apple_file<F> {
     return f;
   }
@@ -211,11 +211,11 @@ class scan_parse_context {
  public:
   using iterator = string_view::iterator;
 
-  FMT_CONSTEXPR explicit scan_parse_context(string_view format)
+  LAWS3_FMT_CONSTEXPR explicit scan_parse_context(string_view format)
       : format_(format) {}
 
-  FMT_CONSTEXPR auto begin() const -> iterator { return format_.begin(); }
-  FMT_CONSTEXPR auto end() const -> iterator { return format_.end(); }
+  LAWS3_FMT_CONSTEXPR auto begin() const -> iterator { return format_.begin(); }
+  LAWS3_FMT_CONSTEXPR auto end() const -> iterator { return format_.end(); }
 
   void advance_to(iterator it) {
     format_.remove_prefix(detail::to_unsigned(it - begin()));
@@ -266,22 +266,22 @@ template <typename Context> class basic_scan_arg {
   }
 
  public:
-  FMT_CONSTEXPR basic_scan_arg()
+  LAWS3_FMT_CONSTEXPR basic_scan_arg()
       : type_(scan_type::none_type), int_value_(nullptr) {}
-  FMT_CONSTEXPR basic_scan_arg(int& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(int& value)
       : type_(scan_type::int_type), int_value_(&value) {}
-  FMT_CONSTEXPR basic_scan_arg(unsigned& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(unsigned& value)
       : type_(scan_type::uint_type), uint_value_(&value) {}
-  FMT_CONSTEXPR basic_scan_arg(long long& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(long long& value)
       : type_(scan_type::long_long_type), long_long_value_(&value) {}
-  FMT_CONSTEXPR basic_scan_arg(unsigned long long& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(unsigned long long& value)
       : type_(scan_type::ulong_long_type), ulong_long_value_(&value) {}
-  FMT_CONSTEXPR basic_scan_arg(std::string& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(std::string& value)
       : type_(scan_type::string_type), string_(&value) {}
-  FMT_CONSTEXPR basic_scan_arg(string_view& value)
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(string_view& value)
       : type_(scan_type::string_view_type), string_view_(&value) {}
   template <typename T>
-  FMT_CONSTEXPR basic_scan_arg(T& value) : type_(scan_type::custom_type) {
+  LAWS3_FMT_CONSTEXPR basic_scan_arg(T& value) : type_(scan_type::custom_type) {
     custom_.value = &value;
     custom_.scan = scan_custom_arg<T>;
   }
@@ -295,22 +295,14 @@ template <typename Context> class basic_scan_arg {
   template <typename Visitor>
   auto visit(Visitor&& vis) -> decltype(vis(monostate())) {
     switch (type_) {
-    case scan_type::none_type:
-      break;
-    case scan_type::int_type:
-      return vis(*int_value_);
-    case scan_type::uint_type:
-      return vis(*uint_value_);
-    case scan_type::long_long_type:
-      return vis(*long_long_value_);
-    case scan_type::ulong_long_type:
-      return vis(*ulong_long_value_);
-    case scan_type::string_type:
-      return vis(*string_);
-    case scan_type::string_view_type:
-      return vis(*string_view_);
-    case scan_type::custom_type:
-      break;
+    case scan_type::none_type:        break;
+    case scan_type::int_type:         return vis(*int_value_);
+    case scan_type::uint_type:        return vis(*uint_value_);
+    case scan_type::long_long_type:   return vis(*long_long_value_);
+    case scan_type::ulong_long_type:  return vis(*ulong_long_value_);
+    case scan_type::string_type:      return vis(*string_);
+    case scan_type::string_view_type: return vis(*string_view_);
+    case scan_type::custom_type:      break;
     }
     return vis(monostate());
   }
@@ -332,7 +324,7 @@ struct scan_args {
   const scan_arg* data;
 
   template <size_t N>
-  FMT_CONSTEXPR scan_args(const std::array<scan_arg, N>& store)
+  LAWS3_FMT_CONSTEXPR scan_args(const std::array<scan_arg, N>& store)
       : size(N), data(store.data()) {
     static_assert(N < INT_MAX, "too many arguments");
   }
@@ -347,10 +339,11 @@ class scan_context {
   using iterator = detail::scan_iterator;
   using sentinel = detail::scan_sentinel;
 
-  FMT_CONSTEXPR explicit scan_context(detail::scan_buffer& buf, scan_args args)
+  LAWS3_FMT_CONSTEXPR explicit scan_context(detail::scan_buffer& buf,
+                                            scan_args args)
       : buf_(buf), args_(args) {}
 
-  FMT_CONSTEXPR auto arg(int id) const -> scan_arg {
+  LAWS3_FMT_CONSTEXPR auto arg(int id) const -> scan_arg {
     return id < args_.size ? args_.data[id] : scan_arg();
   }
 
@@ -371,14 +364,13 @@ const char* parse_scan_specs(const char* begin, const char* end,
       specs.set_type(presentation_type::hex);
       ++begin;
       break;
-    case '}':
-      return begin;
+    case '}': return begin;
     }
   }
   return begin;
 }
 
-template <typename T, FMT_ENABLE_IF(std::is_unsigned<T>::value)>
+template <typename T, LAWS3_FMT_ENABLE_IF(std::is_unsigned<T>::value)>
 auto read(scan_iterator it, T& value) -> scan_iterator {
   if (it == scan_sentinel()) return it;
   char c = *it;
@@ -411,7 +403,7 @@ auto read(scan_iterator it, T& value) -> scan_iterator {
   return it;
 }
 
-template <typename T, FMT_ENABLE_IF(std::is_unsigned<T>::value)>
+template <typename T, LAWS3_FMT_ENABLE_IF(std::is_unsigned<T>::value)>
 auto read_hex(scan_iterator it, T& value) -> scan_iterator {
   if (it == scan_sentinel()) return it;
   int digit = to_hex_digit(*it);
@@ -434,16 +426,16 @@ auto read_hex(scan_iterator it, T& value) -> scan_iterator {
   return it;
 }
 
-template <typename T, FMT_ENABLE_IF(std::is_unsigned<T>::value)>
-auto read(scan_iterator it, T& value, const format_specs& specs)
-    -> scan_iterator {
+template <typename T, LAWS3_FMT_ENABLE_IF(std::is_unsigned<T>::value)>
+auto read(scan_iterator it, T& value,
+          const format_specs& specs) -> scan_iterator {
   if (specs.type() == presentation_type::hex) return read_hex(it, value);
   return read(it, value);
 }
 
-template <typename T, FMT_ENABLE_IF(std::is_signed<T>::value)>
-auto read(scan_iterator it, T& value, const format_specs& specs = {})
-    -> scan_iterator {
+template <typename T, LAWS3_FMT_ENABLE_IF(std::is_signed<T>::value)>
+auto read(scan_iterator it, T& value,
+          const format_specs& specs = {}) -> scan_iterator {
   bool negative = it != scan_sentinel() && *it == '-';
   if (negative) {
     ++it;
@@ -457,14 +449,14 @@ auto read(scan_iterator it, T& value, const format_specs& specs = {})
   return it;
 }
 
-auto read(scan_iterator it, std::string& value, const format_specs& = {})
-    -> scan_iterator {
+auto read(scan_iterator it, std::string& value,
+          const format_specs& = {}) -> scan_iterator {
   while (it != scan_sentinel() && *it != ' ') value.push_back(*it++);
   return it;
 }
 
-auto read(scan_iterator it, string_view& value, const format_specs& = {})
-    -> scan_iterator {
+auto read(scan_iterator it, string_view& value,
+          const format_specs& = {}) -> scan_iterator {
   auto range = to_contiguous(it);
   // This could also be checked at compile time in scan.
   if (!range) report_error("string_view requires contiguous input");
@@ -475,8 +467,8 @@ auto read(scan_iterator it, string_view& value, const format_specs& = {})
   return advance(it, size);
 }
 
-auto read(scan_iterator it, monostate, const format_specs& = {})
-    -> scan_iterator {
+auto read(scan_iterator it, monostate,
+          const format_specs& = {}) -> scan_iterator {
   return it;
 }
 
@@ -484,7 +476,8 @@ auto read(scan_iterator it, monostate, const format_specs& = {})
 struct default_arg_scanner {
   scan_iterator it;
 
-  template <typename T> FMT_INLINE auto operator()(T&& value) -> scan_iterator {
+  template <typename T>
+  LAWS3_FMT_INLINE auto operator()(T&& value) -> scan_iterator {
     return read(it, value);
   }
 };
@@ -508,8 +501,8 @@ struct scan_handler {
   using sentinel = scan_buffer::sentinel;
 
  public:
-  FMT_CONSTEXPR scan_handler(string_view format, scan_buffer& buf,
-                             scan_args args)
+  LAWS3_FMT_CONSTEXPR scan_handler(string_view format, scan_buffer& buf,
+                                   scan_args args)
       : parse_ctx_(format), scan_ctx_(buf, args), next_arg_id_(0) {}
 
   auto pos() const -> scan_buffer::iterator { return scan_ctx_.begin(); }
@@ -523,12 +516,14 @@ struct scan_handler {
     scan_ctx_.advance_to(it);
   }
 
-  FMT_CONSTEXPR auto on_arg_id() -> int { return on_arg_id(next_arg_id_++); }
-  FMT_CONSTEXPR auto on_arg_id(int id) -> int {
+  LAWS3_FMT_CONSTEXPR auto on_arg_id() -> int {
+    return on_arg_id(next_arg_id_++);
+  }
+  LAWS3_FMT_CONSTEXPR auto on_arg_id(int id) -> int {
     if (!scan_ctx_.arg(id)) on_error("argument index out of range");
     return id;
   }
-  FMT_CONSTEXPR auto on_arg_id(string_view id) -> int {
+  LAWS3_FMT_CONSTEXPR auto on_arg_id(string_view id) -> int {
     if (id.data()) on_error("invalid format");
     return 0;
   }
@@ -553,7 +548,9 @@ struct scan_handler {
     return begin;
   }
 
-  FMT_NORETURN void on_error(const char* message) { report_error(message); }
+  LAWS3_FMT_NORETURN void on_error(const char* message) {
+    report_error(message);
+  }
 };
 
 void vscan(detail::scan_buffer& buf, string_view fmt, scan_args args) {
@@ -561,10 +558,10 @@ void vscan(detail::scan_buffer& buf, string_view fmt, scan_args args) {
   detail::parse_format_string(fmt, h);
 }
 
-template <size_t I, typename... T, FMT_ENABLE_IF(I == sizeof...(T))>
+template <size_t I, typename... T, LAWS3_FMT_ENABLE_IF(I == sizeof...(T))>
 void make_args(std::array<scan_arg, sizeof...(T)>&, std::tuple<T...>&) {}
 
-template <size_t I, typename... T, FMT_ENABLE_IF(I < sizeof...(T))>
+template <size_t I, typename... T, LAWS3_FMT_ENABLE_IF(I < sizeof...(T))>
 void make_args(std::array<scan_arg, sizeof...(T)>& args,
                std::tuple<T...>& values) {
   using element_type = typename std::tuple_element<I, std::tuple<T...>>::type;
@@ -622,14 +619,14 @@ template <typename T, typename E> class expected {
 
   auto operator->() const -> const T* { return &value_; }
 
-  auto error() -> E const { return E(); }
+  auto error() -> const E { return E(); }
 };
 
 template <typename Range, typename... T>
 using scan_result = expected<scan_data<Range, T...>, scan_error>;
 
-auto vscan(string_view input, string_view fmt, scan_args args)
-    -> string_view::iterator {
+auto vscan(string_view input, string_view fmt,
+           scan_args args) -> string_view::iterator {
   auto&& buf = detail::string_scan_buffer(input);
   detail::vscan(buf, fmt, args);
   return input.begin() + (buf.begin().base() - input.data());
@@ -637,23 +634,23 @@ auto vscan(string_view input, string_view fmt, scan_args args)
 
 // Scans the input and stores the results (in)to args.
 template <typename... T>
-auto scan_to(string_view input, string_view fmt, T&... args)
-    -> string_view::iterator {
+auto scan_to(string_view input, string_view fmt,
+             T&... args) -> string_view::iterator {
   return vscan(input, fmt, make_scan_args(args...));
 }
 
 template <typename... T>
-auto scan(string_view input, string_view fmt)
-    -> scan_result<string_view, T...> {
+auto scan(string_view input,
+          string_view fmt) -> scan_result<string_view, T...> {
   auto data = scan_data<string_view, T...>();
   vscan(input, fmt, data.make_args());
   return data;
 }
 
 template <typename Range, typename... T,
-          FMT_ENABLE_IF(!std::is_convertible<Range, string_view>::value)>
-auto scan_to(Range&& input, string_view fmt, T&... args)
-    -> decltype(std::begin(input)) {
+          LAWS3_FMT_ENABLE_IF(!std::is_convertible<Range, string_view>::value)>
+auto scan_to(Range&& input, string_view fmt,
+             T&... args) -> decltype(std::begin(input)) {
   auto it = std::begin(input);
   detail::vscan(get_buffer(it), fmt, make_scan_args(args...));
   return it;
@@ -666,4 +663,4 @@ auto scan_to(FILE* f, string_view fmt, T&... args) -> bool {
   return buf.begin() != buf.end();
 }
 
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE

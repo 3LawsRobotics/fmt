@@ -5,7 +5,6 @@ includedir=@includedir_for_pc_file@
 
 Name: fmt
 Description: A modern formatting library
-Version: @FMT_VERSION@
-Libs: -L${libdir} -l@FMT_LIB_NAME@
+Version: @LAWS3_FMT_VERSION@
+Libs: -L${libdir} -l@LAWS3_FMT_LIB_NAME@
 Cflags: -I${includedir}
-

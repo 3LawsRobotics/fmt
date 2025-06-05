@@ -5,13 +5,13 @@
 //
 // For the license information refer to format.h.
 
-#ifndef FMT_STD_H_
-#define FMT_STD_H_
+#ifndef LAWS3_FMT_STD_H_
+#define LAWS3_FMT_STD_H_
 
-#include "format.h"
-#include "ostream.h"
+#include "format.hpp"
+#include "ostream.hpp"
 
-#ifndef FMT_MODULE
+#ifndef LAWS3_FMT_MODULE
 #  include <atomic>
 #  include <bitset>
 #  include <complex>
@@ -23,64 +23,65 @@
 #  include <typeinfo>  // std::type_info
 #  include <utility>   // std::make_index_sequence
 
-// Check FMT_CPLUSPLUS to suppress a bogus warning in MSVC.
-#  if FMT_CPLUSPLUS >= 201703L
-#    if FMT_HAS_INCLUDE(<filesystem>) && \
-        (!defined(FMT_CPP_LIB_FILESYSTEM) || FMT_CPP_LIB_FILESYSTEM != 0)
+// Check LAWS3_FMT_CPLUSPLUS to suppress a bogus warning in MSVC.
+#  if LAWS3_FMT_CPLUSPLUS >= 201703L
+#    if LAWS3_FMT_HAS_INCLUDE(<filesystem>) &&     \
+        (!defined(LAWS3_FMT_CPP_LIB_FILESYSTEM) || \
+         LAWS3_FMT_CPP_LIB_FILESYSTEM != 0)
 #      include <filesystem>
 #    endif
-#    if FMT_HAS_INCLUDE(<variant>)
+#    if LAWS3_FMT_HAS_INCLUDE(<variant>)
 #      include <variant>
 #    endif
-#    if FMT_HAS_INCLUDE(<optional>)
+#    if LAWS3_FMT_HAS_INCLUDE(<optional>)
 #      include <optional>
 #    endif
 #  endif
 // Use > instead of >= in the version check because <source_location> may be
 // available after C++17 but before C++20 is marked as implemented.
-#  if FMT_CPLUSPLUS > 201703L && FMT_HAS_INCLUDE(<source_location>)
+#  if LAWS3_FMT_CPLUSPLUS > 201703L && LAWS3_FMT_HAS_INCLUDE(<source_location>)
 #    include <source_location>
 #  endif
-#  if FMT_CPLUSPLUS > 202002L && FMT_HAS_INCLUDE(<expected>)
+#  if LAWS3_FMT_CPLUSPLUS > 202002L && LAWS3_FMT_HAS_INCLUDE(<expected>)
 #    include <expected>
 #  endif
-#endif  // FMT_MODULE
+#endif  // LAWS3_FMT_MODULE
 
-#if FMT_HAS_INCLUDE(<version>)
+#if LAWS3_FMT_HAS_INCLUDE(<version>)
 #  include <version>
 #endif
 
-// GCC 4 does not support FMT_HAS_INCLUDE.
-#if FMT_HAS_INCLUDE(<cxxabi.h>) || defined(__GLIBCXX__)
+// GCC 4 does not support LAWS3_FMT_HAS_INCLUDE.
+#if LAWS3_FMT_HAS_INCLUDE(<cxxabi.h>) || defined(__GLIBCXX__)
 #  include <cxxabi.h>
 // Android NDK with gabi++ library on some architectures does not implement
 // abi::__cxa_demangle().
 #  ifndef __GABIXX_CXXABI_H__
-#    define FMT_HAS_ABI_CXA_DEMANGLE
+#    define LAWS3_FMT_HAS_ABI_CXA_DEMANGLE
 #  endif
 #endif
 
 // For older Xcode versions, __cpp_lib_xxx flags are inaccurately defined.
-#ifndef FMT_CPP_LIB_FILESYSTEM
+#ifndef LAWS3_FMT_CPP_LIB_FILESYSTEM
 #  ifdef __cpp_lib_filesystem
-#    define FMT_CPP_LIB_FILESYSTEM __cpp_lib_filesystem
+#    define LAWS3_FMT_CPP_LIB_FILESYSTEM __cpp_lib_filesystem
 #  else
-#    define FMT_CPP_LIB_FILESYSTEM 0
+#    define LAWS3_FMT_CPP_LIB_FILESYSTEM 0
 #  endif
 #endif
 
-#ifndef FMT_CPP_LIB_VARIANT
+#ifndef LAWS3_FMT_CPP_LIB_VARIANT
 #  ifdef __cpp_lib_variant
-#    define FMT_CPP_LIB_VARIANT __cpp_lib_variant
+#    define LAWS3_FMT_CPP_LIB_VARIANT __cpp_lib_variant
 #  else
-#    define FMT_CPP_LIB_VARIANT 0
+#    define LAWS3_FMT_CPP_LIB_VARIANT 0
 #  endif
 #endif
 
-FMT_BEGIN_NAMESPACE
+LAWS3_FMT_BEGIN_NAMESPACE
 namespace detail {
 
-#if FMT_CPP_LIB_FILESYSTEM
+#if LAWS3_FMT_CPP_LIB_FILESYSTEM
 
 template <typename Char, typename PathChar>
 auto get_path_string(const std::filesystem::path& p,
@@ -100,7 +101,7 @@ void write_escaped_path(basic_memory_buffer<Char>& quoted,
     auto buf = basic_memory_buffer<wchar_t>();
     write_escaped_string<wchar_t>(std::back_inserter(buf), native);
     bool valid = to_utf8<wchar_t>::convert(quoted, {buf.data(), buf.size()});
-    FMT_ASSERT(valid, "invalid utf16");
+    LAWS3_FMT_ASSERT(valid, "invalid utf16");
   } else if constexpr (std::is_same_v<Char, PathChar>) {
     write_escaped_string<std::filesystem::path::value_type>(
         std::back_inserter(quoted), native);
@@ -109,9 +110,9 @@ void write_escaped_path(basic_memory_buffer<Char>& quoted,
   }
 }
 
-#endif  // FMT_CPP_LIB_FILESYSTEM
+#endif  // LAWS3_FMT_CPP_LIB_FILESYSTEM
 
-#if defined(__cpp_lib_expected) || FMT_CPP_LIB_VARIANT
+#if defined(__cpp_lib_expected) || LAWS3_FMT_CPP_LIB_VARIANT
 template <typename Char, typename OutputIt, typename T>
 auto write_escaped_alternative(OutputIt out, const T& v) -> OutputIt {
   if constexpr (has_to_string_view<T>::value)
@@ -121,7 +122,7 @@ auto write_escaped_alternative(OutputIt out, const T& v) -> OutputIt {
 }
 #endif
 
-#if FMT_CPP_LIB_VARIANT
+#if LAWS3_FMT_CPP_LIB_VARIANT
 
 template <typename> struct is_variant_like_ : std::false_type {};
 template <typename... Types>
@@ -138,13 +139,13 @@ template <typename Variant, typename Char> class is_variant_formattable {
       std::make_index_sequence<std::variant_size<Variant>::value>()))::value;
 };
 
-#endif  // FMT_CPP_LIB_VARIANT
+#endif  // LAWS3_FMT_CPP_LIB_VARIANT
 
-#if FMT_USE_RTTI
+#if LAWS3_FMT_USE_RTTI
 
 template <typename Char, typename OutputIt>
 auto write_demangled_name(OutputIt out, const std::type_info& ti) -> OutputIt {
-#  ifdef FMT_HAS_ABI_CXA_DEMANGLE
+#  ifdef LAWS3_FMT_HAS_ABI_CXA_DEMANGLE
   int status = 0;
   size_t size = 0;
   std::unique_ptr<char, void (*)(void*)> demangled_name_ptr(
@@ -183,7 +184,7 @@ auto write_demangled_name(OutputIt out, const std::type_info& ti) -> OutputIt {
     demangled_name_view = string_view(ti.name());
   }
   return detail::write_bytes<Char>(out, demangled_name_view);
-#  elif FMT_MSC_VERSION
+#  elif LAWS3_FMT_MSC_VERSION
   const string_view demangled_name(ti.name());
   for (size_t i = 0; i < demangled_name.size(); ++i) {
     auto sub = demangled_name;
@@ -208,7 +209,7 @@ auto write_demangled_name(OutputIt out, const std::type_info& ti) -> OutputIt {
 #  endif
 }
 
-#endif  // FMT_USE_RTTI
+#endif  // LAWS3_FMT_USE_RTTI
 
 template <typename T, typename Enable = void>
 struct has_flip : std::false_type {};
@@ -255,19 +256,19 @@ template <typename T> auto ptr(const std::shared_ptr<T>& p) -> const void* {
   return p.get();
 }
 
-#if FMT_CPP_LIB_FILESYSTEM
+#if LAWS3_FMT_CPP_LIB_FILESYSTEM
 
 class path : public std::filesystem::path {
  public:
   auto display_string() const -> std::string {
     const std::filesystem::path& base = *this;
-    return fmt::format(FMT_STRING("{}"), base);
+    return lll::fmt::format(LAWS3_FMT_STRING("{}"), base);
   }
   auto system_string() const -> std::string { return string(); }
 
   auto generic_display_string() const -> std::string {
     const std::filesystem::path& base = *this;
-    return fmt::format(FMT_STRING("{:g}"), base);
+    return lll::fmt::format(LAWS3_FMT_STRING("{:g}"), base);
   }
   auto generic_system_string() const -> std::string { return generic_string(); }
 };
@@ -280,9 +281,9 @@ template <typename Char> struct formatter<std::filesystem::path, Char> {
   char path_type_ = 0;
 
  public:
-  FMT_CONSTEXPR void set_debug_format(bool set = true) { debug_ = set; }
+  LAWS3_FMT_CONSTEXPR void set_debug_format(bool set = true) { debug_ = set; }
 
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) {
     auto it = ctx.begin(), end = ctx.end();
     if (it == end) return it;
 
@@ -321,7 +322,7 @@ template <typename Char> struct formatter<std::filesystem::path, Char> {
   }
 };
 
-#endif  // FMT_CPP_LIB_FILESYSTEM
+#endif  // LAWS3_FMT_CPP_LIB_FILESYSTEM
 
 template <size_t N, typename Char>
 struct formatter<std::bitset<N>, Char>
@@ -332,7 +333,7 @@ struct formatter<std::bitset<N>, Char>
     const std::bitset<N>& bs;
 
     template <typename OutputIt>
-    FMT_CONSTEXPR auto operator()(OutputIt out) -> OutputIt {
+    LAWS3_FMT_CONSTEXPR auto operator()(OutputIt out) -> OutputIt {
       for (auto pos = N; pos > 0; --pos)
         out = detail::write<Char>(out, bs[pos - 1] ? Char('1') : Char('0'));
       return out;
@@ -341,8 +342,8 @@ struct formatter<std::bitset<N>, Char>
 
  public:
   template <typename FormatContext>
-  auto format(const std::bitset<N>& bs, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::bitset<N>& bs,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     return this->write_padded(ctx, writer{bs});
   }
 };
@@ -363,23 +364,23 @@ struct formatter<std::optional<T>, Char,
       detail::string_literal<Char, 'n', 'o', 'n', 'e'>{};
 
   template <class U>
-  FMT_CONSTEXPR static auto maybe_set_debug_format(U& u, bool set)
+  LAWS3_FMT_CONSTEXPR static auto maybe_set_debug_format(U& u, bool set)
       -> decltype(u.set_debug_format(set)) {
     u.set_debug_format(set);
   }
 
   template <class U>
-  FMT_CONSTEXPR static void maybe_set_debug_format(U&, ...) {}
+  LAWS3_FMT_CONSTEXPR static void maybe_set_debug_format(U&, ...) {}
 
  public:
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) {
     maybe_set_debug_format(underlying_, true);
     return underlying_.parse(ctx);
   }
 
   template <typename FormatContext>
-  auto format(const std::optional<T>& opt, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::optional<T>& opt,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     if (!opt) return detail::write<Char>(ctx.out(), none);
 
     auto out = ctx.out();
@@ -397,13 +398,13 @@ struct formatter<std::expected<T, E>, Char,
                  std::enable_if_t<(std::is_void<T>::value ||
                                    is_formattable<T, Char>::value) &&
                                   is_formattable<E, Char>::value>> {
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const std::expected<T, E>& value, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::expected<T, E>& value,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     auto out = ctx.out();
 
     if (value.has_value()) {
@@ -422,11 +423,11 @@ struct formatter<std::expected<T, E>, Char,
 
 #ifdef __cpp_lib_source_location
 template <> struct formatter<std::source_location> {
-  FMT_CONSTEXPR auto parse(parse_context<>& ctx) { return ctx.begin(); }
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<>& ctx) { return ctx.begin(); }
 
   template <typename FormatContext>
-  auto format(const std::source_location& loc, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::source_location& loc,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     auto out = ctx.out();
     out = detail::write(out, loc.file_name());
     out = detail::write(out, ':');
@@ -440,20 +441,20 @@ template <> struct formatter<std::source_location> {
 };
 #endif
 
-#if FMT_CPP_LIB_VARIANT
+#if LAWS3_FMT_CPP_LIB_VARIANT
 
 template <typename T> struct is_variant_like {
   static constexpr bool value = detail::is_variant_like_<T>::value;
 };
 
 template <typename Char> struct formatter<std::monostate, Char> {
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const std::monostate&, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::monostate&,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     return detail::write<Char>(ctx.out(), "monostate");
   }
 };
@@ -463,24 +464,24 @@ struct formatter<Variant, Char,
                  std::enable_if_t<std::conjunction_v<
                      is_variant_like<Variant>,
                      detail::is_variant_formattable<Variant, Char>>>> {
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Variant& value, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const Variant& value,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     auto out = ctx.out();
 
     out = detail::write<Char>(out, "variant(");
-    FMT_TRY {
+    LAWS3_FMT_TRY {
       std::visit(
           [&](const auto& v) {
             out = detail::write_escaped_alternative<Char>(out, v);
           },
           value);
     }
-    FMT_CATCH(const std::bad_variant_access&) {
+    LAWS3_FMT_CATCH(const std::bad_variant_access&) {
       detail::write<Char>(out, "valueless by exception");
     }
     *out++ = ')';
@@ -488,7 +489,7 @@ struct formatter<Variant, Char,
   }
 };
 
-#endif  // FMT_CPP_LIB_VARIANT
+#endif  // LAWS3_FMT_CPP_LIB_VARIANT
 
 template <> struct formatter<std::error_code> {
  private:
@@ -497,7 +498,7 @@ template <> struct formatter<std::error_code> {
   bool debug_ = false;
 
  public:
-  FMT_CONSTEXPR auto parse(parse_context<>& ctx) -> const char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<>& ctx) -> const char* {
     auto it = ctx.begin(), end = ctx.end();
     if (it == end) return it;
 
@@ -519,8 +520,9 @@ template <> struct formatter<std::error_code> {
   }
 
   template <typename FormatContext>
-  FMT_CONSTEXPR20 auto format(const std::error_code& ec,
-                              FormatContext& ctx) const -> decltype(ctx.out()) {
+  LAWS3_FMT_CONSTEXPR20 auto format(const std::error_code& ec,
+                                    FormatContext& ctx) const
+      -> decltype(ctx.out()) {
     auto specs = specs_;
     detail::handle_dynamic_spec(specs.dynamic_width(), specs.width, width_ref_,
                                 ctx);
@@ -542,22 +544,22 @@ template <> struct formatter<std::error_code> {
   }
 };
 
-#if FMT_USE_RTTI
+#if LAWS3_FMT_USE_RTTI
 template <typename Char>
 struct formatter<std::type_info, Char  // DEPRECATED! Mixing code unit types.
                  > {
  public:
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     return ctx.begin();
   }
 
   template <typename Context>
-  auto format(const std::type_info& ti, Context& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::type_info& ti,
+              Context& ctx) const -> decltype(ctx.out()) {
     return detail::write_demangled_name<Char>(ctx.out(), ti);
   }
 };
-#endif  // FMT_USE_RTTI
+#endif  // LAWS3_FMT_USE_RTTI
 
 template <typename T, typename Char>
 struct formatter<
@@ -567,22 +569,22 @@ struct formatter<
   bool with_typename_ = false;
 
  public:
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     auto it = ctx.begin();
     auto end = ctx.end();
     if (it == end || *it == '}') return it;
     if (*it == 't') {
       ++it;
-      with_typename_ = FMT_USE_RTTI != 0;
+      with_typename_ = LAWS3_FMT_USE_RTTI != 0;
     }
     return it;
   }
 
   template <typename Context>
-  auto format(const std::exception& ex, Context& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::exception& ex,
+              Context& ctx) const -> decltype(ctx.out()) {
     auto out = ctx.out();
-#if FMT_USE_RTTI
+#if LAWS3_FMT_USE_RTTI
     if (with_typename_) {
       out = detail::write_demangled_name<Char>(out, typeid(ex));
       *out++ = ':';
@@ -601,7 +603,7 @@ struct formatter<BitRef, Char,
                  enable_if_t<detail::is_bit_reference_like<BitRef>::value>>
     : formatter<bool, Char> {
   template <typename FormatContext>
-  FMT_CONSTEXPR auto format(const BitRef& v, FormatContext& ctx) const
+  LAWS3_FMT_CONSTEXPR auto format(const BitRef& v, FormatContext& ctx) const
       -> decltype(ctx.out()) {
     return formatter<bool, Char>::format(v, ctx);
   }
@@ -612,8 +614,8 @@ struct formatter<std::atomic<T>, Char,
                  enable_if_t<is_formattable<T, Char>::value>>
     : formatter<T, Char> {
   template <typename FormatContext>
-  auto format(const std::atomic<T>& v, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::atomic<T>& v,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     return formatter<T, Char>::format(v.load(), ctx);
   }
 };
@@ -622,8 +624,8 @@ struct formatter<std::atomic<T>, Char,
 template <typename Char>
 struct formatter<std::atomic_flag, Char> : formatter<bool, Char> {
   template <typename FormatContext>
-  auto format(const std::atomic_flag& v, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::atomic_flag& v,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     return formatter<bool, Char>::format(v.test(), ctx);
   }
 };
@@ -634,10 +636,10 @@ template <typename T, typename Char> struct formatter<std::complex<T>, Char> {
   detail::dynamic_format_specs<Char> specs_;
 
   template <typename FormatContext, typename OutputIt>
-  FMT_CONSTEXPR auto do_format(const std::complex<T>& c,
-                               detail::dynamic_format_specs<Char>& specs,
-                               FormatContext& ctx, OutputIt out) const
-      -> OutputIt {
+  LAWS3_FMT_CONSTEXPR auto do_format(const std::complex<T>& c,
+                                     detail::dynamic_format_specs<Char>& specs,
+                                     FormatContext& ctx,
+                                     OutputIt out) const -> OutputIt {
     if (c.real() != 0) {
       *out++ = Char('(');
       out = detail::write<Char>(out, c.real(), specs, ctx.locale());
@@ -655,15 +657,15 @@ template <typename T, typename Char> struct formatter<std::complex<T>, Char> {
   }
 
  public:
-  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+  LAWS3_FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
     if (ctx.begin() == ctx.end() || *ctx.begin() == '}') return ctx.begin();
     return parse_format_specs(ctx.begin(), ctx.end(), specs_, ctx,
                               detail::type_constant<T, Char>::value);
   }
 
   template <typename FormatContext>
-  auto format(const std::complex<T>& c, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(const std::complex<T>& c,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     auto specs = specs_;
     if (specs.dynamic()) {
       detail::handle_dynamic_spec(specs.dynamic_width(), specs.width,
@@ -700,12 +702,12 @@ struct formatter<std::reference_wrapper<T>, Char,
                              !detail::has_format_as_member<T>::value>>
     : formatter<remove_cvref_t<T>, Char> {
   template <typename FormatContext>
-  auto format(std::reference_wrapper<T> ref, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
+  auto format(std::reference_wrapper<T> ref,
+              FormatContext& ctx) const -> decltype(ctx.out()) {
     return formatter<remove_cvref_t<T>, Char>::format(ref.get(), ctx);
   }
 };
 
-FMT_END_NAMESPACE
+LAWS3_FMT_END_NAMESPACE
 
-#endif  // FMT_STD_H_
+#endif  // LAWS3_FMT_STD_H_

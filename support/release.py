@@ -5,7 +5,7 @@
 Usage:
   release.py [<branch>]
 
-For the release command $FMT_TOKEN should contain a GitHub personal access token
+For the release command $LAWS3_FMT_TOKEN should contain a GitHub personal access token
 obtained from https://github.com/settings/tokens.
 """
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
     # Create a release on GitHub.
     fmt_repo.push('origin', 'release')
-    auth_headers = {'Authorization': 'token ' + os.getenv('FMT_TOKEN')}
+    auth_headers = {'Authorization': 'token ' + os.getenv('LAWS3_FMT_TOKEN')}
     req = urllib.request.Request(
         'https://api.github.com/repos/fmtlib/fmt/releases',
         data=json.dumps({'tag_name': version,

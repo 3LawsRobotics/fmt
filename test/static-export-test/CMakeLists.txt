@@ -7,24 +7,24 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 
 # Broken LTO on GCC 4
-if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
   set(BROKEN_LTO ON)
-endif ()
+endif()
 
-if (NOT BROKEN_LTO AND CMAKE_VERSION VERSION_GREATER "3.8")
+if(NOT BROKEN_LTO AND CMAKE_VERSION VERSION_GREATER "3.8")
   # CMake 3.9+
   include(CheckIPOSupported)
   check_ipo_supported(RESULT HAVE_IPO)
-  if (HAVE_IPO)
+  if(HAVE_IPO)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-  endif ()
-endif ()
+  endif()
+endif()
 
 add_subdirectory(../.. fmt)
 set_property(TARGET fmt PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(library-test SHARED library.cc)
-target_link_libraries(library-test PRIVATE fmt::fmt)
+target_link_libraries(library-test PRIVATE lll::fmt::fmt)
 
 add_executable(exe-test main.cc)
 target_link_libraries(exe-test PRIVATE library-test)
